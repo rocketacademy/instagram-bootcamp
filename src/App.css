@@ -17,3 +17,8 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.Card-Img {
+  width: 50vw;
+  height: 30vh;
+}
