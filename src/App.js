@@ -52,6 +52,7 @@ class App extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
+    // Prevent default form submit behaviour that will reload the page
     event.preventDefault();
 
     // Store images in an images folder in Firebase Storage
