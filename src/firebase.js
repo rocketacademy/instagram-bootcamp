@@ -18,4 +18,4 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // Get a reference to the database service and export the reference for other modules
-export const db = getDatabase(firebaseApp);
+export const database = getDatabase(firebaseApp);
