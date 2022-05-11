@@ -31,9 +31,9 @@ class App extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
-    const postListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newPostRef = push(postListRef);
-    set(newPostRef, "abc");
+    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+    const newMessageRef = push(messageListRef);
+    set(newMessageRef, "abc");
   };
 
   render() {
