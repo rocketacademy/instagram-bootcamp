@@ -49,7 +49,7 @@ class App extends React.Component {
             Edit <code>src/App.js</code> and save to reload.
           </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Click me!</button>
+          <button onClick={this.writeData}>Send</button>
           <ol>{messageListItems}</ol>
         </header>
       </div>
