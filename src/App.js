@@ -1,6 +1,6 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { db } from "./firebase";
+import { database } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
@@ -18,7 +18,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const messagesRef = ref(db, MESSAGE_FOLDER_NAME);
+    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -31,7 +31,7 @@ class App extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
-    const postListRef = ref(db, MESSAGE_FOLDER_NAME);
+    const postListRef = ref(database, MESSAGE_FOLDER_NAME);
     const newPostRef = push(postListRef);
     set(newPostRef, "abc");
   };
