@@ -36,12 +36,7 @@ class App extends React.Component {
 
   render() {
     const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
-    const composer = (
-      <Composer
-        loggedInUser={this.state.loggedInUser}
-        toggleAuthForm={this.toggleAuthForm}
-      />
-    );
+    const composer = <Composer loggedInUser={this.state.loggedInUser} />;
     const createAccountOrSignInButton = (
       <div>
         <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>
