@@ -1,5 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import React from "react";
+import { Link, Routes, Route } from "react-router-dom";
 import "./App.css";
 import AuthForm from "./AuthForm";
 import Composer from "./Composer";
@@ -12,7 +13,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       loggedInUser: null,
-      shouldRenderAuthForm: false,
     };
   }
 
@@ -28,18 +28,12 @@ class App extends React.Component {
     });
   }
 
-  toggleAuthForm = () => {
-    this.setState((state) => ({
-      shouldRenderAuthForm: !state.shouldRenderAuthForm,
-    }));
-  };
-
   render() {
-    const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
+    const authForm = <AuthForm />;
     const composer = <Composer loggedInUser={this.state.loggedInUser} />;
     const createAccountOrSignInButton = (
       <div>
-        <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>
+        <Link to="authform">Create Account Or Sign In</Link>
         <br />
       </div>
     );
@@ -56,7 +50,10 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <br />
-          {this.state.shouldRenderAuthForm ? authForm : composerAndNewsFeed}
+          <Routes>
+            <Route path="/" element={composerAndNewsFeed} />
+            <Route path="authform" element={authForm} />
+          </Routes>
         </header>
       </div>
     );
