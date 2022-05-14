@@ -32,8 +32,8 @@ class Composer extends React.Component {
   render() {
     // Convert posts in state to post JSX elements to render
     let postCards = this.state.posts.map((post) => (
-      <Card bg="dark" key={post.key}>
-        <Card.Img src={post.val.imageLink} className="Card-Img" />
+      <Card bg="dark" key={post.key} className="Card">
+        <Card.Img variant="top" src={post.val.imageLink} className="Card-Img" />
         <Card.Text>{post.val.authorEmail}</Card.Text>
         <Card.Text>{post.val.text}</Card.Text>
       </Card>

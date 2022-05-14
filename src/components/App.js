@@ -36,12 +36,22 @@ class App extends React.Component {
 
   render() {
     const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
+    const composer = (
+      <Composer
+        loggedInUser={this.state.loggedInUser}
+        toggleAuthForm={this.toggleAuthForm}
+      />
+    );
+    const createAccountOrSignInButton = (
+      <div>
+        <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>
+        <br />
+      </div>
+    );
     const composerAndNewsFeed = (
       <div>
-        <Composer
-          loggedInUser={this.state.loggedInUser}
-          toggleAuthForm={this.toggleAuthForm}
-        />
+        {/* Render composer if user logged in, else render auth button */}
+        {this.state.loggedInUser ? composer : createAccountOrSignInButton}
         <br />
         <NewsFeed />
       </div>
@@ -50,6 +60,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
+          <br />
           {this.state.shouldRenderAuthForm ? authForm : composerAndNewsFeed}
         </header>
       </div>

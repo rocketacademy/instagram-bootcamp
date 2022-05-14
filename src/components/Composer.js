@@ -37,12 +37,6 @@ class Composer extends React.Component {
     // Prevent default form submit behaviour that will reload the page
     event.preventDefault();
 
-    // If there is no logged in user, Post button should call App logic to render auth form
-    if (!this.props.loggedInUser) {
-      this.props.toggleAuthForm();
-      return;
-    }
-
     // Store images in an images folder in Firebase Storage
     const fileRef = storageRef(
       storage,
