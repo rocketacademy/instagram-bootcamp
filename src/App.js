@@ -83,7 +83,7 @@ class App extends React.Component {
   render() {
     // Convert posts in state to post JSX elements to render
     let postCards = this.state.posts.map((post) => (
-      <Card key={post.key}>
+      <Card bg="dark" key={post.key}>
         <Card.Img src={post.val.imageLink} className="Card-Img" />
         <Card.Text>{post.val.text}</Card.Text>
       </Card>
