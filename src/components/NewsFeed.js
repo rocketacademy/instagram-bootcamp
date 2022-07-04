@@ -7,7 +7,7 @@ import { database } from "../firebase";
 // Save Firebase folder names as constants to avoid bugs due to misspelling
 const POSTS_FOLDER_NAME = "posts";
 
-class Composer extends React.Component {
+class NewsFeed extends React.Component {
   constructor(props) {
     super(props);
     // Initialise empty posts array in state to keep local state in sync with Firebase
@@ -44,4 +44,4 @@ class Composer extends React.Component {
   }
 }
 
-export default Composer;
+export default NewsFeed;
