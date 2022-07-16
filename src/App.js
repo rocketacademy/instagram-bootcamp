@@ -14,6 +14,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      inputTextValue: "",
     };
   }
 
@@ -29,11 +30,28 @@ class App extends React.Component {
     });
   }
 
+  // **insert handleChange for the input textfield here**
+  handleInputChange = (e) => {
+    const { value } = e.target;
+    this.setState({
+      inputTextValue: value,
+    });
+  };
+
+  // **insert handleSubmit here for what happens when click send**
+  handleSubmit = (event) => {
+    event.preventDefault();
+    this.writeData();
+    this.setState({
+      inputTextValue: "",
+    });
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    set(newMessageRef, this.state.inputTextValue);
   };
 
   render() {
@@ -49,7 +67,18 @@ class App extends React.Component {
             Edit <code>src/App.js</code> and save to reload.
           </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Chat:
+              <input
+                type="text"
+                value={this.state.inputTextValue}
+                onChange={this.handleInputChange}
+              />
+            </label>
+            <br />
+            <input type="submit" value="Send!" />
+          </form>
           <ol>{messageListItems}</ol>
         </header>
       </div>
