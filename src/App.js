@@ -1,35 +1,61 @@
 import React from "react";
-import Posts from "./Posts";
-import Register from "./Register";
-import Signin from "./Signin";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Composer from "./Composer";
+import NewsFeed from "./NewsFeed";
+import AuthForm from "./AuthForm";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
     this.state = {
-      loggedInUser: "",
+      loggedInUser: null,
+      shouldRenderAuthForm: false,
     };
   }
 
   componentDidMount = () => {
-    const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      this.setState({
-        loggedInUser: user,
-      });
+      if (user) {
+        this.setState({
+          loggedInUser: user,
+        });
+        return;
+      } else {
+        this.setState({
+          loggedInUser: null,
+        });
+      }
     });
   };
 
+  toggleAuthForm = () => {
+    this.setState((state) => ({
+      shouldRenderAuthForm: !state.shouldRenderAuthForm,
+    }));
+  };
+
   render() {
+    const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
+    const composer = <Composer loggedInUser={this.state.loggedInUser} />;
+    const createAccountOrSignInButton = (
+      <div>
+        <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>
+      </div>
+    );
+    const composerAndNewsFeed = (
+      <div>
+        {this.state.loggedInUser ? composer : createAccountOrSignInButton}
+        <br />
+        <NewsFeed />
+      </div>
+    );
     return (
-      <>
-        <Register />
-        <Signin />
-        <Posts />;
-      </>
+      <div className="App">
+        <header className="App-header">
+          {this.state.shouldRenderAuthForm ? authForm : composerAndNewsFeed}
+        </header>
+      </div>
     );
   }
 }
