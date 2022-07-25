@@ -14,6 +14,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      textBlankInput: "",
     };
   }
 
