@@ -14,6 +14,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      textInputValue: "",
     };
   }
 
@@ -28,6 +29,13 @@ class App extends React.Component {
       }));
     });
   }
+
+  // include handleChange
+  handleChange = (event) => {
+    this.setState({ textInputValue: event.target.value });
+  };
+
+  //include a handleSubmit that needs to push the messages to the folder
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
