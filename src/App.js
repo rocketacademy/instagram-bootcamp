@@ -6,6 +6,8 @@ import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
+// where to put the messages
+const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
 
 class App extends React.Component {
   constructor(props) {
@@ -19,8 +21,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // where to put the messages
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -31,23 +31,29 @@ class App extends React.Component {
     });
   }
 
+  // // Note use of array fields syntax to avoid having to manually bind this method to the class
+  // writeData = () => {
+  //   const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+  //   const newMessageRef = push(messageListRef);
+  //   set(newMessageRef, "abc");
+  // };
+
   //handleChange
   handleChange = (event) => {
-    this.setState((prevState) => {
-      return { ...prevState, input: event.target.value };
-    });
+    this.setState({ textBlankInput: event.target.value });
+    // this.setState((prevState) => {
+    //   return { ...prevState, textBlankInput: event.target.value };
+    // });
   };
 
-  //handleSubmit which will set the message into the target folder
+  //handleSubmit which will set the message into the target folder on firebase;
   handleSubmit = (event) => {
     event.preventDefault();
-  };
+    // pass to firebase;
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    const newMessageRef = push(messagesRef);
+    set(newMessageRef, this.state.textBlankInput);
+    //
   };
 
   render() {
@@ -64,10 +70,14 @@ class App extends React.Component {
             <p>Start chatting here!</p>
             <input
               type="text"
-              value={this.state.input}
+              value={this.state.textBlankInput}
               onChange={this.handleChange}
             />
-            <input type="submit" value="Submit" />
+            <input
+              type="submit"
+              value="Submit"
+              disabled={!this.state.textBlankInput}
+            />
           </form>
           {/* <p>
             Edit <code>src/App.js</code> and save to reload.
