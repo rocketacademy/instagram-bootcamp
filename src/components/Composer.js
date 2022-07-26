@@ -5,7 +5,7 @@ import {
   ref as storageRef,
   uploadBytes,
 } from "firebase/storage";
-import { database, storage } from "./firebase";
+import { database, storage } from "../firebase";
 import "./App.css";
 
 const POSTS_FOLDER_NAME = "posts";

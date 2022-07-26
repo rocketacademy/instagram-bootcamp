@@ -3,7 +3,7 @@ import Composer from "./Composer";
 import NewsFeed from "./NewsFeed";
 import AuthForm from "./AuthForm";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 
 class App extends React.Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React from "react";
 import { onChildAdded, ref as databaseRef } from "firebase/database";
-import { database } from "./firebase";
+import { database } from "../firebase";
 import "./NewsFeed.css";
 import Card from "react-bootstrap/Card";
 
