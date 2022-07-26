@@ -19,6 +19,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // where to put the messages
     const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
@@ -29,6 +30,18 @@ class App extends React.Component {
       }));
     });
   }
+
+  //handleChange
+  handleChange = (event) => {
+    this.setState((prevState) => {
+      return { ...prevState, input: event.target.value };
+    });
+  };
+
+  //handleSubmit which will set the message into the target folder
+  handleSubmit = (event) => {
+    event.preventDefault();
+  };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
@@ -46,11 +59,21 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
+          <h1>Rocketgram!</h1>
+          <form onSubmit={this.handleSubmit}>
+            <p>Start chatting here!</p>
+            <input
+              type="text"
+              value={this.state.input}
+              onChange={this.handleChange}
+            />
+            <input type="submit" value="Submit" />
+          </form>
+          {/* <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          TODO: Add input field and add text input as messages in Firebase */}
+          {/* <button onClick={this.writeData}>Send</button> */}
           <ol>{messageListItems}</ol>
         </header>
       </div>
