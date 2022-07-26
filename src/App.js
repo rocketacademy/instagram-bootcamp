@@ -53,6 +53,7 @@ class App extends React.Component {
 
     const newMessageRef = push(messagesRef);
     set(newMessageRef, this.state.textBlankInput);
+    this.setState({ textBlankInput: "" });
     //
   };
 
