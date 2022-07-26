@@ -34,7 +34,7 @@ class UserAuth extends React.Component {
         .then(
           this.setState(() => ({
             Id: "",
-            Password: "",
+            Password: "weqweqwe",
           }))
         )
         .catch(
@@ -50,7 +50,7 @@ class UserAuth extends React.Component {
             Password: "",
           }))
         )
-        .catch((err) => window.alert("ggwp"));
+        .catch((err) => window.alert("Wrong Password!"));
     }
   };
 
@@ -92,9 +92,13 @@ class UserAuth extends React.Component {
             </div>
           </form>
           {this.state.create ? (
-            <button onClick={this.userAuthen}>Sign Up</button>
+            <button name="SignInOrUp" onClick={this.userAuthen}>
+              Sign Up
+            </button>
           ) : (
-            <button onClick={this.userAuthen}>Sign In</button>
+            <button name="SignInOrUp" onClick={this.userAuthen}>
+              Sign In
+            </button>
           )}
           <br />
           {this.state.create ? (

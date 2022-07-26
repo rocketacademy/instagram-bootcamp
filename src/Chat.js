@@ -1,5 +1,5 @@
 import React from "react";
-import { onChildAdded, ref, set, child } from "firebase/database";
+import { onChildAdded, ref, set, child, push } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
 
@@ -38,10 +38,28 @@ class Chat extends React.Component {
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = (event) => {
+  // writeData = (event) => {
+  //   const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+
+  //   const newMessageRef = child(messageListRef, this.state.key);
+
+  //   set(newMessageRef, this.state.input);
+
+  //   this.setState((prevState) => ({
+  //     // Store message key so we can use it as a key in our list items when rendering messages
+  //     input: "",
+  //     key: this.prevState.key + 1,
+  //   }));
+  // };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = child(messageListRef, this.state.key);
+
+    const newMessageRef = child(messageListRef, this.state.key.toString());
+
     set(newMessageRef, this.state.input);
+
     this.setState(() => ({
       // Store message key so we can use it as a key in our list items when rendering messages
       input: "",
@@ -56,8 +74,8 @@ class Chat extends React.Component {
     ));
     return (
       <div className="Chat">
-        <ol>{messageListItems}</ol>
-        <form>
+        <ul style={{ listStyleType: "none" }}>{messageListItems}</ul>
+        <form onSubmit={this.handleSubmit}>
           <label>
             Input:
             <input
@@ -67,7 +85,7 @@ class Chat extends React.Component {
               value={this.state.input}
             />
           </label>
-          <button onClick={this.writeData}>Enter</button>
+          <input type="submit" value="enter" />
         </form>
       </div>
     );

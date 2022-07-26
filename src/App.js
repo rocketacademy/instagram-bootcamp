@@ -1,9 +1,10 @@
 import React from "react";
 import { Chat } from "./Chat";
+import { Posts } from "./Posts";
 import logo from "./logo.png";
 import "./App.css";
 import { UserAuth } from "./UserAuth";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -44,7 +45,9 @@ class App extends React.Component {
             ) : (
               <UserAuth login="true" />
             )}
-            {this.state.userIsLoggedIn && <Chat />}{" "}
+            {this.state.userIsLoggedIn && <Chat />}
+            <br />
+            {this.state.userIsLoggedIn && <Posts />}
           </header>
         </div>
       </>
