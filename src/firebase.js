@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 // TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
@@ -16,7 +18,22 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+var firebaseApp = initializeApp(firebaseConfig);
+
+// // var auth = getAuth(firebaseApp);
+// createUserWithEmailAndPassword(auth, email, password)
+//   .then((userCredential) => {
+//     // Signed in
+//     const user = userCredential.user;
+//     // ...
+//   })
+//   .catch((error) => {
+//     const errorCode = error.code;
+//     const errorMessage = error.message;
+//     // ..
+//   });
 
 // Get a reference to the database service and export the reference for other modules
 export const database = getDatabase(firebaseApp);
+export const storage = getStorage(firebaseApp);
+export var auth = getAuth(firebaseApp);
