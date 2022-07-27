@@ -2,6 +2,7 @@ import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
 import logo from "./logo.png";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -17,6 +18,8 @@ class App extends React.Component {
     this.state = {
       messages: [],
       textBlankInput: "",
+      files: null,
+      fileBlankInput: "",
     };
   }
 
@@ -57,6 +60,14 @@ class App extends React.Component {
     //
   };
 
+  //handleChangePost
+
+  handleChangePost = () => {};
+
+  //handleSubmitPost
+
+  handleSubmitPost = () => {};
+
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
@@ -80,12 +91,30 @@ class App extends React.Component {
               disabled={!this.state.textBlankInput}
             />
           </form>
+          <form onSubmit={this.handleSubmitPost}>
+            <p>Upload to newsfeed here</p>
+            <input
+              type="file"
+              value={this.state.postBlankInput}
+              onChange={this.handleChangePost}
+            />
+            <input
+              type="submit"
+              value="Submit"
+              disabled={!this.state.textBlankInput}
+            />
+          </form>
           {/* <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
           TODO: Add input field and add text input as messages in Firebase */}
           {/* <button onClick={this.writeData}>Send</button> */}
+
+          <h3>Chat</h3>
+
           <ol>{messageListItems}</ol>
+          <h4>Posts</h4>
+          <ul></ul>
         </header>
       </div>
     );
