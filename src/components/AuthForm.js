@@ -1,136 +1,101 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
-class AuthForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      emailInputValue: "",
-      passwordInputValue: "",
-      isNewUser: true,
-      errorCode: "",
-      errorMessage: "",
-    };
-  }
+const AuthForm = () => {
+  const [emailInputValue, setEmailInputValue] = useState("");
+  const [passwordInputValue, setPasswordInputValue] = useState("");
+  const [isNewUser, setIsNewUser] = useState(true);
+  const [errorCode, setErrorCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
-  handleInputChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
+  const handleInputChange = (e) => {
+    if (e.target.name === "emailInputValue") {
+      setEmailInputValue(e.target.value);
+    } else if (e.target.name === "passwordInputValue") {
+      setPasswordInputValue(e.target.value);
+    }
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const closeAuthForm = () => {
-      //reset to initial state
-      this.setState({
-        emailInputValue: "",
-        passwordInputValue: "",
-        isNewUser: true,
-        errorCode: "",
-        errorMessage: "",
-      });
-      //toggle authform
-      this.props.toggleAuthForm();
+      setEmailInputValue("");
+      setPasswordInputValue("");
+      setIsNewUser(true);
+      setErrorCode("");
+      setErrorMessage("");
+      navigate("/");
     };
 
     const setErrorState = (error) => {
-      //set errorCode and errorMessage
-      this.setState({
-        errorCode: error.code,
-        errorMessage: error.message,
-      });
+      setErrorCode(error.code);
+      setErrorMessage(error.message);
     };
 
-    //chhange below to if create else signin
-    //if new user, run createUserWithEmailAndPassword()
-    //.then run closeAuthForm
-    //.catch setErrorState
-    //else run signInWithEmailandPassword()
-    //.then run closeAuthForm
-    //.catch setErrorState
-    if (this.state.isNewUser) {
-      createUserWithEmailAndPassword(
-        auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
-      )
+    if (isNewUser) {
+      createUserWithEmailAndPassword(auth, emailInputValue, passwordInputValue)
         .then(closeAuthForm)
         .catch(setErrorState);
     } else {
-      signInWithEmailAndPassword(
-        auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
-      )
+      signInWithEmailAndPassword(auth, emailInputValue, passwordInputValue)
         .then(closeAuthForm)
         .catch(setErrorState);
     }
   };
 
-  toggleNewOrReturningAuth = () => {
-    this.setState((state) => ({
-      isNewUser: !state.isNewUser,
-    }));
+  const toggleNewOrReturningAuth = () => {
+    setIsNewUser(!isNewUser);
   };
 
-  render() {
-    return (
-      <div>
-        <p>
-          {this.state.errorCode ? `Error code: ${this.state.errorCode}` : null}
-        </p>
-        <p>
-          {this.state.errorMessage
-            ? `Error message: ${this.state.errorMessage}`
-            : null}
-        </p>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Email:
-            <input
-              type="email"
-              name="emailInputValue"
-              value={this.state.emailInputValue}
-              onChange={this.handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Password:
-            <input
-              type="password"
-              name="passwordInputValue"
-              value={this.state.passwordInputValue}
-              onChange={this.handleInputChange}
-            />
-          </label>
-          <br />
+  return (
+    <div>
+      <p>{errorCode ? `Error code: ${errorCode}` : null}</p>
+      <p>{errorMessage ? `Error message: ${errorMessage}` : null}</p>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Email:
           <input
-            type="submit"
-            value={this.state.isNewUser ? "Create Account" : "Sign In"}
-            disabled={
-              !this.state.emailInputValue || !this.state.passwordInputValue
-            }
+            type="email"
+            name="emailInputValue"
+            value={emailInputValue}
+            onChange={handleInputChange}
           />
+        </label>
+        <br />
+        <label>
+          Password:
           <input
-            type="button"
-            onClick={this.toggleNewOrReturningAuth}
-            value={
-              this.state.isNewUser
-                ? "If you have an account, click here to login"
-                : "If you are a new user, click here to create account"
-            }
+            type="password"
+            name="passwordInputValue"
+            value={passwordInputValue}
+            onChange={handleInputChange}
           />
-        </form>
-      </div>
-    );
-  }
-}
+        </label>
+        <br />
+        <input
+          type="submit"
+          value={isNewUser ? "Create Account" : "Sign In"}
+          disabled={!emailInputValue || !passwordInputValue}
+        />
+        <input
+          type="button"
+          onClick={toggleNewOrReturningAuth}
+          value={
+            isNewUser
+              ? "If you have an account, click here to login"
+              : "If you are a new user, click here to create account"
+          }
+        />
+      </form>
+    </div>
+  );
+};
 
 export default AuthForm;

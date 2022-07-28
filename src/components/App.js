@@ -1,63 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Composer from "./Composer";
 import NewsFeed from "./NewsFeed";
 import AuthForm from "./AuthForm";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
+import { Routes, Route, Link } from "react-router-dom";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loggedInUser: null,
-      shouldRenderAuthForm: false,
-    };
-  }
+const App = () => {
+  const [loggedInUser, setLoggedInUser] = useState();
 
-  componentDidMount = () => {
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.setState({
-          loggedInUser: user,
-        });
+        setLoggedInUser(user);
         return;
       } else {
-        this.setState({
-          loggedInUser: null,
-        });
+        setLoggedInUser(null);
       }
     });
-  };
+  }, []);
 
-  toggleAuthForm = () => {
-    this.setState((state) => ({
-      shouldRenderAuthForm: !state.shouldRenderAuthForm,
-    }));
-  };
+  const authForm = <AuthForm />;
+  const composer = <Composer loggedInUser={loggedInUser} />;
+  const createAccountOrSignInButton = (
+    <div>
+      <Link to="authform">Create Account Or Sign In</Link>
+    </div>
+  );
+  const composerAndNewsFeed = (
+    <div>
+      {loggedInUser ? composer : createAccountOrSignInButton}
+      <br />
+      <NewsFeed />
+    </div>
+  );
 
-  render() {
-    const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
-    const composer = <Composer loggedInUser={this.state.loggedInUser} />;
-    const createAccountOrSignInButton = (
-      <div>
-        <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>
-      </div>
-    );
-    const composerAndNewsFeed = (
-      <div>
-        {this.state.loggedInUser ? composer : createAccountOrSignInButton}
-        <br />
-        <NewsFeed />
-      </div>
-    );
-    return (
-      <div className="App">
-        <header className="App-header">
-          {this.state.shouldRenderAuthForm ? authForm : composerAndNewsFeed}
-        </header>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="App">
+      <header className="App-header">
+        <Routes>
+          <Route path="/" element={composerAndNewsFeed} />
+          <Route path="/authform" element={authForm} />
+        </Routes>
+      </header>
+    </div>
+  );
+};
 
 export default App;
