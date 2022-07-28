@@ -2,10 +2,13 @@ import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
 import logo from "./logo.png";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
+// where to put the messages
+const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
 
 class App extends React.Component {
   constructor(props) {
@@ -14,11 +17,13 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      textBlankInput: "",
+      files: null,
+      fileBlankInput: "",
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -29,12 +34,39 @@ class App extends React.Component {
     });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+  // // Note use of array fields syntax to avoid having to manually bind this method to the class
+  // writeData = () => {
+  //   const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+  //   const newMessageRef = push(messageListRef);
+  //   set(newMessageRef, "abc");
+  // };
+
+  //handleChange
+  handleChange = (event) => {
+    this.setState({ textBlankInput: event.target.value });
+    // this.setState((prevState) => {
+    //   return { ...prevState, textBlankInput: event.target.value };
+    // });
   };
+
+  //handleSubmit which will set the message into the target folder on firebase;
+  handleSubmit = (event) => {
+    event.preventDefault();
+    // pass to firebase;
+
+    const newMessageRef = push(messagesRef);
+    set(newMessageRef, this.state.textBlankInput);
+    this.setState({ textBlankInput: "" });
+    //
+  };
+
+  //handleChangePost
+
+  handleChangePost = () => {};
+
+  //handleSubmitPost
+
+  handleSubmitPost = () => {};
 
   render() {
     // Convert messages in state to message JSX elements to render
@@ -45,12 +77,44 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
+          <h1>Rocketgram!</h1>
+          <form onSubmit={this.handleSubmit}>
+            <p>Start chatting here!</p>
+            <input
+              type="text"
+              value={this.state.textBlankInput}
+              onChange={this.handleChange}
+            />
+            <input
+              type="submit"
+              value="Submit"
+              disabled={!this.state.textBlankInput}
+            />
+          </form>
+          <form onSubmit={this.handleSubmitPost}>
+            <p>Upload to newsfeed here</p>
+            <input
+              type="file"
+              value={this.state.postBlankInput}
+              onChange={this.handleChangePost}
+            />
+            <input
+              type="submit"
+              value="Submit"
+              disabled={!this.state.textBlankInput}
+            />
+          </form>
+          {/* <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          TODO: Add input field and add text input as messages in Firebase */}
+          {/* <button onClick={this.writeData}>Send</button> */}
+
+          <h3>Chat</h3>
+
           <ol>{messageListItems}</ol>
+          <h4>Posts</h4>
+          <ul></ul>
         </header>
       </div>
     );
