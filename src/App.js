@@ -9,38 +9,53 @@ const MESSAGE_FOLDER_NAME = "messages";
 
 const App = () => {
   const [messages, setMessages] = useState([]);
-  // const [messageListItems, setMessageListItems] = useState("");
-
+  const [input, setInput] = useState("");
+  const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
   useEffect(() => {
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
+    const msg = [];
     onChildAdded(messagesRef, (data) => {
+      msg.push({ key: data.key, val: data.val() });
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      setMessages([...messages, { key: data.key, val: data.val() }]);
+      setMessages([...msg]);
     });
   }, []);
-
-  console.log(messages);
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  const writeData = () => {
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
 
   const messageListItems = messages.map((message) => (
     <li key={message.key}>{message.val}</li>
   ));
 
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+    const newMessageRef = push(messageListRef);
+    set(newMessageRef, input);
+    setInput("");
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        {/* TODO: Add input field and add text input as messages in Firebase */}
-        <button onClick={writeData}>Send</button>
+        <br></br>
+        <form onSubmit={handleSubmit}>
+          <label for="message">
+            To start communicating, type a message inside the input field!
+          </label>
+          <br></br>
+          <input
+            type="text"
+            id="message"
+            required
+            onChange={handleChange}
+          ></input>
+          <input type="submit" value="Send" disabled={!input}></input>
+        </form>
         <ol>{messageListItems}</ol>
       </header>
     </div>
@@ -48,55 +63,3 @@ const App = () => {
 };
 
 export default App;
-
-// class App extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     // Initialise empty messages array in state to keep local state in sync with Firebase
-//     // When Firebase changes, update local state, which will update local UI
-//     this.state = {
-//       messages: [],
-//     };
-//   }
-
-//   componentDidMount() {
-//     const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
-//     // onChildAdded will return data for every child at the reference and every subsequent new child
-//     onChildAdded(messagesRef, (data) => {
-//       // Add the subsequent child to local component state, initialising a new array to trigger re-render
-//       this.setState((state) => ({
-//         // Store message key so we can use it as a key in our list items when rendering messages
-//         messages: [...state.messages, { key: data.key, val: data.val() }],
-//       }));
-//     });
-//   }
-
-//   // Note use of array fields syntax to avoid having to manually bind this method to the class
-//   writeData = () => {
-//     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-//     const newMessageRef = push(messageListRef);
-//     set(newMessageRef, "abc");
-//   };
-
-//   render() {
-//     // Convert messages in state to message JSX elements to render
-//     let messageListItems = this.state.messages.map((message) => (
-//       <li key={message.key}>{message.val}</li>
-//     ));
-//     return (
-//       <div className="App">
-//         <header className="App-header">
-//           <img src={logo} className="App-logo" alt="logo" />
-//           <p>
-//             Edit <code>src/App.js</code> and save to reload.
-//           </p>
-//           {/* TODO: Add input field and add text input as messages in Firebase */}
-//           <button onClick={this.writeData}>Send</button>
-//           <ol>{messageListItems}</ol>
-//         </header>
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
