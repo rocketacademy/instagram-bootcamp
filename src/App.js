@@ -3,6 +3,7 @@ import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
@@ -75,6 +76,8 @@ class App extends React.Component {
             >
               Send
             </button>
+            <br />
+            <input type="file"></input>
           </form>
 
           <ol>{messageListItems}</ol>
