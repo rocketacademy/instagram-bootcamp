@@ -29,11 +29,27 @@ class App extends React.Component {
     });
   }
 
+  handleTextChange = (e) => {
+    this.setState({
+      currentText: e.target.value,
+      messageTime: new Date().toLocaleTimeString(),
+      messageDate: new Date().toLocaleDateString(),
+    });
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  writeData = (e) => {
+    e.preventDefault();
     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    set(
+      newMessageRef,
+      this.state.currentText +
+        `` +
+        this.state.messageTime +
+        " | " +
+        this.state.messageDate
+    );
   };
 
   render() {
@@ -49,7 +65,10 @@ class App extends React.Component {
             Edit <code>src/App.js</code> and save to reload.
           </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          <form>
+            <input onChange={(e) => this.handleTextChange(e)} />
+            <button onClick={this.writeData}>Send</button>
+          </form>
           <ol>{messageListItems}</ol>
         </header>
       </div>
