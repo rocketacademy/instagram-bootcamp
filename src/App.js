@@ -1,12 +1,20 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
 import { database } from "./firebase";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
+import Card from "react-bootstrap/Card";
+import { database, storage } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const MESSAGE_FOLDER_NAME = "messages";
+const IMAGES_FOLDER_NAME = "images";
+const POSTS_FOLDER_NAME = "posts";
 
 class App extends React.Component {
   constructor(props) {
@@ -14,13 +22,15 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      posts: [],
+      fileInputFile: null,
+      fileInputValue: "",
       textInputValue: "",
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
+    const postsRef = databaseRef(database, POSTS_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -31,15 +41,24 @@ class App extends React.Component {
     });
   }
 
-  handleChange = (event) => {
+  handleFileInputChange = (event) => {
     this.setState({
-      textInputValue: event.target.value,
+      fileInputFile: event.target.files[0],
+      fileInputValue: event.target.value,
     });
+  };
+
+  handleTextInputChange = (event) => {
+    this.setState({ textInputValue: event.target.value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
-    const currentTimestamp = new Date().toJSON().slice(0, 19);
+    const currentTimestamp = Date.now();
     console.log(currentTimestamp);
     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
     // push(): Add to a list of data in the database. Every time you push a new node onto a list, your database generates a unique key, like messages/<unique-message-id>/<message-data>
@@ -81,6 +100,7 @@ class App extends React.Component {
           </form>
 
           <ol>{messageListItems}</ol>
+          <FileUpload />
         </header>
       </div>
     );
