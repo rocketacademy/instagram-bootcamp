@@ -15,7 +15,6 @@ class App extends React.Component {
     this.state = {
       messages: [],
       inputText: "",
-      time: new Date(),
     };
   }
 
@@ -41,14 +40,22 @@ class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, this.state.inputText);
+    set(newMessageRef, { inputMessage: this.state.inputText, date: Date() });
+    // Resets the contents in the input box
+    this.setState({
+      inputText: "",
+    });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <li key={message.key}>
+        {message.val.inputMessage},{" "}
+        {new Date(message.val.date).toLocaleString()}
+      </li>
     ));
+
     return (
       <div className="App">
         <header className="App-header">
