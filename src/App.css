@@ -8,7 +8,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #111213;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -16,4 +16,28 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+#image {
+  line-height: 1.5em;
+  list-style-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4621/treehouse-marker.png);
+}
+
+p {
+  line-height: 1.5;
+  color: rgba(255, 255, 0, 0.89);
+}
+
+ul {
+  text-align: left;
+}
+
+li {
+  margin: 0;
+  padding: 5px 0 0 50px;
+  list-style: none;
+  background-image: url(https://c.tenor.com/Q1FHlkwRLlgAAAAM/kiss-emoticon.gif);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 30px;
 }
