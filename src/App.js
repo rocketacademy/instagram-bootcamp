@@ -1,6 +1,11 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
+import { database, storage } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
@@ -15,11 +20,14 @@ class App extends React.Component {
     this.state = {
       messages: [],
       userInput: "",
+      fileInputFile: null,
+      fileInputValue: "",
+      imageURL: "",
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
+    const messagesRef = databaseRef(database, MESSAGE_FOLDER_NAME);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -31,24 +39,53 @@ class App extends React.Component {
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, { userMessage: this.state.userInput, date: Date() });
-    this.setState({ userInput: "" });
+  writeData = (event) => {
+    event.preventDefault();
+    const fileDetails = this.state.fileInputFile;
+    const imageReference = storageRef(storage, `images/${fileDetails.name}`);
+
+    uploadBytes(imageReference, this.state.fileInputFile).then(
+      getDownloadURL(imageReference)
+        .then((url) => {
+          const messageListRef = databaseRef(database, MESSAGE_FOLDER_NAME);
+          const newMessageRef = push(messageListRef);
+
+          set(newMessageRef, {
+            userMessage: this.state.userInput,
+            imageURL: url,
+            date: Date(),
+          });
+
+          this.setState({ userInput: "", fileInputValue: "" });
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    );
   };
 
   handleChange = (event) => {
     this.setState({
       userInput: event.target.value,
     });
-    console.log(this.state.userInput);
+  };
+
+  onFileChange = (event) => {
+    this.setState({
+      fileInputFile: event.target.files[0],
+      fileInputValue: event.target.value,
+    });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>
+        <img
+          className="user-image"
+          src={message.val.imageURL}
+          alt={message.val.userMessage}
+        />
         {message.val.userMessage}
         {new Date(message.val.date).toLocaleString()}
       </li>
@@ -61,8 +98,17 @@ class App extends React.Component {
           {/* TODO: Add input field and add text input as messages in Firebase */}
         </header>
         <body>
-          <ol>{messageListItems}</ol>
+          <ul>{messageListItems}</ul>
           <form>
+            <label>Upload a Photo: </label>
+            <input
+              id="post-picture"
+              name="post-picture"
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={this.onFileChange}
+              value={this.state.fileInputValue}
+            />
             <input onChange={this.handleChange} value={this.state.userInput} />
             <button type="submit" onClick={this.writeData}>
               Send
