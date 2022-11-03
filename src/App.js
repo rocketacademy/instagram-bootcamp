@@ -1,41 +1,78 @@
 import React, { useState, useEffect } from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
+import { database, storage } from "./firebase";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 import logo from "./logo.png";
 import "./App.css";
+import Card from "react-bootstrap/Card";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const MESSAGE_FOLDER_NAME = "messages";
+const POSTS_FOLDER_NAME = "posts";
+const IMAGES_FOLDER_NAME = "images";
 
 const App = () => {
-  const [messages, setMessages] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [input, setInput] = useState("");
-  const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
+  const [fileInput, setFileInput] = useState("");
+  const [fileInputFile, setFileInputFile] = useState(null);
+
+  const postRef = databaseRef(database, POSTS_FOLDER_NAME);
+
   useEffect(() => {
     // onChildAdded will return data for every child at the reference and every subsequent new child
-    const msg = [];
-    onChildAdded(messagesRef, (data) => {
-      msg.push({ key: data.key, val: data.val() });
+    const post = [];
+    onChildAdded(postRef, (data) => {
+      post.push({ key: data.key, val: data.val() });
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      setMessages([...msg]);
+      setPosts([...post]);
     });
   }, []);
   // Note use of array fields syntax to avoid having to manually bind this method to the class
 
-  const messageListItems = messages.map((message) => (
-    <li key={message.key}>{message.val}</li>
+  const postListItems = posts.map((post) => (
+    <Card style={{ width: "18rem" }} key={post.key} className="post">
+      <Card.Img variant="top" src={post.val.imageLink} className="image" />
+      <Card.Body>
+        <Card.Text>
+          Post Date: {new Date().toLocaleString("en-GB", { timeZone: "Japan" })}
+        </Card.Text>
+        <Card.Text>{post.val.text}</Card.Text>
+      </Card.Body>
+    </Card>
   ));
 
-  const handleChange = (e) => {
+  const handlePostChange = (e) => {
     setInput(e.target.value);
+  };
+
+  const handleFileChange = (e) => {
+    setFileInputFile(e.target.files[0]);
+    setFileInput(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, input);
+    const imageRef = storageRef(
+      storage,
+      `${IMAGES_FOLDER_NAME}/${fileInputFile.name}`,
+    );
+    uploadBytes(imageRef, fileInputFile).then(() => {
+      getDownloadURL(imageRef).then((downloadURL) => {
+        const postListRef = databaseRef(database, POSTS_FOLDER_NAME);
+        const newPostRef = push(postListRef);
+        set(newPostRef, {
+          imageLink: downloadURL,
+          text: input,
+        });
+      });
+    });
     setInput("");
+    setFileInput("");
+    setFileInputFile(null);
   };
 
   return (
@@ -44,19 +81,16 @@ const App = () => {
         <img src={logo} className="App-logo" alt="logo" />
         <br></br>
         <form onSubmit={handleSubmit}>
-          <label for="message">
-            To start communicating, type a message inside the input field!
-          </label>
-          <br></br>
+          <input type="file" value={fileInput} onChange={handleFileChange} />
           <input
             type="text"
             id="message"
             required
-            onChange={handleChange}
-          ></input>
-          <input type="submit" value="Send" disabled={!input}></input>
+            onChange={handlePostChange}
+          />
+          <input type="submit" value="Send" disabled={!input} />
         </form>
-        <ol>{messageListItems}</ol>
+        <ol>{postListItems}</ol>
       </header>
     </div>
   );
