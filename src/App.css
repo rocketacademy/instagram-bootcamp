@@ -41,3 +41,8 @@ li {
   background-position: left center;
   background-size: 30px;
 }
+
+.storage-image {
+  width: 50vw;
+  height: 30vh;
+}

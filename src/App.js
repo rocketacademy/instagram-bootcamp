@@ -6,11 +6,13 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { database, storage } from "./firebase";
+import Card from "react-bootstrap/Card";
 import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
+const IMAGES_FOLDER_NAME = "images";
 
 class App extends React.Component {
   constructor(props) {
@@ -23,20 +25,49 @@ class App extends React.Component {
       fileInputValue: "",
       textInputValue: "",
     };
-
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
+  handleTextInputChange = (event) => {
+    this.setState({ textInputValue: event.target.value });
+  };
+
+  handleFileInputChange = (event) => {
+    this.setState({
+      fileInputFile: event.target.files[0],
+      fileInputValue: event.target.value,
+    });
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
     if (!this.state.textInputValue) return; // skip the rest of code if user didn't type anything
 
-    this.writeData();
-    this.setState(() => ({ textInputValue: "" }));
+    // Store images in an images folder in Firebase Storage
+    const fileRef = storageRef(
+      storage,
+      `${IMAGES_FOLDER_NAME}/${this.state.fileInputFile.name}`
+    );
+
+    // Upload file, save file download URL in database with post text
+    uploadBytes(fileRef, this.state.fileInputFile).then(() => {
+      getDownloadURL(fileRef).then((downloadUrl) => {
+        const messageListRef = databaseRef(database, MESSAGE_FOLDER_NAME);
+        const newMessageRef = push(messageListRef);
+        set(newMessageRef, {
+          imageLink: downloadUrl,
+          createdAt: new Date().toLocaleString(),
+          text: this.state.textInputValue,
+        });
+        // Reset input field after submit
+        this.setState({
+          fileInputFile: null,
+          fileInputValue: "",
+          textInputValue: "",
+        });
+      });
+    });
+
+    //this.writeData();
   };
 
   componentDidMount() {
@@ -51,30 +82,18 @@ class App extends React.Component {
     });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = databaseRef(database, MESSAGE_FOLDER_NAME);
-    const newMessageRef = push(messageListRef);
-    let stringToSave =
-      new Date().toLocaleString() + "<>" + this.state.textInputValue;
-    set(newMessageRef, stringToSave);
-  };
-
-  writeFile = () => {
-    // Create a reference to the image file
-    const imagesRef = storageRef(storage, this.state.fileInputFile);
-    const metadata = { contentType: "image/jpeg" };
-
-    // Upload the file and metadata
-    //const uploadTask = uploadBytes(imagesRef, file, metadata);
-  };
-
   render() {
-    // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        {message.val.split("<>")[0]} →→→ {message.val.split("<>")[1]}
-      </li>
+      <Card key={message.key}>
+        <Card.Img
+          className="storage-image"
+          src={message.val.imageLink}
+          alt="image"
+        />
+        <Card.Text>
+          {message.val.createdAt} →→→ {message.val.text}
+        </Card.Text>
+      </Card>
     ));
     return (
       <div className="App">
@@ -88,19 +107,13 @@ class App extends React.Component {
               type="file"
               // Set state's fileInputValue to "" after submit to reset file input
               value={this.state.fileInputValue}
-              onChange={(e) =>
-                // e.target.files is a FileList object that is an array of File objects
-                // e.target.files[0] is a File object that Firebase Storage can upload
-                this.setState({ fileInputFile: e.target.files[0] })
-              }
+              onChange={this.handleFileInputChange}
             />
             {/* Text input example */}
             <input
               type="text"
               value={this.state.textInputValue}
-              onChange={(e) =>
-                this.setState({ textInputValue: e.target.value })
-              }
+              onChange={this.handleTextInputChange}
             />
             <button onClick={this.handleSubmit}>Send</button>
           </form>
