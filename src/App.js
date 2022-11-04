@@ -6,6 +6,8 @@ import logo from "./logo.png";
 import "./App.css";
 import { createMessageLog } from "./firebase";
 import { ChatList } from "./components/ChatList";
+import { FileUpload } from "./components/FileUpload";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 
@@ -33,12 +35,6 @@ export default function App() {
     createMessageLog({ name: name, chat: chat, timestamp: timeStamp });
     console.log("write")
   }
-
-// const imagesRef = ref(storage, 'images');
-// const imagesPictureRef = ref(storage, 'images/picture.jpg');
-// uploadBytes(imagesPictureRef, file).then(snapshot => {
-//   console.log('uploaded a file!');
-// });
 
   return (
     <div className="App">
@@ -71,6 +67,8 @@ export default function App() {
         </form>
 
         <ChatList />
+        <br></br>
+        <FileUpload />
       </header>
     </div>
   );
