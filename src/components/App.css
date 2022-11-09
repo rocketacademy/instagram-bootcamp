@@ -1,0 +1,67 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #111213;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(8px + 2vmin);
+  color: white;
+}
+
+#image {
+  line-height: 1.5em;
+  list-style-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4621/treehouse-marker.png);
+}
+
+p {
+  line-height: 1.5;
+  color: rgba(255, 255, 0, 0.89);
+}
+
+a {
+  color: hotpink;
+}
+
+ul {
+  text-align: left;
+}
+
+li {
+  margin: 0;
+  padding: 5px 0 0 50px;
+  list-style: none;
+  background-image: url(https://c.tenor.com/Q1FHlkwRLlgAAAAM/kiss-emoticon.gif);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 30px;
+}
+
+.storage-image {
+  width: 50vw;
+  height: 30vh;
+}
+
+button {
+  background-color: #4caf50;
+  border: none;
+  color: lightyellow;
+  font-weight: bold;
+  padding: 7px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(5px + 1.5vmin);
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+}
