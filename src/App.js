@@ -1,13 +1,13 @@
 import React from "react";
-import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
-import {
-  getDownloadURL,
-  ref as storageRef,
-  uploadBytes,
-} from "firebase/storage";
-import { database, storage } from "./firebase";
-import logo from "./logo.png";
+import { onChildAdded, ref as databaseRef } from "firebase/database";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { database, auth } from "./firebase";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import AuthForm from "./AuthForm";
+import Postcards from "./Postcards";
+import NavigationBar from "./navbar";
+import CreatePost from "./CreatePost";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
@@ -19,10 +19,8 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
-      userInput: "",
-      fileInputFile: null,
-      fileInputValue: "",
-      imageURL: "",
+      shouldRenderAuthForm: false,
+      userEmail: "Guest",
     };
   }
 
@@ -36,85 +34,50 @@ class App extends React.Component {
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
     });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.setState({ userEmail: user.email });
+      } else {
+        this.setState({ userEmail: "Guest" });
+      }
+    });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = (event) => {
-    event.preventDefault();
-    const fileDetails = this.state.fileInputFile;
-    const imageReference = storageRef(storage, `images/${fileDetails.name}`);
-
-    uploadBytes(imageReference, this.state.fileInputFile).then(
-      getDownloadURL(imageReference)
-        .then((url) => {
-          const messageListRef = databaseRef(database, MESSAGE_FOLDER_NAME);
-          const newMessageRef = push(messageListRef);
-
-          set(newMessageRef, {
-            userMessage: this.state.userInput,
-            imageURL: url,
-            date: Date(),
-          });
-
-          this.setState({ userInput: "", fileInputValue: "" });
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-    );
+  toggleAuthForm = () => {
+    this.setState({ shouldRenderAuthForm: !this.state.shouldRenderAuthForm });
   };
 
-  handleChange = (event) => {
-    this.setState({
-      userInput: event.target.value,
-    });
-  };
-
-  onFileChange = (event) => {
-    this.setState({
-      fileInputFile: event.target.files[0],
-      fileInputValue: event.target.value,
-    });
+  userSignOut = () => {
+    signOut(auth)
+      .then(() => this.setState({ userEmail: "Guest" }))
+      .catch((error) => console.log(error));
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        <img
-          className="user-image"
-          src={message.val.imageURL}
-          alt={message.val.userMessage}
-        />
-        {message.val.userMessage}
-        {new Date(message.val.date).toLocaleString()}
-      </li>
-    ));
-
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-        </header>
-        <body>
-          <ul>{messageListItems}</ul>
-          <form>
-            <label>Upload a Photo: </label>
-            <input
-              id="post-picture"
-              name="post-picture"
-              type="file"
-              accept="image/png, image/jpeg"
-              onChange={this.onFileChange}
-              value={this.state.fileInputValue}
-            />
-            <input onChange={this.handleChange} value={this.state.userInput} />
-            <button type="submit" onClick={this.writeData}>
-              Send
-            </button>
-          </form>
-        </body>
+        <NavigationBar
+          toggleAuth={this.toggleAuthForm}
+          userSignOut={this.userSignOut}
+          currentUser={this.state.userEmail}
+        />
+        <div>
+          <AuthForm
+            showForm={this.state.shouldRenderAuthForm}
+            toggleForm={this.toggleAuthForm}
+          />
+        </div>
+        <div>
+          {this.state.userEmail === "Guest" ? (
+            <p>Sign in to start posting</p>
+          ) : (
+            <CreatePost currentUser={this.state.userEmail} />
+          )}
+        </div>
+        <div>
+          <Postcards messages={this.state.messages} />
+        </div>
       </div>
     );
   }
