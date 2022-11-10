@@ -6,64 +6,60 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 
+const defaultState = {
+  emailInputValue: "",
+  passwordInputValue: "",
+  isNewUser: true,
+  errorCode: "",
+  errorMessage: "",
+};
+
 class AuthForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      emailInputValue: "",
-      passwordInputValue: "",
-      isNewUser: true,
-      errorCode: "",
-      errorMessage: "",
-    };
+    this.state = defaultState;
   }
 
   handleInputChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  closeAuthForm = () => {
+    // Reset auth form state
+    this.setState(defaultState);
+    // Toggle auth form off after authentication
+    this.props.toggleAuthForm();
+  };
+
+  setErrorState = (error) => {
+    this.setState({
+      errorCode: error.code,
+      errorMessage: error.message,
+    });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     if (!this.state.emailInputValue || !this.state.passwordInputValue) return;
 
-    const closeAuthForm = () => {
-      // Reset auth form state
-      this.setState({
-        emailInputValue: "",
-        passwordInputValue: "",
-        isNewUser: true,
-        errorCode: "",
-        errorMessage: "",
-      });
-      // // Toggle auth form off after authentication
-      this.props.toggleAuthForm();
-    };
-
-    const setErrorState = (error) => {
-      this.setState({
-        errorCode: error.code,
-        errorMessage: error.message,
-      });
-    };
-
     // Authenticate user on submit
     if (this.state.isNewUser) {
-      createUserWithEmailAndPassword(
+      return createUserWithEmailAndPassword(
         auth,
         this.state.emailInputValue,
         this.state.passwordInputValue
       )
-        .then(closeAuthForm)
-        .catch(setErrorState);
-    } else {
-      signInWithEmailAndPassword(
-        auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
-      )
-        .then(closeAuthForm)
-        .catch(setErrorState);
+        .then(this.closeAuthForm)
+        .catch(this.setErrorState);
     }
+
+    return signInWithEmailAndPassword(
+      auth,
+      this.state.emailInputValue,
+      this.state.passwordInputValue
+    )
+      .then(this.closeAuthForm)
+      .catch(this.setErrorState);
   };
 
   toggleNewOrReturningAuth = () => {
@@ -73,38 +69,37 @@ class AuthForm extends React.Component {
   render() {
     return (
       <div>
-        <p>
-          {this.state.errorCode ? `Error code: ${this.state.errorCode}` : null}
-        </p>
-        <p>
-          {this.state.errorMessage
-            ? `Error message: ${this.state.errorMessage}`
-            : null}
-        </p>
+        {this.state.errorCode && <p>{`Error code: ${this.state.errorCode}`}</p>}
+        {this.state.errorMessage && (
+          <p>{`Error message: ${this.state.errorMessage}`}</p>
+        )}
         <p>Sign in here - password is 8 characters minimum.</p>
         <form>
-          <label>Username: </label>
-          <input
-            type="text"
-            name="emailInputValue"
-            value={this.emailInputValue}
-            onChange={this.handleInputChange}
-          />
-          <br />
-          <label>Password: </label>
-          <input
-            type="password"
-            name="passwordInputValue"
-            minLength="8"
-            required
-            value={this.passwordInputValue}
-            onChange={this.handleInputChange}
-          />
-          <br />
-          <Button onClick={this.handleSubmit}>
-            {this.state.isNewUser ? "Create Account" : "Sign In"}
-          </Button>
-          <br />
+          <div>
+            <label>Username: </label>
+            <input
+              type="text"
+              name="emailInputValue"
+              value={this.emailInputValue}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div>
+            <label>Password: </label>
+            <input
+              type="password"
+              name="passwordInputValue"
+              minLength="8"
+              required
+              value={this.passwordInputValue}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div>
+            <Button onClick={this.handleSubmit}>
+              {this.state.isNewUser ? "Create Account" : "Sign In"}
+            </Button>
+          </div>
           <Button variant="link" onClick={this.toggleNewOrReturningAuth}>
             {this.state.isNewUser
               ? "If you have an account, click here to login"

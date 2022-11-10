@@ -36,9 +36,9 @@ class NewsFeed extends React.Component {
         />
         <Card.Text>
           {message.val.createdAt},{" "}
-          <a href="#login">{message.val.authorEmail}</a> <br />
-          →→→ {message.val.text}
+          <a href="#login">{message.val.authorEmail}</a>
         </Card.Text>
+        <Card.Text>→→→ {message.val.text}</Card.Text>
       </Card>
     ));
   }

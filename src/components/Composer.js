@@ -8,7 +8,7 @@ import {
 import { database, storage } from "../firebase";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const MESSAGE_FOLDER_NAME = "messages";
+const MESSAGE_KEY = "messages";
 const IMAGES_FOLDER_NAME = "images";
 
 class Composer extends React.Component {
@@ -45,7 +45,7 @@ class Composer extends React.Component {
     // Upload file, save file download URL in database with post text
     uploadBytes(fileRef, this.state.fileInputFile).then(() => {
       getDownloadURL(fileRef).then((downloadUrl) => {
-        const messageListRef = databaseRef(database, MESSAGE_FOLDER_NAME);
+        const messageListRef = databaseRef(database, MESSAGE_KEY);
         const newMessageRef = push(messageListRef);
         set(newMessageRef, {
           imageLink: downloadUrl,
