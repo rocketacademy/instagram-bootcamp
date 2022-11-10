@@ -8,18 +8,15 @@ import {
 } from "firebase/storage";
 import { database } from "./firebase";
 import { storage } from "./firebase";
+import logo from "./logo.png";
 import "./App.css";
-import AuthForm from "./AuthForm";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
-import NavBar from "./NavBar";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const MESSAGE_FOLDER_NAME = "messages";
 const IMAGES_FOLDER_NAME = "images";
 const POSTS_FOLDER_NAME = "posts";
 
-class App extends React.Component {
+class UploadPhoto extends React.Component {
   constructor(props) {
     super(props);
     // Initialise empty messages array in state to keep local state in sync with Firebase
@@ -30,7 +27,6 @@ class App extends React.Component {
       messageInput: "",
       fileInputValue: "",
       fileInputFile: null,
-      signedIn: false,
     };
   }
 
@@ -53,20 +49,6 @@ class App extends React.Component {
         // Store post key so we can use it as a key in our list items when rendering posts
         posts: [...state.posts, { key: data.key, val: data.val() }],
       }));
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        this.setState({
-          signedIn: true,
-        });
-      } else {
-        this.setState({
-          signedIn: false,
-        });
-      }
     });
   }
   handleChange = (event) => {
@@ -130,29 +112,27 @@ class App extends React.Component {
     });
   };
   render() {
-    const authForm = <AuthForm />;
-    console.log(auth.currentUser, this.state.signedIn);
     let postCards = this.state.posts.map((post) => (
       <Card bg="dark" key={post.key}>
         <Card.Img src={post.val.imageLink} className="Card-Img" />
         <Card.Text>{post.val.text}</Card.Text>
       </Card>
     ));
-    const navBar = <NavBar />;
     // Convert messages in state to message JSX elements to render
     // let messageListItems = this.state.messages.map((message) => (
     //   <li key={message.key}>{message.val}</li>
     // ));
     return (
-      <div className="App">
-        <header className="App-header">
-          {this.state.signedIn ? navBar : null}
-          {this.state.signedIn ? null : authForm}
-          {!this.state.signedIn ? null : postCards}
-        </header>
-      </div>
+      <form onSubmit={this.handleSubmit}>
+        <input
+          type="file"
+          value={this.state.fileInputValue}
+          onChange={this.handleFileInputChange}
+        />
+        <input type="submit"></input>
+      </form>
     );
   }
 }
 
-export default App;
+export default UploadPhoto;
