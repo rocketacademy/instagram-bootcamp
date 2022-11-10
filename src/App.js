@@ -5,7 +5,7 @@ import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const MESSAGE_FOLDER_NAME = "messages";
+const DB_MESSAGES_KEY = "messages";
 
 class App extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, MESSAGE_FOLDER_NAME);
+    const messagesRef = ref(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -37,7 +37,7 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
     event.preventDefault();
-    const messageListRef = ref(database, MESSAGE_FOLDER_NAME);
+    const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, this.state.textInputValue);
     // Reset input field after submit
