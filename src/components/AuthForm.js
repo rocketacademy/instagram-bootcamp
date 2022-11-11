@@ -34,8 +34,8 @@ const AuthForm = (props) => {
     };
 
     const setErrorState = (error) => {
-      setErrorCode({ ...errorCode, errorCode: error.code });
-      setErrorMessage({ ...errorMessage, errorMessage: error.message });
+      setErrorCode(error.code);
+      setErrorMessage(error.message);
     };
 
     if (isNewUser) {
@@ -76,6 +76,7 @@ const AuthForm = (props) => {
             name="passwordInput"
             value={passwordInput}
             onChange={handlePasswordInputChange}
+            minLength={6}
           />
         </label>
         <br />

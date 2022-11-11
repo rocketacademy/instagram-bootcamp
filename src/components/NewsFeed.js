@@ -46,7 +46,7 @@ const NewsFeed = () => {
             Post Date:{" "}
             {new Date().toLocaleString("en-GB", { timeZone: "Japan" })}
           </Card.Text>
-          <Card.Text>{post.val.authorEmail}</Card.Text>
+          {/* <Card.Text>{post.val.authorEmail}</Card.Text> */}
           <Card.Text>{post.val.text}</Card.Text>
           <Button onClick={() => handleClick(post.id)}>
             {post.val.toggle ? AiOutlineHeart : AiFillHeart}

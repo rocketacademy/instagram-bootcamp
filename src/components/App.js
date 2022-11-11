@@ -22,7 +22,7 @@ const App = () => {
   }, []);
 
   const toggleAuthForm = () => {
-    setShouldRenderAuthForm(true);
+    setShouldRenderAuthForm(false);
   };
 
   const authForm = <AuthForm toggleAuthForm={toggleAuthForm} />;
@@ -38,6 +38,8 @@ const App = () => {
       <NewsFeed />
     </div>
   );
+
+  // console.log(loggedInUser);
 
   return (
     <div className="App">
