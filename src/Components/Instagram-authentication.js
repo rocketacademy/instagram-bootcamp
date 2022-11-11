@@ -32,7 +32,14 @@ export default class InstagramAuth extends React.Component {
         errorCode: "",
         errorMessage: "",
       });
-      this.props.toggleAuthForm();
+      this.props.toggleAuthentication();
+    };
+
+    const errorState = (error) => {
+      this.setState({
+        errorCode: error.code,
+        errorMessage: error.message,
+      });
     };
 
     if (this.state.newUser) {
@@ -40,13 +47,17 @@ export default class InstagramAuth extends React.Component {
         auth,
         this.state.emailInputValue,
         this.state.passwordInputValue,
-      ).then(closeAuthentication);
+      )
+        .then(closeAuthentication)
+        .catch(errorState);
     } else {
       signInWithEmailAndPassword(
         auth,
         this.state.emailInputValue,
         this.state.passwordInputValue,
-      ).then(closeAuthentication);
+      )
+        .then(closeAuthentication)
+        .catch(errorState);
     }
   };
 
@@ -57,6 +68,14 @@ export default class InstagramAuth extends React.Component {
   render() {
     return (
       <div>
+        <p>
+          {this.state.errorCode ? `Error code: ${this.state.errorCode}` : null}
+        </p>
+        <p>
+          {this.state.errorMessage
+            ? `Error message: ${this.state.errorMessage}`
+            : null}
+        </p>
         <p>Please sign in to continue</p>
         <form onSubmit={this.handleSubmit}>
           <label>

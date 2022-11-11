@@ -7,7 +7,6 @@ import {
 import React from "react";
 import { database, storage } from "../firebase";
 
-// Save Firebase folder names as constants to avoid bugs due to misspelling
 const IMAGES_FOLDER_NAME = "images";
 const POSTS_FOLDER_NAME = "posts";
 
@@ -32,18 +31,14 @@ export default class Composer extends React.Component {
     this.setState({ textInputValue: event.target.value });
   };
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
-    // Prevent default form submit behaviour that will reload the page
     event.preventDefault();
 
-    // Store images in an images folder in Firebase Storage
     const fileRef = storageRef(
       storage,
       `${IMAGES_FOLDER_NAME}/${this.state.fileInputFile.name}`,
     );
 
-    // Upload file, save file download URL in database with post text
     uploadBytes(fileRef, this.state.fileInputFile).then(() => {
       getDownloadURL(fileRef).then((downloadUrl) => {
         const postListRef = databaseRef(database, POSTS_FOLDER_NAME);
@@ -53,7 +48,7 @@ export default class Composer extends React.Component {
           text: this.state.textInputValue,
           authorEmail: this.props.loggedInUser.email,
         });
-        // Reset input field after submit
+
         this.setState({
           fileInputFile: null,
           fileInputValue: "",
@@ -66,7 +61,7 @@ export default class Composer extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <p>{this.props.loggedInUser ? this.props.loggedInUser.email : null}</p>
+        {this.props.loggedInUser && <p>{this.props.loggedInUser.email}</p>}
         <input
           type="file"
           value={this.state.fileInputValue}
@@ -81,7 +76,6 @@ export default class Composer extends React.Component {
         <input
           type="submit"
           value="Post"
-          // Disable Send button when text input is empty
           disabled={!this.state.textInputValue}
         />
       </form>
