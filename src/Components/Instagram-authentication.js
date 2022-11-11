@@ -83,9 +83,10 @@ export default class InstagramAuth extends React.Component {
             type="submit"
             value={this.state.newUser ? "Create new account" : "Sign in"}
             disabled={
-              this.state.emailInputValue || !this.state.passwordInputValue
+              !this.state.emailInputValue || !this.state.passwordInputValue
             }
           />
+          <br />
           <button variant="link" onClick={this.toggleNewOrReturningUser}>
             {this.state.newUser
               ? "If you have an account, click here to log in instead"
