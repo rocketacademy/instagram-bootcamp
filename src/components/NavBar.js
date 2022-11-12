@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import InputForm from "./InputForm";
 
 export default function NavBar(props) {
   const navigate = useNavigate();
@@ -16,22 +17,25 @@ export default function NavBar(props) {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            RocketGram
-          </Typography>
-          <Typography sx={{ color: "white", mr: 2 }}>
-            {props.user?.email}
-          </Typography>
-          <Button onClick={handleLogout}>
-            <Typography sx={{ color: "white" }}>
-              {props.user?.email && "Logout"}
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              RocketGram
             </Typography>
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+            <Typography sx={{ color: "white", mr: 2 }}>
+              {props.user?.email}
+            </Typography>
+            <Button onClick={handleLogout}>
+              <Typography sx={{ color: "white" }}>
+                {props.user?.email && "Logout"}
+              </Typography>
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <InputForm />
+    </>
   );
 }
