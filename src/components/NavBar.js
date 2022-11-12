@@ -6,10 +6,13 @@ import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar(props) {
+  const navigate = useNavigate();
   const handleLogout = async () => {
     await signOut(auth);
+    navigate("/");
   };
 
   return (

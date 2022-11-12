@@ -6,10 +6,12 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
-function LoginForm() {
+function LoginForm(props) {
   const [loginEmail, setLoginEmail] = React.useState("");
   const [loginPassword, setLoginPassword] = React.useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
@@ -19,6 +21,7 @@ function LoginForm() {
         loginPassword
       );
       console.log(user);
+      navigate("/chat");
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -35,6 +38,7 @@ function LoginForm() {
         loginPassword
       );
       console.log(user);
+      navigate("/chat");
     } catch (error) {
       console.log(error.message);
     } finally {
