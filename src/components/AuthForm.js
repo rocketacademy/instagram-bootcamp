@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { useNavigate } from "react-router";
 
 const AuthForm = (props) => {
   const [emailInput, setEmailInput] = useState("");
@@ -12,6 +13,7 @@ const AuthForm = (props) => {
   const [isNewUser, setIsNewUser] = useState(true);
   const [errorCode, setErrorCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleEmailInputChange = (e) => {
     setEmailInput(e.target.value);
@@ -29,8 +31,8 @@ const AuthForm = (props) => {
       setPasswordInput("");
       setIsNewUser(true);
       setErrorCode("");
-      setErrorMessage("");
-      props.toggleAuthForm();
+      setErrorMessage(""); 
+      navigate("/");
     };
 
     const setErrorState = (error) => {

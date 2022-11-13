@@ -38,7 +38,7 @@ const Composer = (props) => {
         set(newPostRef, {
           imageLink: downloadURL,
           text: input,
-          // authorEmail: props.loggedInUser.email,
+          authorEmail: props.loggedInUser.email,
         });
       });
     });

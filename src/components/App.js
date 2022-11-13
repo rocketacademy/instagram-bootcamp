@@ -6,30 +6,26 @@ import "./App.css";
 import Composer from "./Composer";
 import NewsFeed from "./NewsFeed";
 import AuthForm from "./AuthForm";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [shouldRenderAuthForm, setShouldRenderAuthForm] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setLoggedInUser({ loggedInUser: user });
+        setLoggedInUser(user);
       } else {
-        setLoggedInUser({ loggedInUser: null });
+        setLoggedInUser(null);
       }
     });
   }, []);
 
-  const toggleAuthForm = () => {
-    setShouldRenderAuthForm(false);
-  };
-
-  const authForm = <AuthForm toggleAuthForm={toggleAuthForm} />;
+  const authForm = <AuthForm />;
   const composer = <Composer loggedInUser={loggedInUser} />;
   const createAccountOrSignedInButton = (
     <div>
-      <button onClick={toggleAuthForm}>Create Account or Sign In</button>
+      <Link to="/authform">Create Account or Sign In</Link>
     </div>
   );
   const composerAndNewsFeed = (
@@ -45,8 +41,13 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={composerAndNewsFeed} />
+            <Route path="/authform" element={authForm} />
+          </Routes>
+        </BrowserRouter>
         <br />
-        {shouldRenderAuthForm ? authForm : composerAndNewsFeed}
       </header>
     </div>
   );
