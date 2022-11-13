@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import InputForm from "./InputForm";
+import PostForm from "./PostForm";
 
 export default function NavBar(props) {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function NavBar(props) {
           </Toolbar>
         </AppBar>
       </Box>
-      <InputForm />
+      <PostForm />
     </>
   );
 }

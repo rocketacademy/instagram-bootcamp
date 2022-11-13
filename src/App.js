@@ -22,7 +22,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginForm user={user} />} />
-
         <Route path="chat" element={<NavBar user={user} />} />
       </Routes>
     </BrowserRouter>
