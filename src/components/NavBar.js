@@ -8,6 +8,7 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import PostForm from "./PostForm";
+import PostDisplay from "./PostDisplay";
 
 export default function NavBar(props) {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ export default function NavBar(props) {
         </AppBar>
       </Box>
       <PostForm />
+      <PostDisplay />
     </>
   );
 }
