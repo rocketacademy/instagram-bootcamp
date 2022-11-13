@@ -41,9 +41,19 @@ export default function PostDisplay() {
   };
 
   return (
-    <Box sx={{ bgcolor: "white", height: "50%" }}>
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "white",
+        height: "50%",
+        m: 1,
+        alignItems: "center",
+        flexGrow: 1,
+        flexWrap: "wrap",
+      }}
+    >
       {messages.map((message) => (
-        <Card key={message.key} sx={{ maxWidth: "50ch", ml: 1 }}>
+        <Card key={message.key} sx={{ maxWidth: "70ch", ml: 1 }}>
           <CardActionArea>
             <CardMedia component="img" height="140" image={message?.imageURL} />
             <CardContent>
