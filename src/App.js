@@ -37,6 +37,7 @@ class App extends React.Component {
     signOut(auth)
       .then(() => this.setState({ userEmail: "Guest" }))
       .catch((error) => console.log(error));
+
   };
 
   render() {
