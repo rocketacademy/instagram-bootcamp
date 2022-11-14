@@ -1,14 +1,14 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const RegisterForm = ({ toggleForm, showSignInForm }) => {
+const RegisterForm = ({ showSignInForm }) => {
   const onUserInput = (event) => {
     setNewUserAccount({
       ...newUserAccount,
@@ -20,6 +20,8 @@ const RegisterForm = ({ toggleForm, showSignInForm }) => {
     email: "",
     password: "",
   });
+
+  let navigate = useNavigate();
 
   const createNewUser = (event) => {
     event.preventDefault();
@@ -37,14 +39,12 @@ const RegisterForm = ({ toggleForm, showSignInForm }) => {
         console.log(errorCode, errorMessage);
       });
 
-    toggleForm();
+    navigate("/");
   };
 
   return (
     <div>
-      <Modal.Header closeButton>
-        <Modal.Title>Register New User</Modal.Title>
-      </Modal.Header>
+      <h1>Register New User</h1>
       <Form onSubmit={createNewUser}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
@@ -70,17 +70,19 @@ const RegisterForm = ({ toggleForm, showSignInForm }) => {
         </Button>
       </Form>
       <Button variant="primary" onClick={showSignInForm}>
-        Login Instead
+        Sign-In if you already have an account
       </Button>
     </div>
   );
 };
 
-const SignInForm = ({ toggleForm, showRegistrationForm }) => {
+const SignInForm = ({ showRegistrationForm }) => {
   const [currentUserAccount, setCurrentUserAccount] = useState({
     email: "",
     password: "",
   });
+
+  let navigate = useNavigate();
 
   const signInUser = (event) => {
     event.preventDefault();
@@ -96,7 +98,7 @@ const SignInForm = ({ toggleForm, showRegistrationForm }) => {
         console.log(error);
       });
 
-    toggleForm();
+    navigate("/");
   };
 
   const onUserInput = (event) => {
@@ -108,9 +110,7 @@ const SignInForm = ({ toggleForm, showRegistrationForm }) => {
 
   return (
     <div>
-      <Modal.Header closeButton>
-        <Modal.Title>Sign In</Modal.Title>
-      </Modal.Header>
+      <h1>Sign In</h1>
       <Form onSubmit={signInUser}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
@@ -136,40 +136,28 @@ const SignInForm = ({ toggleForm, showRegistrationForm }) => {
         </Button>
       </Form>
       <Button variant="primary" onClick={showRegistrationForm}>
-        Login Instead
+        Register a New Account
       </Button>
     </div>
   );
 };
 
-const AuthForm = ({ showForm, toggleForm }) => {
+const AuthForm = () => {
+  //if show registration form is set to false, sign in form will show//
   const [showRegistrationForm, setShowRegistrationForm] = useState(true);
-  const [showSignInForm, setShowSignInForm] = useState(false);
 
-  const toggleRegistrationForm = () => {
-    setShowRegistrationForm(true);
-    setShowSignInForm(false);
-  };
-
-  const toggleSignInForm = () => {
-    setShowRegistrationForm(false);
-    setShowSignInForm(true);
+  const toggleForm = () => {
+    setShowRegistrationForm(!showRegistrationForm);
   };
 
   return (
-    <Modal show={showForm} onHide={toggleForm}>
+    <div>
       {showRegistrationForm ? (
-        <RegisterForm
-          toggleForm={toggleForm}
-          showSignInForm={toggleSignInForm}
-        />
+        <RegisterForm showSignInForm={toggleForm} />
       ) : (
-        <SignInForm
-          toggleForm={toggleForm}
-          showRegistrationForm={toggleRegistrationForm}
-        />
+        <SignInForm showRegistrationForm={toggleForm} />
       )}
-    </Modal>
+    </div>
   );
 };
 

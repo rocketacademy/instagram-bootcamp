@@ -1,16 +1,12 @@
 import React from "react";
-import { onChildAdded, ref as databaseRef } from "firebase/database";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { database, auth } from "./firebase";
+import { auth } from "./firebase";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AuthForm from "./AuthForm";
-import Postcards from "./Postcards";
 import NavigationBar from "./navbar";
-import CreatePost from "./CreatePost";
-
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const MESSAGE_FOLDER_NAME = "messages";
+import NewsFeed from "./NewsFeed";
+import { Routes, Route, Outlet } from "react-router-dom";
 
 class App extends React.Component {
   constructor(props) {
@@ -19,22 +15,11 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
-      shouldRenderAuthForm: false,
       userEmail: "Guest",
     };
   }
 
   componentDidMount() {
-    const messagesRef = databaseRef(database, MESSAGE_FOLDER_NAME);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
-
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.setState({ userEmail: user.email });
@@ -58,26 +43,17 @@ class App extends React.Component {
     return (
       <div className="App">
         <NavigationBar
-          toggleAuth={this.toggleAuthForm}
           userSignOut={this.userSignOut}
           currentUser={this.state.userEmail}
         />
-        <div>
-          <AuthForm
-            showForm={this.state.shouldRenderAuthForm}
-            toggleForm={this.toggleAuthForm}
+        <Routes>
+          <Route
+            path="/"
+            element={<NewsFeed userEmail={this.state.userEmail} />}
           />
-        </div>
-        <div>
-          {this.state.userEmail === "Guest" ? (
-            <p>Sign in to start posting</p>
-          ) : (
-            <CreatePost currentUser={this.state.userEmail} />
-          )}
-        </div>
-        <div>
-          <Postcards messages={this.state.messages} />
-        </div>
+          <Route path="authform" element={<AuthForm />} />
+        </Routes>
+        <Outlet />
       </div>
     );
   }
