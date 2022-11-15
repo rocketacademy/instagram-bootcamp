@@ -15,7 +15,7 @@ export function FileDisplay({ picture }) {
       .catch((err) => {
         console.log("unable to download url", err);
       });
-  },[urlName])
+  },[picture])
   
 return (
   <Card style={{ width: '30vw', minHeight: "60vh", color: "black" }}>

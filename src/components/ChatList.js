@@ -23,7 +23,7 @@ export function ChatList() {
   },[]);
 
   return (
-    <div style={{ border: "2px solid white", width: "90%" }}>
+    <div className="w-90" style={{ border: "2px solid white", width: "90%" }}>
       <h3>Chat List</h3>
       {messages.map((message, index) => (
         <div key={index} style={{ border: "2px solid white" }}>
