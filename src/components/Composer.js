@@ -4,89 +4,92 @@ import {
   ref as storageRef,
   uploadBytes,
 } from "firebase/storage";
-import React from "react";
+import React, { useState } from "react";
 import { database, storage } from "../firebase";
+import { Button, Col, Form } from "react-bootstrap";
 
 // Save Firebase folder names as constants to avoid bugs due to misspelling
 const IMAGES_FOLDER_NAME = "images";
 const POSTS_FOLDER_NAME = "posts";
 
-class Composer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileInputFile: null,
-      fileInputValue: "",
-      textInputValue: "",
-    };
-  }
+export function Composer({ loggedInUser }) {
+  const [fileInputFile, setFileInputFile] = useState(null);
+  const [fileInputValue, setFileInputValue] = useState("");
+  const [textInputValue, setTextInputValue] = useState("");
 
-  handleFileInputChange = (event) => {
-    this.setState({
-      fileInputFile: event.target.files[0],
-      fileInputValue: event.target.value,
-    });
+  const handleFileInputChange = (event) => {
+    setFileInputFile(event.target.files[0]);
+    setFileInputValue(event.target.value);
   };
 
-  handleTextInputChange = (event) => {
-    this.setState({ textInputValue: event.target.value });
+  const handleTextInputChange = (event) => {
+    setTextInputValue(event.target.value);
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     // Prevent default form submit behaviour that will reload the page
     event.preventDefault();
 
     // Store images in an images folder in Firebase Storage
     const fileRef = storageRef(
       storage,
-      `${IMAGES_FOLDER_NAME}/${this.state.fileInputFile.name}`
+      `${IMAGES_FOLDER_NAME}/${fileInputFile.name}`
     );
 
     // Upload file, save file download URL in database with post text
-    uploadBytes(fileRef, this.state.fileInputFile).then(() => {
+    uploadBytes(fileRef, fileInputFile).then(() => {
       getDownloadURL(fileRef).then((downloadUrl) => {
         const postListRef = databaseRef(database, POSTS_FOLDER_NAME);
         const newPostRef = push(postListRef);
         set(newPostRef, {
           imageLink: downloadUrl,
-          text: this.state.textInputValue,
-          authorEmail: this.props.loggedInUser.email,
+          text: textInputValue,
+          authorEmail: loggedInUser.email,
         });
         // Reset input field after submit
-        this.setState({
-          fileInputFile: null,
-          fileInputValue: "",
-          textInputValue: "",
-        });
+        setFileInputFile(null);
+        setFileInputValue("");
+        setTextInputValue("");
       });
     });
   };
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <p>{this.props.loggedInUser ? this.props.loggedInUser.email : null}</p>
-        <input
-          type="file"
-          value={this.state.fileInputValue}
-          onChange={this.handleFileInputChange}
-        />
-        <br />
-        <input
-          type="text"
-          value={this.state.textInputValue}
-          onChange={this.handleTextInputChange}
-        />
-        <input
-          type="submit"
-          value="Post"
-          // Disable Send button when text input is empty
-          disabled={!this.state.textInputValue}
-        />
-      </form>
-    );
-  }
+  return (
+    <Col
+      className="d-flex align-items-center flex-column m-auto"
+      style={{ maxWidth: "600px" }}
+    >
+      <Form onSubmit={handleSubmit}>
+        <p>{loggedInUser ? loggedInUser.email : null}</p>
+        <Form.Group className="mb-2">
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            name="description"
+            type="text"
+            value={textInputValue}
+            onChange={handleTextInputChange}
+          />
+        </Form.Group>
+        <Form.Group className="mb-4">
+          <Form.Label>Picture</Form.Label>
+          <Form.Control
+            type="file"
+            value={fileInputValue}
+            onChange={handleFileInputChange}
+          />
+        </Form.Group>
+        <Form.Group className="d-flex justify-content-center">
+          <Button
+            variant="primary"
+            type="submit"
+            className="w-100"
+            disabled={!textInputValue}
+          >
+            Submit
+          </Button>
+        </Form.Group>
+      </Form>
+    </Col>
+  );
 }
-
-export default Composer;

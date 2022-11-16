@@ -1,125 +1,128 @@
-import React from "react";
-import { Button } from "react-bootstrap";
+import React, { useState } from "react";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { Alert, Button, Form } from "react-bootstrap";
 
-class AuthForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      emailInputValue: "",
-      passwordInputValue: "",
-      isNewUser: true,
-      errorCode: "",
-      errorMessage: "",
-    };
-  }
+export function AuthForm({ toggleAuthForm }) {
+  const [form, setForm] = useState({
+    emailInputValue: "",
+    passwordInputValue: "",
+  });
 
-  // Use a single method to control email and password form inputs
-  handleInputChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+  const [isNewUser, setIsNewUser] = useState(true);
+  const [errorCode, setErrorCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleInputChange = (event) => {
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
+    });
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const closeAuthForm = () => {
-      // Reset auth form state
-      this.setState({
+      setForm({
         emailInputValue: "",
         passwordInputValue: "",
-        isNewUser: true,
-        errorCode: "",
-        errorMessage: "",
       });
-      // Toggle auth form off after authentication
-      this.props.toggleAuthForm();
+      setIsNewUser(true);
+      setErrorCode("");
+      setErrorMessage("");
+
+      toggleAuthForm();
     };
 
     const setErrorState = (error) => {
-      this.setState({
-        errorCode: error.code,
-        errorMessage: error.message,
-      });
+      setErrorCode(error.code);
+      setErrorMessage(error.message);
     };
-    // Authenticate user on submit
-    if (this.state.isNewUser) {
+
+    //Authenticate user on submit
+    if (isNewUser) {
       createUserWithEmailAndPassword(
         auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
+        form.emailInputValue,
+        form.passwordInputValue
       )
         .then(closeAuthForm)
         .catch(setErrorState);
     } else {
       signInWithEmailAndPassword(
         auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
+        form.emailInputValue,
+        form.passwordInputValue
       )
         .then(closeAuthForm)
         .catch(setErrorState);
     }
   };
 
-  toggleNewOrReturningAuth = () => {
-    this.setState((state) => ({ isNewUser: !state.isNewUser }));
+  const toggleNewOrReturningAuth = () => {
+    setIsNewUser(!isNewUser);
   };
 
-  render() {
-    return (
-      <div>
-        <p>
-          {this.state.errorCode ? `Error code: ${this.state.errorCode}` : null}
-        </p>
-        <p>
-          {this.state.errorMessage
-            ? `Error message: ${this.state.errorMessage}`
-            : null}
-        </p>
-        <p>Sign in with this form to post.</p>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            <span>Email: </span>
-            <input
-              type="email"
-              name="emailInputValue"
-              value={this.state.emailInputValue}
-              onChange={this.handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            <span>Password: </span>
-            <input
-              type="password"
-              name="passwordInputValue"
-              value={this.state.passwordInputValue}
-              onChange={this.handleInputChange}
-            />
-          </label>
-          <br />
-          <input
-            type="submit"
-            value={this.state.isNewUser ? "Create Account" : "Sign In"}
-            // Disable form submission if email or password are empty
-            disabled={
-              !this.state.emailInputValue || !this.state.passwordInputValue
-            }
-          />
-          <br />
-          <Button variant="link" onClick={this.toggleNewOrReturningAuth}>
-            {this.state.isNewUser
-              ? "If you have an account, click here to login"
-              : "If you are a new user, click here to create account"}
-          </Button>
-        </form>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          {errorCode && (
+            <Alert variant="danger">{`Error code: ${errorCode}`}</Alert>
+          )}
+        </Form.Group>
 
-export default AuthForm;
+        <Form.Group>
+          {errorMessage && (
+            <Alert variant="danger">{`Error message: ${errorMessage}`}</Alert>
+          )}
+        </Form.Group>
+        <p>Sign in with this form to post.</p>
+
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Email Address</Form.Label>
+          <Form.Control
+            type="email"
+            name="emailInputValue"
+            value={form.emailInputValue}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-4" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="passwordInputValue"
+            value={form.passwordInputValue}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+
+        <Button
+          type="submit"
+          className="w-100"
+          // Disable form submission if email or password are empty
+          disabled={!form.emailInputValue || !form.passwordInputValue}
+        >
+          {isNewUser ? "Create Account" : "Sign In"}
+        </Button>
+
+        <Button
+          variant="link"
+          className="w-100"
+          onClick={toggleNewOrReturningAuth}
+        >
+          {isNewUser
+            ? "If you have an account, click here to login"
+            : "If you are a new user, click here to create account"}
+        </Button>
+      </Form>
+    </div>
+  );
+}
