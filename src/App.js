@@ -19,10 +19,7 @@ export function App() {
       // If user is logged in, save logged-in user to state
       if (user) {
         setLoggedInUser(user);
-        return;
       }
-      // Else set logged-in user in state to null
-      setLoggedInUser(null);
     });
   });
 
