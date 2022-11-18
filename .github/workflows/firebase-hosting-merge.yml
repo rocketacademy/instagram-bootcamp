@@ -24,6 +24,7 @@ jobs:
           file_name: '.env'           
       
   build_and_deploy:
+    needs: make_env
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
