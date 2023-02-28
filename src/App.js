@@ -5,9 +5,13 @@ import logo from "./logo.png";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const DB_TS_KEY = "timestamps";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -17,6 +21,8 @@ export default class App extends React.Component {
     this.state = {
       messages: [],
       message: "",
+      timestamps: [],
+      timestamp: "",
     };
   }
 
@@ -30,6 +36,15 @@ export default class App extends React.Component {
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
     });
+    const timestampRef = ref(database, DB_TS_KEY);
+    // onChildAdded will return data for every child at the reference and every subsequent new child
+    onChildAdded(timestampRef, (data) => {
+      // Add the subsequent child to local component state, initialising a new array to trigger re-render
+      this.setState((state) => ({
+        // Store message key so we can use it as a key in our list items when rendering messages
+        timestamps: [...state.timestamps, { key: data.key, val: data.val() }],
+      }));
+    });
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
@@ -37,6 +52,9 @@ export default class App extends React.Component {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, this.state.message);
+    const timestampListRef = ref(database, DB_TS_KEY);
+    const newTimestampRef = push(timestampListRef);
+    set(newTimestampRef, this.state.timestamp);
   };
 
   handleChange = (e) => {
@@ -46,14 +64,26 @@ export default class App extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.setState({ message: "" });
-    this.writeData();
+    if (this.state.message.length === 0) {
+      return;
+    }
+    this.setState({ timestamp: new Date().toLocaleString("en-GB") }, () => {
+      this.writeData();
+      this.setState({ message: "", timestamp: "" });
+    });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+    let messageListItems = this.state.messages.map((message, index) => (
+      <Row key={message.key}>
+        <Col key={this.state.timestamps[index].key} className="timestamp">
+          {this.state.timestamps[index].val}
+        </Col>
+        <Col key={message.key} className="message">
+          {message.val}
+        </Col>
+      </Row>
     ));
     return (
       <div className="App">
@@ -73,7 +103,7 @@ export default class App extends React.Component {
               Send
             </Button>
           </Form>
-          <ol>{messageListItems}</ol>
+          <Container>{messageListItems}</Container>
         </header>
       </div>
     );
