@@ -73,7 +73,7 @@ export default class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message, index) => (
-      <div className="container">
+      <div key={message.key} className="container">
         <div key={this.state.timestamps[index].key} className="timestamp">
           {this.state.timestamps[index].val}
         </div>
@@ -88,8 +88,6 @@ export default class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <Form onSubmit={this.handleSubmit}>
             <Form.Control
-              as="textarea"
-              rows={2}
               name="message"
               placeholder="Write your message here!"
               value={this.state.message}
