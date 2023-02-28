@@ -54,6 +54,20 @@ export default class App extends React.Component {
     set(newTimestampRef, this.state.timestamp);
   };
 
+  renderMessageItems = () => {
+    let messageListItems = this.state.messages.map((message, index) => (
+      <div key={message.key} className="container">
+        <div key={this.state.timestamps[index].key} className="timestamp">
+          {this.state.timestamps[index].val}
+        </div>
+        <div key={message.key} className="message">
+          {message.val}
+        </div>
+      </div>
+    ));
+    return messageListItems;
+  };
+
   handleChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
@@ -71,17 +85,6 @@ export default class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message, index) => (
-      <div key={message.key} className="container">
-        <div key={this.state.timestamps[index].key} className="timestamp">
-          {this.state.timestamps[index].val}
-        </div>
-        <div key={message.key} className="message">
-          {message.val}
-        </div>
-      </div>
-    ));
     return (
       <div className="App">
         <header className="App-header">
@@ -97,7 +100,9 @@ export default class App extends React.Component {
               Send
             </Button>
           </Form>
-          {messageListItems}
+          {this.state.messages.length > 0 &&
+            this.state.timestamps.length > 0 &&
+            this.renderMessageItems()}
         </header>
       </div>
     );
