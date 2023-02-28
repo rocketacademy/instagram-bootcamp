@@ -5,9 +5,6 @@ import logo from "./logo.png";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -76,24 +73,23 @@ export default class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message, index) => (
-      <Row key={message.key}>
-        <Col key={this.state.timestamps[index].key} className="timestamp">
+      <div className="container">
+        <div key={this.state.timestamps[index].key} className="timestamp">
           {this.state.timestamps[index].val}
-        </Col>
-        <Col key={message.key} className="message">
+        </div>
+        <div key={message.key} className="message">
           {message.val}
-        </Col>
-      </Row>
+        </div>
+      </div>
     ));
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
           <Form onSubmit={this.handleSubmit}>
             <Form.Control
+              as="textarea"
+              rows={2}
               name="message"
               placeholder="Write your message here!"
               value={this.state.message}
@@ -103,7 +99,7 @@ export default class App extends React.Component {
               Send
             </Button>
           </Form>
-          <Container>{messageListItems}</Container>
+          {messageListItems}
         </header>
       </div>
     );
