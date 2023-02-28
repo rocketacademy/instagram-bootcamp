@@ -37,12 +37,17 @@ export default class App extends React.Component {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, this.state.message);
-    this.setState({ message: "" });
   };
 
   handleChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.setState({ message: "" });
+    this.writeData();
   };
 
   render() {
@@ -57,7 +62,7 @@ export default class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          <Form onSubmit={this.writeData}>
+          <Form onSubmit={this.handleSubmit}>
             <Form.Control
               name="message"
               placeholder="Write your message here!"
