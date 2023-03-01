@@ -1,6 +1,11 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { onChildAdded, push, ref as dbRef, set } from "firebase/database";
+import {
+  ref as storageRef,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { database, storage } from "./firebase.js";
 import logo from "./logo.png";
 import "./App.css";
 import Button from "react-bootstrap/Button";
@@ -8,6 +13,7 @@ import Form from "react-bootstrap/Form";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const STORAGE_IMAGES_KEY = "images";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -18,11 +24,13 @@ export default class App extends React.Component {
       messages: [],
       message: "",
       timestamp: "",
+      fileName: "",
+      fileInput: null,
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const messagesRef = dbRef(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -34,25 +42,52 @@ export default class App extends React.Component {
             key: data.key,
             message: data.val().message,
             timestamp: data.val().timestamp,
+            fileDownloadURL: data.val().fileDownloadURL,
           },
         ],
       }));
     });
   }
 
+  // promisedSetState = (newState) =>
+  //   new Promise((resolve) => this.setState(newState, resolve));
+
+  uploadFile = () => {
+    console.log("intended step 3");
+    const fileRef = storageRef(
+      storage,
+      `${STORAGE_IMAGES_KEY}/${this.state.fileName}`
+    );
+    return uploadBytesResumable(fileRef, this.state.fileInput)
+      .then((snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Step 3 - Upload is " + progress + "% done");
+      })
+      .then(() => getDownloadURL(fileRef))
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
+  writeData = (url) => {
+    console.log("intended step 4");
+    const messageListRef = dbRef(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, {
+    return set(newMessageRef, {
       message: this.state.message,
       timestamp: this.state.timestamp,
+      fileDownloadURL: url,
     });
   };
 
   renderMessageItems = () => {
     let messageListItems = this.state.messages.map((item) => (
       <div key={item.key} className="container">
+        <div key={`${item.key}-img`} className="uploaded-image">
+          <img src={item.fileDownloadURL} alt={item.message} />
+        </div>
         <div key={`${item.key}-m`} className="timestamp">
           {item.timestamp}
         </div>
@@ -64,20 +99,39 @@ export default class App extends React.Component {
     return messageListItems;
   };
 
-  handleChange = (e) => {
+  handleTextChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
+  handleFileChange = (e) => {
+    this.setState({
+      fileInput: e.target.files[0],
+      fileName: e.target.files[0].name, // try w/o [0].name
+    });
+  };
+
   handleSubmit = (e) => {
+    console.log("intended step 1");
     e.preventDefault();
     if (this.state.message.length === 0) {
       return;
     }
-    this.setState({ timestamp: new Date().toLocaleString("en-GB") }, () => {
-      this.writeData();
-      this.setState({ message: "", timestamp: "" });
-    });
+    new Promise((resolve) => {
+      console.log("intended step 2");
+      this.setState({ timestamp: new Date().toLocaleString("en-GB") }, resolve);
+    })
+      .then(this.uploadFile)
+      .then(this.writeData)
+      .then(() => {
+        console.log("intended step 5");
+        this.setState({
+          message: "",
+          timestamp: "",
+          fileName: "",
+          fileInput: null,
+        });
+      });
   };
 
   render() {
@@ -87,13 +141,18 @@ export default class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <Form onSubmit={this.handleSubmit}>
             <Form.Control
+              type="file"
+              // value={this.state.fileName}
+              onChange={this.handleFileChange}
+            />
+            <Form.Control
               name="message"
               placeholder="Write your message here!"
               value={this.state.message}
-              onChange={this.handleChange}
+              onChange={this.handleTextChange}
             />
             <Button variant="light" type="submit">
-              Send
+              Post
             </Button>
           </Form>
           {this.state.messages.length > 0 && this.renderMessageItems()}
