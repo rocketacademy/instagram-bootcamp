@@ -17,6 +17,7 @@
 .App-logo {
   width: 300px;
   pointer-events: none;
+  margin-top: 2vmin;
 }
 
 form {
@@ -31,6 +32,37 @@ form {
 
 .btn-light {
   height: 38px;
+}
+
+.like-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.btn-dark {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffb5b5;
+  border: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.btn-dark:hover {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ff5151;
+  animation: expand 0.3s;
+  animation-iteration-count: 1;
+}
+
+@keyframes expand {
+  from {
+    scale: 0.9;
+  }
+  to {
+    scale: 1.2;
+  }
 }
 
 input {
@@ -55,6 +87,14 @@ input {
   background-color: #ffefeb;
   border-bottom: 0.5vmin solid #eec7b275;
   justify-content: space-between;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  background-color: #ffefeb;
 }
 
 .timestamp {

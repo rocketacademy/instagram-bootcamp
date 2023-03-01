@@ -1,5 +1,12 @@
 import React from "react";
-import { onChildAdded, push, ref as dbRef, set } from "firebase/database";
+import {
+  onChildAdded,
+  push,
+  ref as dbRef,
+  set,
+  onValue,
+  update,
+} from "firebase/database";
 import {
   ref as storageRef,
   uploadBytesResumable,
@@ -21,6 +28,7 @@ export default class App extends React.Component {
     super(props);
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
+    this.inputRef = React.createRef();
     this.state = {
       messages: [],
       message: "",
@@ -44,17 +52,15 @@ export default class App extends React.Component {
             message: data.val().message,
             timestamp: data.val().timestamp,
             fileDownloadURL: data.val().fileDownloadURL,
+            likes: data.val().likes,
+            liked: false,
           },
         ],
       }));
     });
   }
 
-  // promisedSetState = (newState) =>
-  //   new Promise((resolve) => this.setState(newState, resolve));
-
   uploadFile = () => {
-    console.log("intended step 3");
     const fileRef = storageRef(
       storage,
       `${STORAGE_IMAGES_KEY}/${this.state.fileName}`
@@ -63,7 +69,7 @@ export default class App extends React.Component {
       .then((snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Step 3 - Upload is " + progress + "% done");
+        console.log("Upload is " + progress + "% done");
       })
       .then(() => getDownloadURL(fileRef))
       .catch((error) => {
@@ -73,13 +79,13 @@ export default class App extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = (url) => {
-    console.log("intended step 4");
     const messageListRef = dbRef(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     return set(newMessageRef, {
       message: this.state.message,
       timestamp: this.state.timestamp,
       fileDownloadURL: url,
+      likes: 0,
     });
   };
 
@@ -92,11 +98,19 @@ export default class App extends React.Component {
           src={item.fileDownloadURL}
           alt={item.message}
         />
-        <Card.Text key={`${item.key}-ts`} className="message">
+        <Card.Text key={`${item.key}-m`} className="message">
           {item.message}
         </Card.Text>
-        <Card.Footer key={`${item.key}-m`} className="timestamp">
-          {item.timestamp}
+        <Card.Footer key={`${item.key}-ft`}>
+          <div key={`${item.key}-ts`} className="timestamp">
+            {item.timestamp}
+          </div>
+          <div className="like-item">
+            <div id="likes">{item.likes}</div>
+            <Button name={item.key} variant="dark" onClick={this.handleLike}>
+              ♥
+            </Button>
+          </div>
         </Card.Footer>
       </Card>
     ));
@@ -109,34 +123,59 @@ export default class App extends React.Component {
   };
 
   handleFileChange = (e) => {
+    console.log(e.target.files[0]);
+    console.log(e.target.files[0].name);
     this.setState({
       fileInput: e.target.files[0],
-      fileName: e.target.file, // try w/o [0].name
+      fileName: e.target.files[0].name,
     });
   };
 
   handleSubmit = (e) => {
-    console.log("intended step 1");
     e.preventDefault();
     if (this.state.message.length === 0 || !this.state.fileInput) {
       alert("Upload something and write a message!");
       return;
     }
     new Promise((resolve) => {
-      console.log("intended step 2");
       this.setState({ timestamp: new Date().toLocaleString("en-GB") }, resolve);
     })
       .then(this.uploadFile)
       .then(this.writeData)
       .then(() => {
-        console.log("intended step 5");
         this.setState({
           message: "",
           timestamp: "",
           fileName: "",
           fileInput: null,
         });
+        this.inputRef.current.value = "";
       });
+  };
+
+  handleLike = (e) => {
+    let currentLikes;
+    const messagesToUpdate = [...this.state.messages];
+    const indexOfLiked = messagesToUpdate
+      .map((message) => message.key)
+      .indexOf(e.target.name);
+    const likedMessageRef = dbRef(
+      database,
+      `${DB_MESSAGES_KEY}/${e.target.name}`
+    );
+    onValue(likedMessageRef, (snapshot) => {
+      currentLikes = snapshot.val().likes;
+    });
+    if (!this.state.messages[indexOfLiked].liked) {
+      update(likedMessageRef, { likes: parseInt(currentLikes) + 1 });
+      messagesToUpdate[indexOfLiked].likes += 1;
+      messagesToUpdate[indexOfLiked].liked = true;
+    } else {
+      update(likedMessageRef, { likes: parseInt(currentLikes) - 1 });
+      messagesToUpdate[indexOfLiked].likes -= 1;
+      messagesToUpdate[indexOfLiked].liked = false;
+    }
+    this.setState({ messages: messagesToUpdate });
   };
 
   render() {
@@ -147,7 +186,7 @@ export default class App extends React.Component {
           <Form onSubmit={this.handleSubmit}>
             <Form.Control
               type="file"
-              value={this.state.fileName}
+              ref={this.inputRef}
               onChange={this.handleFileChange}
             />
             <Form.Control
