@@ -9,7 +9,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 1vmin);
+  font-size: calc(8px + 1vmin);
   color: #000000;
   font-family: "Nunito", sans-serif;
 }
@@ -39,19 +39,21 @@ input {
 }
 
 .container {
-  width: 90%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 1.5vmin;
-  padding: 1.5vmin 2vmin;
-  border-radius: 5px;
-  background-color: #ffcbcb;
-  border-bottom: 1vmin solid #e09e9e90;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+
+.card {
+  width: 250px;
+  padding: 1.5vmin;
+  margin: 1vmin;
+  background-color: #ffefeb;
+  border-bottom: 0.5vmin solid #ffb5b575;
 }
 
 .timestamp {
-  font-size: smaller;
+  font-size: calc(8px + 0.4vmin);
   color: #132743;
   font-weight: 300;
 }
@@ -61,7 +63,6 @@ input {
   font-weight: 500;
 }
 
-.uploaded-image img {
-  max-width: 50vw;
-  max-height: 30vh;
+.card-img-top {
+  margin: 0 0 1vmin 0;
 }

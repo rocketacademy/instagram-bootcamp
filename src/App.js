@@ -10,6 +10,7 @@ import logo from "./logo.png";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -84,17 +85,20 @@ export default class App extends React.Component {
 
   renderMessageItems = () => {
     let messageListItems = this.state.messages.map((item) => (
-      <div key={item.key} className="container">
-        <div key={`${item.key}-img`} className="uploaded-image">
-          <img src={item.fileDownloadURL} alt={item.message} />
-        </div>
-        <div key={`${item.key}-m`} className="timestamp">
-          {item.timestamp}
-        </div>
-        <div key={`${item.key}-ts`} className="message">
+      <Card key={item.key}>
+        <Card.Img
+          variant="top"
+          key={`${item.key}-img`}
+          src={item.fileDownloadURL}
+          alt={item.message}
+        />
+        <Card.Text key={`${item.key}-ts`} className="message">
           {item.message}
-        </div>
-      </div>
+        </Card.Text>
+        <Card.Footer key={`${item.key}-m`} className="timestamp">
+          {item.timestamp}
+        </Card.Footer>
+      </Card>
     ));
     return messageListItems;
   };
@@ -107,7 +111,7 @@ export default class App extends React.Component {
   handleFileChange = (e) => {
     this.setState({
       fileInput: e.target.files[0],
-      fileName: e.target.files[0].name, // try w/o [0].name
+      fileName: e.target.file, // try w/o [0].name
     });
   };
 
@@ -142,7 +146,7 @@ export default class App extends React.Component {
           <Form onSubmit={this.handleSubmit}>
             <Form.Control
               type="file"
-              // value={this.state.fileName}
+              value={this.state.fileName}
               onChange={this.handleFileChange}
             />
             <Form.Control
@@ -155,7 +159,9 @@ export default class App extends React.Component {
               Post
             </Button>
           </Form>
-          {this.state.messages.length > 0 && this.renderMessageItems()}
+          {this.state.messages.length > 0 && (
+            <div className="container">{this.renderMessageItems()}</div>
+          )}
         </header>
       </div>
     );
