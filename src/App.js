@@ -118,7 +118,8 @@ export default class App extends React.Component {
   handleSubmit = (e) => {
     console.log("intended step 1");
     e.preventDefault();
-    if (this.state.message.length === 0) {
+    if (this.state.message.length === 0 || !this.state.fileInput) {
+      alert("Upload something and write a message!");
       return;
     }
     new Promise((resolve) => {
@@ -151,6 +152,7 @@ export default class App extends React.Component {
             />
             <Form.Control
               name="message"
+              id="message"
               placeholder="Write your message here!"
               value={this.state.message}
               onChange={this.handleTextChange}

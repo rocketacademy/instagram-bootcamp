@@ -15,41 +15,46 @@
 }
 
 .App-logo {
-  height: 10vh;
+  width: 300px;
   pointer-events: none;
-  margin: 4vmin 0 1vmin 0;
 }
 
 form {
-  min-height: 10vh;
-  min-width: 300px;
-  width: 50%;
-  margin: 1vmin 1.5vmin;
+  min-height: 90px;
+  width: 300px;
+  margin: 2vmin 1.5vmin;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .btn-light {
-  padding: 0.3vmin 1.5vmin;
-  border-radius: 5px;
-  margin: 0 0 1.5vmin 0;
+  height: 38px;
 }
 
 input {
   width: 100%;
-  margin: 1.5vmin 0;
+}
+
+#message {
+  width: 235px;
 }
 
 .container {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: 300px 300px 300px;
+  grid-template-rows: auto;
+  grid-gap: 5vw;
+  justify-content: center;
 }
 
 .card {
-  width: 250px;
+  width: 300px;
   padding: 1.5vmin;
-  margin: 1vmin;
   background-color: #ffefeb;
-  border-bottom: 0.5vmin solid #ffb5b575;
+  border-bottom: 0.5vmin solid #eec7b275;
+  justify-content: space-between;
 }
 
 .timestamp {
@@ -65,4 +70,21 @@ input {
 
 .card-img-top {
   margin: 0 0 1vmin 0;
+}
+
+@media only screen and (max-width: 1000px) {
+  .container {
+    display: grid;
+    grid-template-columns: 300px 300px;
+    grid-template-rows: auto;
+    grid-gap: 5vw;
+    justify-content: center;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+  }
 }
