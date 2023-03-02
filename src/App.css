@@ -1,3 +1,9 @@
+* {
+  font-size: calc(10px + 1vmin);
+  color: #000000;
+  font-family: "Nunito", sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -5,33 +11,62 @@
 .App-header {
   background-color: #132743;
   min-height: 100vh;
+}
+
+.modal-content {
+  background-color: #f6f1e8;
+  min-height: 35vh;
+}
+
+.feed {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(8px + 1vmin);
-  color: #000000;
-  font-family: "Nunito", sans-serif;
 }
 
 .App-logo {
-  width: 300px;
+  height: 50px;
   pointer-events: none;
-  margin-top: 2vmin;
+  margin-left: 2vmin;
 }
 
-form {
+.navbar {
+  align-items: center;
+  margin-bottom: 2vmin;
+}
+
+.form-control {
+  margin: 0.5vmin 0;
+}
+
+.post-form {
   min-height: 90px;
-  width: 300px;
-  margin: 2vmin 1.5vmin;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.form-label {
+  margin: 0;
+}
+
+.login-input {
+  margin-bottom: 1vmin;
 }
 
 .btn-light {
-  height: 38px;
+  height: 37px;
+}
+
+.btn-primary {
+  background-color: #132743;
+  border: none;
+}
+
+.btn-primary #login {
+  margin: 1vmin 4vmin 0 0;
 }
 
 .like-item {
@@ -40,7 +75,7 @@ form {
   align-items: center;
 }
 
-.btn-dark {
+.like-btn {
   background-color: rgba(0, 0, 0, 0);
   color: #ffb5b5;
   border: none;
@@ -49,7 +84,7 @@ form {
   padding: 0;
 }
 
-.btn-dark:hover {
+.like-btn:hover {
   background-color: rgba(0, 0, 0, 0);
   color: #ff5151;
   animation: expand 0.3s;
@@ -67,10 +102,6 @@ form {
 
 input {
   width: 100%;
-}
-
-#message {
-  width: 235px;
 }
 
 .container {
@@ -97,10 +128,18 @@ input {
   background-color: #ffefeb;
 }
 
-.timestamp {
+.footer-data > .timestamp,
+.auth-email {
   font-size: calc(8px + 0.4vmin);
   color: #132743;
   font-weight: 300;
+}
+
+.footer-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .message {

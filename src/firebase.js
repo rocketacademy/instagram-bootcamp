@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
@@ -18,7 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-// Get a reference to the database service and export the reference for other modules
+// Get a reference to the services and export the references for other modules
 export const database = getDatabase(firebaseApp);
-
 export const storage = getStorage(firebaseApp);
+export const auth = getAuth(firebaseApp);

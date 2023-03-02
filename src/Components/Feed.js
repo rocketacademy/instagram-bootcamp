@@ -13,10 +13,9 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { database, storage } from "../firebase.js";
-import logo from "../logo.png";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import MainForm from "./Form.js";
+import PostForm from "./PostForm.js";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -52,12 +51,16 @@ export default class MainFeed extends React.Component {
             timestamp: data.val().timestamp,
             fileDownloadURL: data.val().fileDownloadURL,
             likes: data.val().likes,
-            liked: false,
+            likedUsers: data.val().likedUsers,
+            liked: (data.val().likedUsers || []).includes(this.props.uid),
+            authorEmail: data.val().authorEmail,
+            authorID: data.val().authorID,
           },
         ],
       }));
     });
   }
+  ////!!! Need to get a different listener to update the likes/likedUsers/liked in state, as they can change even after the child has been added
 
   uploadFile = () => {
     const fileRef = storageRef(
@@ -85,6 +88,9 @@ export default class MainFeed extends React.Component {
       timestamp: this.state.timestamp,
       fileDownloadURL: url,
       likes: 0,
+      likedUsers: [""],
+      authorEmail: this.props.email,
+      authorID: this.props.uid,
     });
   };
 
@@ -101,12 +107,22 @@ export default class MainFeed extends React.Component {
           {item.message}
         </Card.Text>
         <Card.Footer key={`${item.key}-ft`}>
-          <div key={`${item.key}-ts`} className="timestamp">
-            {item.timestamp}
+          <div className="footer-data">
+            <div key={`${item.key}-ts`} className="timestamp">
+              {item.timestamp}
+            </div>
+            <div className="auth-email">{item.authorEmail}</div>
           </div>
           <div className="like-item">
             <div id="likes">{item.likes}</div>
-            <Button name={item.key} variant="dark" onClick={this.handleLike}>
+            <Button
+              name={item.key}
+              className="like-btn"
+              variant="outline-danger"
+              onClick={this.handleLike}
+              disabled={!this.props.authenticated}
+              style={item.liked ? { color: "#ff5151" } : { color: "#ffb5b5" }}
+            >
               ♥
             </Button>
           </div>
@@ -154,6 +170,7 @@ export default class MainFeed extends React.Component {
 
   handleLike = (e) => {
     let currentLikes;
+    let currentLikedUsers;
     const messagesToUpdate = [...this.state.messages];
     const indexOfLiked = messagesToUpdate
       .map((message) => message.key)
@@ -164,13 +181,20 @@ export default class MainFeed extends React.Component {
     );
     onValue(likedMessageRef, (snapshot) => {
       currentLikes = snapshot.val().likes;
+      currentLikedUsers = snapshot.val().likedUsers;
     });
     if (!this.state.messages[indexOfLiked].liked) {
-      update(likedMessageRef, { likes: parseInt(currentLikes) + 1 });
+      update(likedMessageRef, {
+        likes: parseInt(currentLikes) + 1,
+        likedUsers: [...currentLikedUsers, this.props.uid],
+      });
       messagesToUpdate[indexOfLiked].likes += 1;
       messagesToUpdate[indexOfLiked].liked = true;
     } else {
-      update(likedMessageRef, { likes: parseInt(currentLikes) - 1 });
+      update(likedMessageRef, {
+        likes: parseInt(currentLikes) - 1,
+        likedUsers: [...currentLikedUsers.slice(0, -1)],
+      });
       messagesToUpdate[indexOfLiked].likes -= 1;
       messagesToUpdate[indexOfLiked].liked = false;
     }
@@ -179,20 +203,19 @@ export default class MainFeed extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <MainForm
-            handleFileChange={this.handleFileChange}
-            handleTextChange={this.handleTextChange}
-            message={this.state.message}
-            inputRef={this.inputRef}
-            handleSubmit={this.handleSubmit}
-          />
-          {this.state.messages.length > 0 && (
-            <div className="container">{this.renderMessageItems()}</div>
+      <div className="feed">
+        <div className="container">
+          {this.renderMessageItems()}
+          {this.props.authenticated && (
+            <PostForm
+              handleFileChange={this.handleFileChange}
+              handleTextChange={this.handleTextChange}
+              message={this.state.message}
+              inputRef={this.inputRef}
+              handleSubmit={this.handleSubmit}
+            />
           )}
-        </header>
+        </div>
       </div>
     );
   }
