@@ -24,8 +24,6 @@ const STORAGE_IMAGES_KEY = "images";
 export default class MainFeed extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
     this.inputRef = React.createRef();
     this.state = {
       messages: [],
@@ -34,15 +32,17 @@ export default class MainFeed extends React.Component {
       fileName: "",
       fileInput: null,
     };
+    // Initialised local state. When Firebase changes, local state is updated.
   }
 
   componentDidMount() {
     const messagesRef = dbRef(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
+      const currentUserEmail = this.props.email;
+      const likedUsers = data.val().likedUsers;
+      const likedByCurrentUser = (likedUsers || []).includes(currentUserEmail);
+      // The added child is added to local state to trigger re-render
       this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
         messages: [
           ...state.messages,
           {
@@ -50,17 +50,32 @@ export default class MainFeed extends React.Component {
             message: data.val().message,
             timestamp: data.val().timestamp,
             fileDownloadURL: data.val().fileDownloadURL,
-            likes: data.val().likes,
-            likedUsers: data.val().likedUsers,
-            liked: (data.val().likedUsers || []).includes(this.props.uid),
             authorEmail: data.val().authorEmail,
             authorID: data.val().authorID,
+            likes: data.val().likes,
+            likedUsers: likedUsers,
+            likedByCurrentUser: likedByCurrentUser,
+            likeButtonColor: likedByCurrentUser ? "#ff5151" : "#ffb5b5",
           },
         ],
       }));
     });
   }
-  ////!!! Need to get a different listener to update the likes/likedUsers/liked in state, as they can change even after the child has been added
+
+  componentDidUpdate(prevProps) {
+    if (this.props.uid !== prevProps.uid) {
+      const messagesToUpdate = [...this.state.messages];
+      for (const message of messagesToUpdate) {
+        message.likedByCurrentUser = (message.likedUsers || []).includes(
+          this.props.email
+        );
+        message.likeButtonColor = message.likedByCurrentUser
+          ? "#ff5151"
+          : "#ffb5b5";
+      }
+      this.setState({ messages: messagesToUpdate });
+    }
+  }
 
   uploadFile = () => {
     const fileRef = storageRef(
@@ -75,11 +90,12 @@ export default class MainFeed extends React.Component {
       })
       .then(() => getDownloadURL(fileRef))
       .catch((error) => {
-        console.log(error);
+        const errorCode = error.code;
+        const errorMessage = errorCode.split("/")[1].replaceAll("-", " ");
+        alert(`Wait a minute... an error occurred: ${errorMessage}`);
       });
   };
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = (url) => {
     const messageListRef = dbRef(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
@@ -121,7 +137,7 @@ export default class MainFeed extends React.Component {
               variant="outline-danger"
               onClick={this.handleLike}
               disabled={!this.props.authenticated}
-              style={item.liked ? { color: "#ff5151" } : { color: "#ffb5b5" }}
+              style={{ color: item.likeButtonColor }}
             >
               ♥
             </Button>
@@ -138,8 +154,6 @@ export default class MainFeed extends React.Component {
   };
 
   handleFileChange = (e) => {
-    console.log(e.target.files[0]);
-    console.log(e.target.files[0].name);
     this.setState({
       fileInput: e.target.files[0],
       fileName: e.target.files[0].name,
@@ -175,28 +189,33 @@ export default class MainFeed extends React.Component {
     const indexOfLiked = messagesToUpdate
       .map((message) => message.key)
       .indexOf(e.target.name);
+    const likedMessage = messagesToUpdate[indexOfLiked];
     const likedMessageRef = dbRef(
       database,
       `${DB_MESSAGES_KEY}/${e.target.name}`
     );
     onValue(likedMessageRef, (snapshot) => {
-      currentLikes = snapshot.val().likes;
+      currentLikes = parseInt(snapshot.val().likes);
       currentLikedUsers = snapshot.val().likedUsers;
     });
-    if (!this.state.messages[indexOfLiked].liked) {
+    if (!likedMessage.likedByCurrentUser) {
       update(likedMessageRef, {
-        likes: parseInt(currentLikes) + 1,
-        likedUsers: [...currentLikedUsers, this.props.uid],
+        likes: currentLikes + 1,
+        likedUsers: [...currentLikedUsers, this.props.email],
       });
-      messagesToUpdate[indexOfLiked].likes += 1;
-      messagesToUpdate[indexOfLiked].liked = true;
+      likedMessage.likes += 1;
+      likedMessage.likedUsers = [...likedMessage.likedUsers, this.props.email];
+      likedMessage.likedByCurrentUser = true;
+      likedMessage.likeButtonColor = "#ff5151";
     } else {
       update(likedMessageRef, {
-        likes: parseInt(currentLikes) - 1,
+        likes: currentLikes - 1,
         likedUsers: [...currentLikedUsers.slice(0, -1)],
       });
-      messagesToUpdate[indexOfLiked].likes -= 1;
-      messagesToUpdate[indexOfLiked].liked = false;
+      likedMessage.likes -= 1;
+      likedMessage.likedUsers = [...likedMessage.likedUsers.slice(0, -1)];
+      likedMessage.likedByCurrentUser = false;
+      likedMessage.likeButtonColor = "#ffb5b5";
     }
     this.setState({ messages: messagesToUpdate });
   };

@@ -15,7 +15,7 @@ export default class LoginForm extends React.Component {
       <Modal {...this.props} backdrop="static" centered>
         <Modal.Header>
           <Modal.Title>LOGIN / SIGN UP</Modal.Title>
-          <CloseButton variant="dark" onClick={this.props.onHide} />
+          <CloseButton onClick={this.props.onHide} />
         </Modal.Header>
         <Modal.Body>
           <Form className="login-form">

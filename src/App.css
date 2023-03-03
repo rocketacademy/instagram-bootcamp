@@ -56,6 +56,15 @@
   margin-bottom: 1vmin;
 }
 
+.alert {
+  z-index: 99;
+  position: fixed;
+  top: 40vh;
+  bottom: 40vh;
+  left: 30vw;
+  right: 30vw;
+}
+
 .btn-light {
   height: 37px;
 }

@@ -30,18 +30,15 @@ export default class App extends React.Component {
   componentDidMount() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("user is signed in");
         this.setState({
           authenticated: true,
-          user: auth.currentUser,
           loginFormShow: false,
+          user: user,
         });
       } else {
-        // not signed in
-        console.log("user is not signed in");
         this.setState({
-          loginFormShow: true,
           authenticated: false,
+          loginFormShow: true,
           user: {},
         });
       }
@@ -61,42 +58,27 @@ export default class App extends React.Component {
   };
 
   signUpUser = (email, password) => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        // this.setState({ user: user });
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.errorMessage;
-        console.log(errorCode);
-        console.log(errorMessage);
-      });
+    createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+      this.showAlert(error);
+    });
   };
 
   signInUser = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.errorMessage;
-        console.log(errorCode);
-        console.log(errorMessage);
-      });
+    signInWithEmailAndPassword(auth, email, password).catch((error) => {
+      this.showAlert(error);
+    });
   };
 
   signOutUser = () => {
-    signOut(auth)
-      .then(() => {
-        console.log("User has signed out.");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    signOut(auth).catch((error) => {
+      this.showAlert(error);
+    });
+  };
+
+  showAlert = (error) => {
+    const errorCode = error.code;
+    const errorMessage = errorCode.split("/")[1].replaceAll("-", " ");
+    alert(`Wait a minute... an error occurred: ${errorMessage}`);
   };
 
   render() {
@@ -119,13 +101,12 @@ export default class App extends React.Component {
             </Navbar.Brand>
             {this.state.authenticated && !this.state.loginFormShow && (
               <Nav id="logged-in-nav">
-                <Nav.Link onClick={this.signOutUser}>Sign out</Nav.Link>
-                <NavDropdown title="Account" id="collasible-nav-dropdown">
-                  <NavDropdown.Item>
-                    {`Welcome, ${this.state.user.email}`}
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="#action/3.2">
-                    Placeholder
+                <NavDropdown
+                  title={`Welcome, ${this.state.user.email}`}
+                  id="collasible-nav-dropdown"
+                >
+                  <NavDropdown.Item onClick={this.signOutUser}>
+                    Sign out
                   </NavDropdown.Item>
                 </NavDropdown>
               </Nav>
@@ -137,7 +118,7 @@ export default class App extends React.Component {
                     this.setState({ loginFormShow: true });
                   }}
                 >
-                  Log in or sign up
+                  Log in or sign up to post
                 </Nav.Link>
               </Nav>
             )}
