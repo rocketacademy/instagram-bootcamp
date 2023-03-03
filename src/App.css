@@ -15,7 +15,6 @@
 
 .modal-content {
   background-color: #f6f1e8;
-  min-height: 35vh;
 }
 
 .feed {
@@ -50,6 +49,12 @@
 
 .form-label {
   margin: 0;
+}
+
+#login-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 3vmin;
 }
 
 .login-input {
@@ -100,6 +105,18 @@
   animation-iteration-count: 1;
 }
 
+.likes {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.liked-users {
+  color: #ffffff;
+  font-size: small;
+}
+
 @keyframes expand {
   from {
     scale: 0.9;
@@ -124,6 +141,7 @@ input {
 .card {
   width: 300px;
   padding: 1.5vmin;
+  margin-bottom: 1vmin;
   background-color: #ffefeb;
   border-bottom: 0.5vmin solid #eec7b275;
   justify-content: space-between;

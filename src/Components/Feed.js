@@ -15,6 +15,8 @@ import {
 import { database, storage } from "../firebase.js";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import PostForm from "./PostForm.js";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -130,7 +132,21 @@ export default class MainFeed extends React.Component {
             <div className="auth-email">{item.authorEmail}</div>
           </div>
           <div className="like-item">
-            <div id="likes">{item.likes}</div>
+            <OverlayTrigger
+              placement="bottom"
+              delay={{ show: 250, hide: 350 }}
+              overlay={
+                <Tooltip key={`${item.key}-tt`}>
+                  {item.likedUsers.slice(1).map((user) => (
+                    <div className="liked-users" key={user}>
+                      {user}
+                    </div>
+                  ))}
+                </Tooltip>
+              }
+            >
+              <div className="likes">{item.likes}</div>
+            </OverlayTrigger>
             <Button
               name={item.key}
               className="like-btn"
@@ -147,6 +163,19 @@ export default class MainFeed extends React.Component {
     ));
     return messageListItems;
   };
+
+  // renderTooltip = (itemKey, itemLikedUsers) => {
+  //   console.log("overlaying");
+  //   console.log(itemLikedUsers.slice(1));
+  //   return (
+  //     <Tooltip key={`${itemKey}-tt`}>
+  //       {itemLikedUsers.slice(1).map((user) => (
+  //         <div key={user}>{user}</div>
+  //       ))}
+  //       test!
+  //     </Tooltip>
+  //   );
+  // };
 
   handleTextChange = (e) => {
     let { name, value } = e.target;

@@ -38,20 +38,20 @@ export default class LoginForm extends React.Component {
                 onChange={this.handleChange}
               />
             </Form.Group>
-            <Form.Group>
+            <Form.Group id="login-buttons">
               <Button
                 variant="primary"
                 id="login"
                 onClick={this.props.handleClick}
               >
-                Login
+                Existing user | log in
               </Button>
               <Button
                 variant="primary"
                 id="sign-up"
                 onClick={this.props.onClick}
               >
-                Sign up
+                New user | sign up
               </Button>
             </Form.Group>
           </Form>
