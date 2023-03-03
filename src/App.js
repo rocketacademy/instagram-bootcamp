@@ -1,208 +1,133 @@
 import React from "react";
+import MainFeed from "./Components/Feed.js";
+import LoginForm from "./Components/LoginForm.js";
+import { auth } from "./firebase.js";
 import {
-  onChildAdded,
-  push,
-  ref as dbRef,
-  set,
-  onValue,
-  update,
-} from "firebase/database";
-import {
-  ref as storageRef,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-import { database, storage } from "./firebase.js";
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import logo from "./logo.png";
 import "./App.css";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
-
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
-const STORAGE_IMAGES_KEY = "images";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.inputRef = React.createRef();
+
     this.state = {
-      messages: [],
-      message: "",
-      timestamp: "",
-      fileName: "",
-      fileInput: null,
+      loginFormShow: false,
+      authenticated: false,
+      user: {},
+      email: "",
+      password: "",
     };
   }
 
   componentDidMount() {
-    const messagesRef = dbRef(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [
-          ...state.messages,
-          {
-            key: data.key,
-            message: data.val().message,
-            timestamp: data.val().timestamp,
-            fileDownloadURL: data.val().fileDownloadURL,
-            likes: data.val().likes,
-            liked: false,
-          },
-        ],
-      }));
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.setState({
+          authenticated: true,
+          loginFormShow: false,
+          user: user,
+        });
+      } else {
+        this.setState({
+          authenticated: false,
+          loginFormShow: true,
+          user: {},
+        });
+      }
     });
   }
 
-  uploadFile = () => {
-    const fileRef = storageRef(
-      storage,
-      `${STORAGE_IMAGES_KEY}/${this.state.fileName}`
-    );
-    return uploadBytesResumable(fileRef, this.state.fileInput)
-      .then((snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-      })
-      .then(() => getDownloadURL(fileRef))
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = (url) => {
-    const messageListRef = dbRef(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    return set(newMessageRef, {
-      message: this.state.message,
-      timestamp: this.state.timestamp,
-      fileDownloadURL: url,
-      likes: 0,
-    });
-  };
-
-  renderMessageItems = () => {
-    let messageListItems = this.state.messages.map((item) => (
-      <Card key={item.key}>
-        <Card.Img
-          variant="top"
-          key={`${item.key}-img`}
-          src={item.fileDownloadURL}
-          alt={item.message}
-        />
-        <Card.Text key={`${item.key}-m`} className="message">
-          {item.message}
-        </Card.Text>
-        <Card.Footer key={`${item.key}-ft`}>
-          <div key={`${item.key}-ts`} className="timestamp">
-            {item.timestamp}
-          </div>
-          <div className="like-item">
-            <div id="likes">{item.likes}</div>
-            <Button name={item.key} variant="dark" onClick={this.handleLike}>
-              ♥
-            </Button>
-          </div>
-        </Card.Footer>
-      </Card>
-    ));
-    return messageListItems;
-  };
-
-  handleTextChange = (e) => {
-    let { name, value } = e.target;
+  handleLoginInput = (name, value) => {
     this.setState({ [name]: value });
   };
 
-  handleFileChange = (e) => {
-    console.log(e.target.files[0]);
-    console.log(e.target.files[0].name);
-    this.setState({
-      fileInput: e.target.files[0],
-      fileName: e.target.files[0].name,
+  handleLoginOrSignUp = (e) => {
+    if (e.target.id === "login") {
+      this.signInUser(this.state.email, this.state.password);
+    } else if (e.target.id === "sign-up") {
+      this.signUpUser(this.state.email, this.state.password);
+    }
+  };
+
+  signUpUser = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+      this.showAlert(error);
     });
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    if (this.state.message.length === 0 || !this.state.fileInput) {
-      alert("Upload something and write a message!");
-      return;
-    }
-    new Promise((resolve) => {
-      this.setState({ timestamp: new Date().toLocaleString("en-GB") }, resolve);
-    })
-      .then(this.uploadFile)
-      .then(this.writeData)
-      .then(() => {
-        this.setState({
-          message: "",
-          timestamp: "",
-          fileName: "",
-          fileInput: null,
-        });
-        this.inputRef.current.value = "";
-      });
+  signInUser = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password).catch((error) => {
+      this.showAlert(error);
+    });
   };
 
-  handleLike = (e) => {
-    let currentLikes;
-    const messagesToUpdate = [...this.state.messages];
-    const indexOfLiked = messagesToUpdate
-      .map((message) => message.key)
-      .indexOf(e.target.name);
-    const likedMessageRef = dbRef(
-      database,
-      `${DB_MESSAGES_KEY}/${e.target.name}`
-    );
-    onValue(likedMessageRef, (snapshot) => {
-      currentLikes = snapshot.val().likes;
+  signOutUser = () => {
+    signOut(auth).catch((error) => {
+      this.showAlert(error);
     });
-    if (!this.state.messages[indexOfLiked].liked) {
-      update(likedMessageRef, { likes: parseInt(currentLikes) + 1 });
-      messagesToUpdate[indexOfLiked].likes += 1;
-      messagesToUpdate[indexOfLiked].liked = true;
-    } else {
-      update(likedMessageRef, { likes: parseInt(currentLikes) - 1 });
-      messagesToUpdate[indexOfLiked].likes -= 1;
-      messagesToUpdate[indexOfLiked].liked = false;
-    }
-    this.setState({ messages: messagesToUpdate });
+  };
+
+  showAlert = (error) => {
+    const errorCode = error.code;
+    const errorMessage = errorCode.split("/")[1].replaceAll("-", " ");
+    alert(`Wait a minute... an error occurred: ${errorMessage}`);
   };
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <Form onSubmit={this.handleSubmit}>
-            <Form.Control
-              type="file"
-              ref={this.inputRef}
-              onChange={this.handleFileChange}
-            />
-            <Form.Control
-              name="message"
-              id="message"
-              placeholder="Write your message here!"
-              value={this.state.message}
-              onChange={this.handleTextChange}
-            />
-            <Button variant="light" type="submit">
-              Post
-            </Button>
-          </Form>
-          {this.state.messages.length > 0 && (
-            <div className="container">{this.renderMessageItems()}</div>
-          )}
+          <LoginForm
+            show={this.state.loginFormShow}
+            onHide={() => {
+              this.setState({ loginFormShow: false });
+            }}
+            onChange={this.handleLoginInput}
+            email={this.state.email}
+            password={this.state.password}
+            onClick={this.handleLoginOrSignUp}
+          />
+          <Navbar bg="dark" variant="dark" sticky="top">
+            <Navbar.Brand href="#top">
+              <img src={logo} className="App-logo" alt="logo" />
+            </Navbar.Brand>
+            {this.state.authenticated && !this.state.loginFormShow && (
+              <Nav id="logged-in-nav">
+                <NavDropdown
+                  title={`Welcome, ${this.state.user.email}`}
+                  id="collasible-nav-dropdown"
+                >
+                  <NavDropdown.Item onClick={this.signOutUser}>
+                    Sign out
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+            )}
+            {!this.state.authenticated && !this.state.loginFormShow && (
+              <Nav id="signed-out-nav">
+                <Nav.Link
+                  onClick={() => {
+                    this.setState({ loginFormShow: true });
+                  }}
+                >
+                  Log in or sign up to post
+                </Nav.Link>
+              </Nav>
+            )}
+          </Navbar>
+          <MainFeed
+            authenticated={this.state.authenticated}
+            email={this.state.user.email}
+            uid={this.state.user.uid}
+          />
         </header>
       </div>
     );
