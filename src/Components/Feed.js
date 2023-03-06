@@ -57,20 +57,7 @@ export default function Feed(props) {
         },
       ]);
     });
-  }, []);
-
-  useEffect(() => {
-    const messagesToUpdate = [...messages];
-    for (const message of messagesToUpdate) {
-      message.likedByCurrentUser = (message.likedUsers || []).includes(
-        props.email
-      );
-      message.likeButtonColor = message.likedByCurrentUser
-        ? "#ff5151"
-        : "#ffb5b5";
-    }
-    setMessages(messagesToUpdate);
-  }, [props.uid]);
+  }, [props]);
 
   const uploadFile = () => {
     const fileRef = storageRef(storage, `${STORAGE_IMAGES_KEY}/${fileName}`);
