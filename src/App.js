@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import MainFeed from "./Components/Feed.js";
+import Feed from "./Components/Feed.js";
 import LoginForm from "./Components/LoginForm.js";
 import { auth } from "./firebase.js";
 import {
@@ -116,11 +116,7 @@ export default function App() {
             </Nav>
           )}
         </Navbar>
-        <MainFeed
-          authenticated={authenticated}
-          email={user.email}
-          uid={user.uid}
-        />
+        <Feed authenticated={authenticated} email={user.email} uid={user.uid} />
       </header>
     </div>
   );
