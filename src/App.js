@@ -19,16 +19,15 @@ export default function App() {
   const [user, setUser] = useState({});
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [postPath, setPostPath] = useState("");
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!authenticated) {
-  //     navigate("/login-signup");
-  //   } else {
-  //     navigate("/");
-  //   }
-  // }, [authenticated]);
+  useEffect(() => {
+    if (!authenticated) {
+      navigate("/login-signup");
+    } else {
+      navigate("/");
+    }
+  }, [authenticated]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {

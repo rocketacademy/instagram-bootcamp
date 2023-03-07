@@ -180,6 +180,33 @@ input {
   margin: 0 0 1vmin 0;
 }
 
+.post {
+  margin: 1vmin 0;
+}
+
+.post > .post-data,
+.post > .post-likes,
+.post > .post-message {
+  color: #dbd9d3;
+  margin: 1vmin 0;
+  padding: 2vmin 0;
+  font-size: calc(10px + 1.5vmin);
+}
+.post > .post-likes > .post-liked {
+  color: #dbd9d3;
+  font-size: calc(10px + 1.2vmin);
+  font-weight: 600;
+}
+
+.post img {
+  max-height: 60vh;
+  max-width: 95vw;
+}
+
+.post > .post-likes {
+  background-color: #00000050;
+}
+
 @media only screen and (max-width: 1000px) {
   .App-logo {
     height: 45px;
