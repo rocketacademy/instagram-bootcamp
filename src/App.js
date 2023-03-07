@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import NavBar from "./Components/NavBar.js";
 import Feed from "./Components/Feed.js";
 import LoginForm from "./Components/LoginForm.js";
 import { auth } from "./firebase.js";
@@ -8,10 +9,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import logo from "./logo.png";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 
 export default function App() {
@@ -20,6 +18,13 @@ export default function App() {
   const [user, setUser] = useState({});
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authenticated) {
+      navigate("/login-signup");
+    }
+  }, [authenticated]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -46,8 +51,10 @@ export default function App() {
   const handleLoginOrSignUp = (e) => {
     if (e.target.id === "login") {
       signInUser(email, password);
+      navigate("/");
     } else if (e.target.id === "sign-up") {
       signUpUser(email, password);
+      navigate("/");
     }
   };
 
@@ -78,45 +85,44 @@ export default function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <LoginForm
-          show={loginFormShow}
-          onHide={() => {
-            setLoginFormShow(false);
+        <NavBar
+          user={user}
+          authenticated={authenticated}
+          loginFormShow={loginFormShow}
+          signOutUser={signOutUser}
+          setLoginFormShow={() => {
+            setLoginFormShow(true);
+            navigate("login-signup");
           }}
-          onChange={handleLoginInput}
-          email={email}
-          password={password}
-          onClick={handleLoginOrSignUp}
         />
-        <Navbar bg="dark" variant="dark" sticky="top">
-          <Navbar.Brand href="#top">
-            <img src={logo} className="App-logo" alt="logo" />
-          </Navbar.Brand>
-          {authenticated && !loginFormShow && (
-            <Nav id="logged-in-nav">
-              <NavDropdown
-                title={`Welcome, ${user.email}`}
-                id="collasible-nav-dropdown"
-              >
-                <NavDropdown.Item onClick={signOutUser}>
-                  Sign out
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          )}
-          {!authenticated && !loginFormShow && (
-            <Nav id="signed-out-nav">
-              <Nav.Link
-                onClick={() => {
-                  setLoginFormShow(true);
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Feed
+                authenticated={authenticated}
+                email={user.email}
+                uid={user.uid}
+              />
+            }
+          />
+          <Route
+            path="/login-signup"
+            element={
+              <LoginForm
+                show={loginFormShow}
+                onHide={() => {
+                  setLoginFormShow(false);
+                  navigate("/");
                 }}
-              >
-                Log in or sign up to post
-              </Nav.Link>
-            </Nav>
-          )}
-        </Navbar>
-        <Feed authenticated={authenticated} email={user.email} uid={user.uid} />
+                onChange={handleLoginInput}
+                email={email}
+                password={password}
+                onClick={handleLoginOrSignUp}
+              />
+            }
+          />
+        </Routes>
       </header>
     </div>
   );

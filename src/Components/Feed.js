@@ -18,6 +18,7 @@ import Card from "react-bootstrap/Card";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import PostForm from "./PostForm.js";
+import { Outlet } from "react-router-dom";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -164,19 +165,6 @@ export default class MainFeed extends React.Component {
     return messageListItems;
   };
 
-  // renderTooltip = (itemKey, itemLikedUsers) => {
-  //   console.log("overlaying");
-  //   console.log(itemLikedUsers.slice(1));
-  //   return (
-  //     <Tooltip key={`${itemKey}-tt`}>
-  //       {itemLikedUsers.slice(1).map((user) => (
-  //         <div key={user}>{user}</div>
-  //       ))}
-  //       test!
-  //     </Tooltip>
-  //   );
-  // };
-
   handleTextChange = (e) => {
     let { name, value } = e.target;
     this.setState({ [name]: value });
@@ -264,6 +252,7 @@ export default class MainFeed extends React.Component {
             />
           )}
         </div>
+        <Outlet />
       </div>
     );
   }
