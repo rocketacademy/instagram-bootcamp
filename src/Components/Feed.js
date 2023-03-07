@@ -18,12 +18,13 @@ import Card from "react-bootstrap/Card";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import PostForm from "./PostForm.js";
+import { Outlet } from "react-router-dom";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_IMAGES_KEY = "images";
 
-export default class MainFeed extends React.Component {
+export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
@@ -113,13 +114,15 @@ export default class MainFeed extends React.Component {
   };
 
   renderMessageItems = () => {
-    let messageListItems = this.state.messages.map((item) => (
+    let messageListItems = this.state.messages.map((item, index) => (
       <Card key={item.key}>
         <Card.Img
           variant="top"
           key={`${item.key}-img`}
           src={item.fileDownloadURL}
           alt={item.message}
+          id={item.key}
+          onClick={this.props.onClick}
         />
         <Card.Text key={`${item.key}-m`} className="message">
           {item.message}
@@ -250,6 +253,7 @@ export default class MainFeed extends React.Component {
               handleSubmit={this.handleSubmit}
             />
           )}
+          <Outlet />
         </div>
       </div>
     );

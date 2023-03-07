@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
+import Post from "./Components/Post.js";
 
 export default function App() {
   const [loginFormShow, setLoginFormShow] = useState(false);
@@ -18,15 +19,16 @@ export default function App() {
   const [user, setUser] = useState({});
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [postPath, setPostPath] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!authenticated) {
-      navigate("/login-signup");
-    } else {
-      navigate("/");
-    }
-  }, [authenticated]);
+  // useEffect(() => {
+  //   if (!authenticated) {
+  //     navigate("/login-signup");
+  //   } else {
+  //     navigate("/");
+  //   }
+  // }, [authenticated]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -84,6 +86,13 @@ export default function App() {
     alert(`Wait a minute... an error occurred: ${errorMessage}`);
   };
 
+  const handleClick = (e) => {
+    if (!authenticated) {
+      return;
+    }
+    navigate(`posts/${e.target.id}`);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -105,29 +114,32 @@ export default function App() {
                 authenticated={authenticated}
                 email={user.email}
                 uid={user.uid}
+                onClick={handleClick}
               />
             }
-          />
-          <Route
-            path="/login-signup"
-            element={
-              authenticated ? (
-                <Navigate to="/" />
-              ) : (
-                <LoginForm
-                  show={true}
-                  onHide={() => {
-                    setLoginFormShow(false);
-                    navigate("/");
-                  }}
-                  onChange={handleLoginInput}
-                  email={email}
-                  password={password}
-                  onClick={handleLoginOrSignUp}
-                />
-              )
-            }
-          />
+          >
+            <Route
+              path="login-signup"
+              element={
+                authenticated ? (
+                  <Navigate to="/" />
+                ) : (
+                  <LoginForm
+                    show={true}
+                    onHide={() => {
+                      setLoginFormShow(false);
+                      navigate("/");
+                    }}
+                    onChange={handleLoginInput}
+                    email={email}
+                    password={password}
+                    onClick={handleLoginOrSignUp}
+                  />
+                )
+              }
+            />
+          </Route>
+          <Route path="posts/:postId" element={<Post />} />
         </Routes>
       </header>
     </div>
