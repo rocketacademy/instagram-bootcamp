@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 
 export default function App() {
@@ -23,6 +23,8 @@ export default function App() {
   useEffect(() => {
     if (!authenticated) {
       navigate("/login-signup");
+    } else {
+      navigate("/");
     }
   }, [authenticated]);
 
@@ -109,17 +111,21 @@ export default function App() {
           <Route
             path="/login-signup"
             element={
-              <LoginForm
-                show={loginFormShow}
-                onHide={() => {
-                  setLoginFormShow(false);
-                  navigate("/");
-                }}
-                onChange={handleLoginInput}
-                email={email}
-                password={password}
-                onClick={handleLoginOrSignUp}
-              />
+              authenticated ? (
+                <Navigate to="/" />
+              ) : (
+                <LoginForm
+                  show={true}
+                  onHide={() => {
+                    setLoginFormShow(false);
+                    navigate("/");
+                  }}
+                  onChange={handleLoginInput}
+                  email={email}
+                  password={password}
+                  onClick={handleLoginOrSignUp}
+                />
+              )
             }
           />
         </Routes>
