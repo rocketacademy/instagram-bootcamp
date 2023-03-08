@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import PostCard from "./PostCard.js";
 import Button from "react-bootstrap/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../firebase.js";
 import { ref, get, child } from "firebase/database";
 
-export default function Post(props) {
+export default function PostWithComments(props) {
   const [postData, setPostData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -24,41 +25,10 @@ export default function Post(props) {
         fileDownloadURL: data.val().fileDownloadURL,
         authorEmail: data.val().authorEmail,
         authorID: data.val().authorID,
-        likes: data.val().likes,
         likedUsers: data.val().likedUsers,
       });
       setIsLoading(false);
     });
-  };
-
-  const renderPost = (postData) => {
-    return (
-      <div className="post">
-        <div className="post-data">
-          on {postData.timestamp}, {postData.authorEmail} posted:
-        </div>
-        <img src={postData.fileDownloadURL} alt={postData.message} />
-        <div className="post-message">{postData.message}</div>
-        {postData.likes > 0 && (
-          <div className="post-likes">
-            {postData.likes > 1 ? (
-              <div className="post-liked">
-                {postData.likes} people liked this:
-              </div>
-            ) : (
-              <div className="post-liked">
-                {postData.likes} person liked this:
-              </div>
-            )}
-            {postData.likedUsers.slice(1).map((user) => (
-              <div className="liked-users" key={user}>
-                {user}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -66,7 +36,9 @@ export default function Post(props) {
       <Button variant="light" onClick={() => navigate("/")}>
         ↼ Back to feed
       </Button>
-      {isLoading ? "Loading..." : renderPost(postData)}
+      {isLoading ? "Loading..." : <PostCard item={postData} />}
+      <br />
+      <h1 style={{ color: "#ffffff" }}>Comment section coming soon...</h1>
     </>
   );
 }

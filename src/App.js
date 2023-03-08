@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
-import Post from "./Components/Post.js";
+import PostWithComments from "./Components/PostWithComments.js";
 
 export const UserContext = React.createContext({ email: null });
 
@@ -124,7 +124,7 @@ export default function App() {
                 }
               />
             </Route>
-            <Route path="posts/:postId" element={<Post />} />
+            <Route path="posts/:postId" element={<PostWithComments />} />
           </Routes>
         </header>
       </UserContext.Provider>

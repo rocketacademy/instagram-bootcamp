@@ -41,7 +41,7 @@ export default function PostCard(props) {
           </div>
           <div className="auth-email">{props.item.authorEmail}</div>
         </div>
-        <div className="like-props.item">
+        <div className="like-item">
           <OverlayTrigger
             placement="bottom"
             delay={{ show: 250, hide: 350 }}

@@ -22,22 +22,16 @@ import PostCard from "./PostCard.js";
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_IMAGES_KEY = "images";
 
-export default function Feed(props) {
+export default function Feed() {
   const inputRef = useRef(null);
   const user = useContext(UserContext);
   // Initialised local state. When Firebase changes, local state is updated.
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [timestamp, setTimestamp] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileInput, setFileInput] = useState(null);
 
   useEffect(() => {
-    console.log("on load", user.email);
-    loadMessages(user);
-  }, []);
-
-  const loadMessages = (currentUser) => {
     const messagesRef = dbRef(database, DB_MESSAGES_KEY);
     onChildAdded(messagesRef, (data) => {
       setMessages((messages) => [
@@ -53,7 +47,7 @@ export default function Feed(props) {
         },
       ]);
     });
-  };
+  }, []);
 
   const uploadFile = () => {
     const fileRef = storageRef(storage, `${STORAGE_IMAGES_KEY}/${fileName}`);
@@ -76,7 +70,7 @@ export default function Feed(props) {
     const newMessageRef = push(messageListRef);
     return set(newMessageRef, {
       message: message,
-      timestamp: timestamp,
+      timestamp: new Date().toLocaleString("en-GB"),
       fileDownloadURL: url,
       likedUsers: [""],
       authorEmail: user.email,
@@ -106,18 +100,16 @@ export default function Feed(props) {
   };
 
   const handleSubmit = (e) => {
-    setTimestamp(new Date().toLocaleString("en-GB"));
+    // setTimestamp(new Date().toLocaleString("en-GB"));
     e.preventDefault();
     if (message.length === 0 || !fileInput) {
       alert("Upload something and write a message!");
       return;
     }
-
     uploadFile()
       .then(writeData)
       .then(() => {
         setMessage("");
-        setTimestamp("");
         setFileName("");
         setFileInput(null);
         console.log(inputRef);

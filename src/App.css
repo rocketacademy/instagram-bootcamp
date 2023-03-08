@@ -73,6 +73,7 @@
 .btn-light {
   height: 37px;
   font-size: smaller;
+  margin-bottom: 2vmin;
 }
 
 .btn-primary {
@@ -145,6 +146,7 @@ input {
 .card {
   width: 300px;
   padding: 1.5vmin;
+  margin: 0 auto;
   background-color: #ffefeb;
   border-bottom: 0.5vmin solid #eec7b275;
   justify-content: space-between;
@@ -181,7 +183,7 @@ input {
   margin: 0 0 1vmin 0;
 }
 
-.post {
+/* .post {
   margin: 1vmin 0;
 }
 
@@ -206,7 +208,7 @@ input {
 
 .post > .post-likes {
   background-color: #00000050;
-}
+} */
 
 @media only screen and (max-width: 1000px) {
   .App-logo {
