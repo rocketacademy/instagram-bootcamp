@@ -87,13 +87,6 @@ export default function App() {
     alert(`Wait a minute... an error occurred: ${errorMessage}`);
   };
 
-  const handleClick = (e) => {
-    if (!authenticated) {
-      return;
-    }
-    navigate(`posts/${e.target.id}`);
-  };
-
   return (
     <div className="App">
       <UserContext.Provider value={user}>
@@ -109,17 +102,7 @@ export default function App() {
             }}
           />
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Feed
-                  // authenticated={authenticated}
-                  // email={user.email}
-                  // uid={user.uid}
-                  onClick={handleClick}
-                />
-              }
-            >
+            <Route path="/" element={<Feed />}>
               <Route
                 path="login-signup"
                 element={
