@@ -1,5 +1,6 @@
-import React from "react";
-import MainFeed from "./Components/Feed.js";
+import React, { useState, useEffect } from "react";
+import NavBar from "./Components/NavBar.js";
+import Feed from "./Components/Feed.js";
 import LoginForm from "./Components/LoginForm.js";
 import { auth } from "./firebase.js";
 import {
@@ -8,128 +9,125 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import logo from "./logo.png";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
+import PostWithComments from "./Components/PostWithComments.js";
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
+export const UserContext = React.createContext({ email: null });
 
-    this.state = {
-      loginFormShow: false,
-      authenticated: false,
-      user: {},
-      email: "",
-      password: "",
-    };
-  }
+export default function App() {
+  const [loginFormShow, setLoginFormShow] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState({});
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  componentDidMount() {
+  useEffect(() => {
+    if (!authenticated) {
+      navigate("/login-signup");
+    } else {
+      navigate("/");
+    }
+  }, [authenticated]);
+
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.setState({
-          authenticated: true,
-          loginFormShow: false,
-          user: user,
-        });
+        setAuthenticated(true);
+        setLoginFormShow(false);
+        setUser(user);
       } else {
-        this.setState({
-          authenticated: false,
-          loginFormShow: true,
-          user: {},
-        });
+        setAuthenticated(false);
+        setLoginFormShow(true);
+        setUser({ email: null });
       }
     });
-  }
+  }, []);
 
-  handleLoginInput = (name, value) => {
-    this.setState({ [name]: value });
-  };
-
-  handleLoginOrSignUp = (e) => {
-    if (e.target.id === "login") {
-      this.signInUser(this.state.email, this.state.password);
-    } else if (e.target.id === "sign-up") {
-      this.signUpUser(this.state.email, this.state.password);
+  const handleLoginInput = (name, value) => {
+    if (name === "email") {
+      setEmail(value);
+    } else if (name === "password") {
+      setPassword(value);
     }
   };
 
-  signUpUser = (email, password) => {
+  const handleLoginOrSignUp = (e) => {
+    if (e.target.id === "login") {
+      signInUser(email, password);
+      navigate("/");
+    } else if (e.target.id === "sign-up") {
+      signUpUser(email, password);
+      navigate("/");
+    }
+  };
+
+  const signUpUser = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password).catch((error) => {
-      this.showAlert(error);
+      showAlert(error);
     });
   };
 
-  signInUser = (email, password) => {
+  const signInUser = (email, password) => {
     signInWithEmailAndPassword(auth, email, password).catch((error) => {
-      this.showAlert(error);
+      showAlert(error);
     });
   };
 
-  signOutUser = () => {
+  const signOutUser = () => {
     signOut(auth).catch((error) => {
-      this.showAlert(error);
+      showAlert(error);
     });
   };
 
-  showAlert = (error) => {
+  const showAlert = (error) => {
     const errorCode = error.code;
     const errorMessage = errorCode.split("/")[1].replaceAll("-", " ");
     alert(`Wait a minute... an error occurred: ${errorMessage}`);
   };
 
-  render() {
-    return (
-      <div className="App">
+  return (
+    <div className="App">
+      <UserContext.Provider value={user}>
         <header className="App-header">
-          <LoginForm
-            show={this.state.loginFormShow}
-            onHide={() => {
-              this.setState({ loginFormShow: false });
+          <NavBar
+            user={user}
+            authenticated={authenticated}
+            loginFormShow={loginFormShow}
+            signOutUser={signOutUser}
+            setLoginFormShow={() => {
+              setLoginFormShow(true);
+              navigate("login-signup");
             }}
-            onChange={this.handleLoginInput}
-            email={this.state.email}
-            password={this.state.password}
-            onClick={this.handleLoginOrSignUp}
           />
-          <Navbar bg="dark" variant="dark" sticky="top">
-            <Navbar.Brand href="#top">
-              <img src={logo} className="App-logo" alt="logo" />
-            </Navbar.Brand>
-            {this.state.authenticated && !this.state.loginFormShow && (
-              <Nav id="logged-in-nav">
-                <NavDropdown
-                  title={`Welcome, ${this.state.user.email}`}
-                  id="collasible-nav-dropdown"
-                >
-                  <NavDropdown.Item onClick={this.signOutUser}>
-                    Sign out
-                  </NavDropdown.Item>
-                </NavDropdown>
-              </Nav>
-            )}
-            {!this.state.authenticated && !this.state.loginFormShow && (
-              <Nav id="signed-out-nav">
-                <Nav.Link
-                  onClick={() => {
-                    this.setState({ loginFormShow: true });
-                  }}
-                >
-                  Log in or sign up to post
-                </Nav.Link>
-              </Nav>
-            )}
-          </Navbar>
-          <MainFeed
-            authenticated={this.state.authenticated}
-            email={this.state.user.email}
-            uid={this.state.user.uid}
-          />
+          <Routes>
+            <Route path="/" element={<Feed />}>
+              <Route
+                path="login-signup"
+                element={
+                  authenticated ? (
+                    <Navigate to="/" />
+                  ) : (
+                    <LoginForm
+                      show={true}
+                      onHide={() => {
+                        setLoginFormShow(false);
+                        navigate("/");
+                      }}
+                      onChange={handleLoginInput}
+                      email={email}
+                      password={password}
+                      onClick={handleLoginOrSignUp}
+                    />
+                  )
+                }
+              />
+            </Route>
+            <Route path="posts/:postId" element={<PostWithComments />} />
+          </Routes>
         </header>
-      </div>
-    );
-  }
+      </UserContext.Provider>
+    </div>
+  );
 }

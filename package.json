@@ -1,21 +1,25 @@
 {
-  "name": "instagram-bootcamp",
+  "name": "rocketgram-7595f",
   "version": "0.1.0",
-  "homepage": "https://peanutyabing.github.io/instagram-bootcamp",
+  "homepage": "https://rocketgram-7595f.web.app",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.2.3",
     "firebase": "^9.8.0",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
     "primeicons": "^6.0.1",
     "primereact": "^9.2.0",
     "react": "^18.1.0",
     "react-bootstrap": "^2.7.2",
     "react-dom": "^18.1.0",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^6.8.2",
+    "react-scripts": "5.0.1",
+    "sort-by": "^1.2.0"
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "firebase deploy",
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
