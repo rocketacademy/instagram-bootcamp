@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "./Components/NavBar.js";
 import Feed from "./Components/Feed.js";
 import LoginForm from "./Components/LoginForm.js";
@@ -12,6 +12,8 @@ import {
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Post from "./Components/Post.js";
+
+export const UserContext = React.createContext({ email: null });
 
 export default function App() {
   const [loginFormShow, setLoginFormShow] = useState(false);
@@ -38,7 +40,7 @@ export default function App() {
       } else {
         setAuthenticated(false);
         setLoginFormShow(true);
-        setUser({});
+        setUser({ email: null });
       }
     });
   }, []);
@@ -94,53 +96,55 @@ export default function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <NavBar
-          user={user}
-          authenticated={authenticated}
-          loginFormShow={loginFormShow}
-          signOutUser={signOutUser}
-          setLoginFormShow={() => {
-            setLoginFormShow(true);
-            navigate("login-signup");
-          }}
-        />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Feed
-                authenticated={authenticated}
-                email={user.email}
-                uid={user.uid}
-                onClick={handleClick}
-              />
-            }
-          >
+      <UserContext.Provider value={user}>
+        <header className="App-header">
+          <NavBar
+            user={user}
+            authenticated={authenticated}
+            loginFormShow={loginFormShow}
+            signOutUser={signOutUser}
+            setLoginFormShow={() => {
+              setLoginFormShow(true);
+              navigate("login-signup");
+            }}
+          />
+          <Routes>
             <Route
-              path="login-signup"
+              path="/"
               element={
-                authenticated ? (
-                  <Navigate to="/" />
-                ) : (
-                  <LoginForm
-                    show={true}
-                    onHide={() => {
-                      setLoginFormShow(false);
-                      navigate("/");
-                    }}
-                    onChange={handleLoginInput}
-                    email={email}
-                    password={password}
-                    onClick={handleLoginOrSignUp}
-                  />
-                )
+                <Feed
+                  // authenticated={authenticated}
+                  // email={user.email}
+                  // uid={user.uid}
+                  onClick={handleClick}
+                />
               }
-            />
-          </Route>
-          <Route path="posts/:postId" element={<Post />} />
-        </Routes>
-      </header>
+            >
+              <Route
+                path="login-signup"
+                element={
+                  authenticated ? (
+                    <Navigate to="/" />
+                  ) : (
+                    <LoginForm
+                      show={true}
+                      onHide={() => {
+                        setLoginFormShow(false);
+                        navigate("/");
+                      }}
+                      onChange={handleLoginInput}
+                      email={email}
+                      password={password}
+                      onClick={handleLoginOrSignUp}
+                    />
+                  )
+                }
+              />
+            </Route>
+            <Route path="posts/:postId" element={<Post />} />
+          </Routes>
+        </header>
+      </UserContext.Provider>
     </div>
   );
 }

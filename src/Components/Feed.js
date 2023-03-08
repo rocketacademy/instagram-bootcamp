@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   onChildAdded,
   push,
@@ -19,73 +19,80 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import PostForm from "./PostForm.js";
 import { Outlet } from "react-router-dom";
+import { UserContext } from "../App.js";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_IMAGES_KEY = "images";
 
-export default class Feed extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputRef = React.createRef();
-    this.state = {
-      messages: [],
-      message: "",
-      timestamp: "",
-      fileName: "",
-      fileInput: null,
-    };
-    // Initialised local state. When Firebase changes, local state is updated.
-  }
+export default function Feed(props) {
+  const inputRef = useRef(null);
+  const user = useContext(UserContext);
+  // Initialised local state. When Firebase changes, local state is updated.
+  const [loaded, setLoaded] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [timestamp, setTimestamp] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [fileInput, setFileInput] = useState(null);
 
-  componentDidMount() {
+  useEffect(() => {
+    console.log("on load", user.email);
+    loadMessages(user);
+  }, []);
+
+  useEffect(() => {
+    console.log("user changed to", user.email);
+    console.log("loaded?", loaded);
+    if (loaded && messages.length > 0) {
+      updateMessages(user);
+    }
+  }, [user.email]);
+
+  const loadMessages = (currentUser) => {
     const messagesRef = dbRef(database, DB_MESSAGES_KEY);
     onChildAdded(messagesRef, (data) => {
-      const currentUserEmail = this.props.email;
+      const currentUserEmail = currentUser.email;
       const likedUsers = data.val().likedUsers;
       const likedByCurrentUser = (likedUsers || []).includes(currentUserEmail);
-      // The added child is added to local state to trigger re-render
-      this.setState((state) => ({
-        messages: [
-          ...state.messages,
-          {
-            key: data.key,
-            message: data.val().message,
-            timestamp: data.val().timestamp,
-            fileDownloadURL: data.val().fileDownloadURL,
-            authorEmail: data.val().authorEmail,
-            authorID: data.val().authorID,
-            likes: data.val().likes,
-            likedUsers: likedUsers,
-            likedByCurrentUser: likedByCurrentUser,
-            likeButtonColor: likedByCurrentUser ? "#ff5151" : "#ffb5b5",
-          },
-        ],
-      }));
+      setMessages((messages) => [
+        ...messages,
+        {
+          key: data.key,
+          message: data.val().message,
+          timestamp: data.val().timestamp,
+          fileDownloadURL: data.val().fileDownloadURL,
+          authorEmail: data.val().authorEmail,
+          authorID: data.val().authorID,
+          likes: data.val().likes,
+          likedUsers: likedUsers,
+          likedByCurrentUser: likedByCurrentUser,
+          likeButtonColor: likedByCurrentUser ? "#ff5151" : "#ffb5b5",
+        },
+      ]);
     });
-  }
+    setLoaded(true);
+  };
 
-  componentDidUpdate(prevProps) {
-    if (this.props.uid !== prevProps.uid) {
-      const messagesToUpdate = [...this.state.messages];
-      for (const message of messagesToUpdate) {
-        message.likedByCurrentUser = (message.likedUsers || []).includes(
-          this.props.email
-        );
-        message.likeButtonColor = message.likedByCurrentUser
-          ? "#ff5151"
-          : "#ffb5b5";
-      }
-      this.setState({ messages: messagesToUpdate });
+  const updateMessages = (currentUser) => {
+    console.log("current user", currentUser);
+    const messagesToUpdate = [...messages];
+    for (const message of messagesToUpdate) {
+      message.likedByCurrentUser = (message.likedUsers || []).includes(
+        currentUser.email
+      );
+      console.log("updating to", message.likedByCurrentUser);
+      message.likeButtonColor = message.likedByCurrentUser
+        ? "#ff5151"
+        : "#ffb5b5";
     }
-  }
+    setMessages(messagesToUpdate);
+    console.log("called update message");
+  };
 
-  uploadFile = () => {
-    const fileRef = storageRef(
-      storage,
-      `${STORAGE_IMAGES_KEY}/${this.state.fileName}`
-    );
-    return uploadBytesResumable(fileRef, this.state.fileInput)
+  const uploadFile = () => {
+    const fileRef = storageRef(storage, `${STORAGE_IMAGES_KEY}/${fileName}`);
+    return uploadBytesResumable(fileRef, fileInput)
       .then((snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -99,22 +106,22 @@ export default class Feed extends React.Component {
       });
   };
 
-  writeData = (url) => {
+  const writeData = (url) => {
     const messageListRef = dbRef(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     return set(newMessageRef, {
-      message: this.state.message,
-      timestamp: this.state.timestamp,
+      message: message,
+      timestamp: timestamp,
       fileDownloadURL: url,
       likes: 0,
       likedUsers: [""],
-      authorEmail: this.props.email,
-      authorID: this.props.uid,
+      authorEmail: user.email,
+      authorID: user.uid,
     });
   };
 
-  renderMessageItems = () => {
-    let messageListItems = this.state.messages.map((item, index) => (
+  const renderMessageItems = () => {
+    let messageListItems = messages.map((item, index) => (
       <Card key={item.key}>
         <Card.Img
           variant="top"
@@ -122,7 +129,7 @@ export default class Feed extends React.Component {
           src={item.fileDownloadURL}
           alt={item.message}
           id={item.key}
-          onClick={this.props.onClick}
+          onClick={props.onClick}
         />
         <Card.Text key={`${item.key}-m`} className="message">
           {item.message}
@@ -154,8 +161,8 @@ export default class Feed extends React.Component {
               name={item.key}
               className="like-btn"
               variant="outline-danger"
-              onClick={this.handleLike}
-              disabled={!this.props.authenticated}
+              onClick={handleLike}
+              disabled={!user.email}
               style={{ color: item.likeButtonColor }}
             >
               ♥
@@ -167,44 +174,39 @@ export default class Feed extends React.Component {
     return messageListItems;
   };
 
-  handleTextChange = (e) => {
-    let { name, value } = e.target;
-    this.setState({ [name]: value });
+  const handleTextChange = (e) => {
+    setMessage(e.target.value);
   };
 
-  handleFileChange = (e) => {
-    this.setState({
-      fileInput: e.target.files[0],
-      fileName: e.target.files[0].name,
-    });
+  const handleFileChange = (e) => {
+    setFileInput(e.target.files[0]);
+    setFileName(e.target.files[0].name);
   };
 
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
+    setTimestamp(new Date().toLocaleString("en-GB"));
     e.preventDefault();
-    if (this.state.message.length === 0 || !this.state.fileInput) {
+    if (message.length === 0 || !fileInput) {
       alert("Upload something and write a message!");
       return;
     }
-    new Promise((resolve) => {
-      this.setState({ timestamp: new Date().toLocaleString("en-GB") }, resolve);
-    })
-      .then(this.uploadFile)
-      .then(this.writeData)
+
+    uploadFile()
+      .then(writeData)
       .then(() => {
-        this.setState({
-          message: "",
-          timestamp: "",
-          fileName: "",
-          fileInput: null,
-        });
-        this.inputRef.current.value = "";
+        setMessage("");
+        setTimestamp("");
+        setFileName("");
+        setFileInput(null);
+        console.log(inputRef);
+        inputRef.current.value = "";
       });
   };
 
-  handleLike = (e) => {
+  const handleLike = (e) => {
     let currentLikes;
     let currentLikedUsers;
-    const messagesToUpdate = [...this.state.messages];
+    const messagesToUpdate = [...messages];
     const indexOfLiked = messagesToUpdate
       .map((message) => message.key)
       .indexOf(e.target.name);
@@ -220,10 +222,10 @@ export default class Feed extends React.Component {
     if (!likedMessage.likedByCurrentUser) {
       update(likedMessageRef, {
         likes: currentLikes + 1,
-        likedUsers: [...currentLikedUsers, this.props.email],
+        likedUsers: [...currentLikedUsers, user.email],
       });
       likedMessage.likes += 1;
-      likedMessage.likedUsers = [...likedMessage.likedUsers, this.props.email];
+      likedMessage.likedUsers = [...likedMessage.likedUsers, user.email];
       likedMessage.likedByCurrentUser = true;
       likedMessage.likeButtonColor = "#ff5151";
     } else {
@@ -232,30 +234,30 @@ export default class Feed extends React.Component {
         likedUsers: [...currentLikedUsers.slice(0, -1)],
       });
       likedMessage.likes -= 1;
-      likedMessage.likedUsers = [...likedMessage.likedUsers.slice(0, -1)];
+      likedMessage.likedUsers = [...likedMessage.likedUsers].filter(
+        (userEmail) => userEmail !== user.email
+      );
       likedMessage.likedByCurrentUser = false;
       likedMessage.likeButtonColor = "#ffb5b5";
     }
-    this.setState({ messages: messagesToUpdate });
+    setMessages(messagesToUpdate);
   };
 
-  render() {
-    return (
-      <div className="feed">
-        <div className="container">
-          {this.renderMessageItems()}
-          {this.props.authenticated && (
-            <PostForm
-              handleFileChange={this.handleFileChange}
-              handleTextChange={this.handleTextChange}
-              message={this.state.message}
-              inputRef={this.inputRef}
-              handleSubmit={this.handleSubmit}
-            />
-          )}
-          <Outlet />
-        </div>
+  return (
+    <div className="feed">
+      <div className="container">
+        {renderMessageItems()}
+        {user.email && (
+          <PostForm
+            handleFileChange={handleFileChange}
+            handleTextChange={handleTextChange}
+            message={message}
+            inputRef={inputRef}
+            handleSubmit={handleSubmit}
+          />
+        )}
+        <Outlet />
       </div>
-    );
-  }
+    </div>
+  );
 }

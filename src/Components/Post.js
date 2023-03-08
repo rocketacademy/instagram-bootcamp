@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
 import { useNavigate, useParams } from "react-router-dom";
 import { database } from "../firebase.js";
 import { ref, get, child } from "firebase/database";
@@ -67,7 +64,7 @@ export default function Post(props) {
   return (
     <>
       <Button variant="light" onClick={() => navigate("/")}>
-        ⇐ Take me back
+        ↼ Back to feed
       </Button>
       {isLoading ? "Loading..." : renderPost(postData)}
     </>
