@@ -1,60 +1,133 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+import React, { useState, useEffect } from "react";
+import NavBar from "./Components/NavBar.js";
+import Feed from "./Components/Feed.js";
+import LoginForm from "./Components/LoginForm.js";
+import { auth } from "./firebase.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
+import PostWithComments from "./Components/PostWithComments.js";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+export const UserContext = React.createContext({ email: null });
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      messages: [],
-    };
-  }
+export default function App() {
+  const [loginFormShow, setLoginFormShow] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState({});
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
+  useEffect(() => {
+    if (!authenticated) {
+      navigate("/login-signup");
+    } else {
+      navigate("/");
+    }
+  }, [authenticated]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthenticated(true);
+        setLoginFormShow(false);
+        setUser(user);
+      } else {
+        setAuthenticated(false);
+        setLoginFormShow(true);
+        setUser({ email: null });
+      }
     });
-  }
+  }, []);
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+  const handleLoginInput = (name, value) => {
+    if (name === "email") {
+      setEmail(value);
+    } else if (name === "password") {
+      setPassword(value);
+    }
   };
 
-  render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
-      </div>
-    );
-  }
-}
+  const handleLoginOrSignUp = (e) => {
+    if (e.target.id === "login") {
+      signInUser(email, password);
+      navigate("/");
+    } else if (e.target.id === "sign-up") {
+      signUpUser(email, password);
+      navigate("/");
+    }
+  };
 
-export default App;
+  const signUpUser = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+      showAlert(error);
+    });
+  };
+
+  const signInUser = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password).catch((error) => {
+      showAlert(error);
+    });
+  };
+
+  const signOutUser = () => {
+    signOut(auth).catch((error) => {
+      showAlert(error);
+    });
+  };
+
+  const showAlert = (error) => {
+    const errorCode = error.code;
+    const errorMessage = errorCode.split("/")[1].replaceAll("-", " ");
+    alert(`Wait a minute... an error occurred: ${errorMessage}`);
+  };
+
+  return (
+    <div className="App">
+      <UserContext.Provider value={user}>
+        <header className="App-header">
+          <NavBar
+            user={user}
+            authenticated={authenticated}
+            loginFormShow={loginFormShow}
+            signOutUser={signOutUser}
+            setLoginFormShow={() => {
+              setLoginFormShow(true);
+              navigate("login-signup");
+            }}
+          />
+          <Routes>
+            <Route path="/" element={<Feed />}>
+              <Route
+                path="login-signup"
+                element={
+                  authenticated ? (
+                    <Navigate to="/" />
+                  ) : (
+                    <LoginForm
+                      show={true}
+                      onHide={() => {
+                        setLoginFormShow(false);
+                        navigate("/");
+                      }}
+                      onChange={handleLoginInput}
+                      email={email}
+                      password={password}
+                      onClick={handleLoginOrSignUp}
+                    />
+                  )
+                }
+              />
+            </Route>
+            <Route path="posts/:postId" element={<PostWithComments />} />
+          </Routes>
+        </header>
+      </UserContext.Provider>
+    </div>
+  );
+}

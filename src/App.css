@@ -1,19 +1,244 @@
+* {
+  font-size: calc(10px + 1vmin);
+  color: #000000;
+  font-family: "Nunito", sans-serif;
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App-header {
+  background-color: #132743;
+  min-height: 100vh;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.modal-content {
+  background-color: #f6f1e8;
+}
+
+.feed {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+}
+
+.App-logo {
+  height: 50px;
+  pointer-events: none;
+  margin-left: 2vmin;
+}
+
+.navbar {
+  align-items: center;
+  margin-bottom: 2vmin;
+}
+
+.form-control {
+  margin: 0.5vmin 0;
+}
+
+.post-form {
+  min-height: 90px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.form-label {
+  margin: 0;
+}
+
+#login-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 3vmin;
+}
+
+.login-input {
+  margin-bottom: 1vmin;
+}
+
+.alert {
+  z-index: 99;
+  position: fixed;
+  top: 40vh;
+  bottom: 40vh;
+  left: 30vw;
+  right: 30vw;
+}
+
+.btn-light {
+  height: 37px;
+  font-size: smaller;
+  margin-bottom: 2vmin;
+}
+
+.btn-primary {
+  background-color: #132743;
+  border: none;
+}
+
+.btn-primary #login {
+  margin: 1vmin 4vmin 0 0;
+}
+
+.like-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.like-btn {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffb5b5;
+  border: none;
+  width: 20px;
+  height: 30px;
+  padding: 0;
+}
+
+.like-btn:hover {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ff5151;
+  animation: expand 0.3s;
+  animation-iteration-count: 1;
+}
+
+.likes {
+  padding: 0 8px 0 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  font-size: calc(10px + 0.8vmin);
+}
+
+.liked-users {
+  color: #ffffff;
+  font-size: small;
+}
+
+@keyframes expand {
+  from {
+    scale: 0.9;
+  }
+  to {
+    scale: 1.2;
+  }
+}
+
+input {
+  width: 100%;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 300px 300px 300px;
+  grid-template-rows: auto;
+  grid-gap: 5vw;
+  justify-content: center;
+  margin-bottom: 10vh;
+}
+
+.card {
+  width: 300px;
+  padding: 1.5vmin;
+  margin: 0 auto;
+  background-color: #ffefeb;
+  border-bottom: 0.5vmin solid #eec7b275;
+  justify-content: space-between;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  background-color: #ffefeb;
+}
+
+.footer-data > .timestamp,
+.auth-email {
+  font-size: calc(8px + 0.4vmin);
+  color: #132743;
+  font-weight: 300;
+}
+
+.footer-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.message {
+  text-align: left;
+  font-weight: 500;
+}
+
+.card-img-top {
+  margin: 0 0 1vmin 0;
+}
+
+/* .post {
+  margin: 1vmin 0;
+}
+
+.post > .post-data,
+.post > .post-likes,
+.post > .post-message {
+  color: #dbd9d3;
+  margin: 1vmin 0;
+  padding: 2vmin 0;
+  font-size: calc(10px + 1.5vmin);
+}
+.post > .post-likes > .post-liked {
+  color: #dbd9d3;
+  font-size: calc(10px + 1.2vmin);
+  font-weight: 600;
+}
+
+.post img {
+  max-height: 60vh;
+  max-width: 95vw;
+}
+
+.post > .post-likes {
+  background-color: #00000050;
+} */
+
+@media only screen and (max-width: 1000px) {
+  .App-logo {
+    height: 45px;
+    pointer-events: none;
+    margin-left: 1vmin;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 300px 300px;
+    grid-template-rows: auto;
+    grid-gap: 5vw;
+    justify-content: center;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .navbar-brand {
+    margin-right: 0;
+  }
+
+  .App-logo {
+    height: 35px;
+    pointer-events: none;
+    margin-left: 1vmin;
+  }
+  .container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    margin-bottom: 5vh;
+  }
 }
