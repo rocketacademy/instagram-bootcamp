@@ -1,12 +1,12 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
+import { initializeApp } from "firebase/app";
 import { database } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -14,6 +14,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      inputMessage: "",
     };
   }
 
@@ -33,7 +34,13 @@ class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    set(newMessageRef, this.state.inputMessage);
+  };
+
+  handleInputChange = (e) => {
+    this.setState({
+      inputMessage: e.target.value,
+    });
   };
 
   render() {
@@ -49,6 +56,7 @@ class App extends React.Component {
             Edit <code>src/App.js</code> and save to reload.
           </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
+          <input type="text" onChange={this.handleInputChange}></input>
           <button onClick={this.writeData}>Send</button>
           <ol>{messageListItems}</ol>
         </header>
