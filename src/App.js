@@ -36,7 +36,12 @@ class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, { text: this.state.inputMessage, date: "today" });
+    const currentDate = new Date();
+    console.log(currentDate);
+    set(newMessageRef, {
+      text: this.state.inputMessage,
+      date: currentDate.toLocaleString("en-GB").slice(0, -3),
+    });
   };
 
   handleInputChange = (e) => {
