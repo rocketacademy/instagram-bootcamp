@@ -2,7 +2,6 @@ import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import { database } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -25,7 +24,10 @@ class App extends React.Component {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       this.setState((state) => ({
         // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
+        messages: [
+          ...state.messages,
+          { key: data.key, text: data.val().text, date: data.val().date },
+        ],
       }));
     });
   }
@@ -34,7 +36,7 @@ class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, this.state.inputMessage);
+    set(newMessageRef, { text: this.state.inputMessage, date: "today" });
   };
 
   handleInputChange = (e) => {
@@ -46,19 +48,17 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <div key={message.key} className="message-bubble">
+        <div>{message.text}</div>
+        <div className="message-date">{message.date}</div>
+      </div>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
           <input type="text" onChange={this.handleInputChange}></input>
           <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+          <div className="message-container">{messageListItems}</div>
         </header>
       </div>
     );
