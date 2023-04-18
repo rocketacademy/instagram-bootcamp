@@ -11,6 +11,8 @@ import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
+const STORE_IMAGE_KEY = "images";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -32,43 +34,60 @@ class App extends React.Component {
         // Store post key so we can use it as a key in our list items when rendering posts
         posts: [
           ...state.posts,
-          { key: data.key, text: data.val().text, date: data.val().date },
+          {
+            key: data.key,
+            text: data.val().text,
+            date: data.val().date,
+            imgURL: data.val().imgURL,
+          },
         ],
       }));
     });
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  writeData = (callback) => {
     const postListRef = ref(database, DB_POSTS_KEY);
+    // push creates a key for the new post in the database
     const newPostRef = push(postListRef);
-    // const fileRef = storeRef(storage, ``)
+    console.log("newPostRef: ", newPostRef);
+    // TODO: add conditional check to see  if there is a file upload
+    const fileRef = storeRef(
+      storage,
+      `${STORE_IMAGE_KEY}/${this.state.file.name}`
+    );
     const currentDate = new Date();
-    set(newPostRef, {
-      text: this.state.inputMessage,
-      date: currentDate.toLocaleString("en-GB").slice(0, -3),
+    uploadBytesResumable(fileRef, this.state.file).then(() => {
+      getDownloadURL(fileRef).then((url) => {
+        set(newPostRef, {
+          text: this.state.inputMessage,
+          date: currentDate.toLocaleString("en-GB").slice(0, -3),
+          imgURL: url,
+        });
+        callback();
+      });
+    });
+  };
+
+  handleInputSubmit = (e) => {
+    e.preventDefault();
+    // TODO: figure out how to use promises correctly
+    const finishDataWrite = new Promise((resolve) => {
+      console.log("Promise created");
+      this.writeData(resolve);
+    });
+    finishDataWrite.then(() => {
+      console.log("Executing setState"); // this never runs because the promise is not set up correctly
+      // reset input text form after submitting
+      this.setState({
+        inputMessage: "",
+      });
     });
   };
 
   handleInputChange = (e) => {
     this.setState({
       inputMessage: e.target.value,
-    });
-  };
-
-  handleInputSubmit = (e) => {
-    e.preventDefault();
-    const finishDataWrite = new Promise((resolve) => {
-      console.log("Promise created");
-      this.writeData();
-      resolve();
-    });
-    finishDataWrite.then(() => {
-      console.log("Executing setState");
-      // reset input text form after submitting
-      this.setState({
-        inputMessage: "",
-      });
     });
   };
 
@@ -83,6 +102,7 @@ class App extends React.Component {
     // Convert messages in state to message JSX elements to render
     let postListItems = this.state.posts.map((post) => (
       <div key={post.key} className="post-bubble">
+        <img src={post.imgURL} alt="user-content" />
         <div>{post.text}</div>
         <div className="post-date">{post.date}</div>
       </div>
