@@ -17,14 +17,14 @@
   color: white;
 }
 
-.message-bubble {
+.post-bubble {
   outline: 0.1em white solid;
   padding: 1em;
   margin: 1em;
   background-color: #515f7b;
 }
 
-.message-date {
+.post-date {
   font-style: italic;
   color: #a6b3cb;
   font-size: 0.8em;
