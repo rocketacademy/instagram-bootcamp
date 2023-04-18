@@ -1,11 +1,18 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { initializeApp } from "firebase/app";
+import {
+  onChildAdded,
+  onChildRemoved,
+  push,
+  ref,
+  remove,
+  set,
+} from "firebase/database";
 import { database, storage } from "./firebase";
 import {
   ref as storeRef,
   uploadBytesResumable,
   getDownloadURL,
+  deleteObject,
 } from "firebase/storage";
 import "./App.css";
 
@@ -39,9 +46,18 @@ class App extends React.Component {
             text: data.val().text,
             date: data.val().date,
             imgURL: data.val().imgURL,
+            imgID: data.val().imgID,
           },
         ],
       }));
+    });
+    onChildRemoved(postsRef, (removedPost) => {
+      const remainingPosts = this.state.posts.filter((post) => {
+        return post.key !== removedPost.key;
+      });
+      this.setState({
+        posts: remainingPosts,
+      });
     });
   }
 
@@ -54,16 +70,16 @@ class App extends React.Component {
     const currentDate = new Date();
     // if there is a file upload
     if (this.state.file) {
-      const fileRef = storeRef(
-        storage,
-        `${STORE_IMAGE_KEY}/${this.state.file.name}`
-      );
+      // make each imgID unique based on the date
+      const imgID = this.state.file.name + JSON.stringify(new Date());
+      const fileRef = storeRef(storage, `${STORE_IMAGE_KEY}/${imgID}`);
       uploadBytesResumable(fileRef, this.state.file).then(() => {
         getDownloadURL(fileRef).then((url) => {
           set(newPostRef, {
             text: this.state.inputMessage,
             date: currentDate.toLocaleString("en-GB").slice(0, -3),
             imgURL: url,
+            imgID: imgID,
           });
           callback();
         });
@@ -79,7 +95,8 @@ class App extends React.Component {
 
   handleInputSubmit = (e) => {
     e.preventDefault();
-    // TODO: figure out how to use promises correctly
+    console.log("e: ", e);
+    e.target[0].value = null;
     const finishDataWrite = new Promise((resolve) => {
       console.log("Promise created");
       this.writeData(resolve);
@@ -107,6 +124,20 @@ class App extends React.Component {
     });
   };
 
+  handleDelete = (e) => {
+    const id = e.target.id;
+    const postRef = ref(database, `${DB_POSTS_KEY}/${id}`);
+    remove(postRef);
+    const imgID = e.target.getAttribute("img-id");
+    if (imgID) {
+      const imageRef = storeRef(
+        storage,
+        `${STORE_IMAGE_KEY}/${e.target.getAttribute("img-id")}`
+      );
+      deleteObject(imageRef);
+    }
+  };
+
   render() {
     // Convert messages in state to message JSX elements to render
     let postListItems = this.state.posts.map((post) => (
@@ -114,6 +145,9 @@ class App extends React.Component {
         {post.imgURL && <img src={post.imgURL} alt="user-content" />}
         <div>{post.text}</div>
         <div className="post-date">{post.date}</div>
+        <button onClick={this.handleDelete} id={post.key} img-id={post.imgID}>
+          Delete
+        </button>
       </div>
     ));
     return (
