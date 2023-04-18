@@ -51,22 +51,30 @@ class App extends React.Component {
     // push creates a key for the new post in the database
     const newPostRef = push(postListRef);
     console.log("newPostRef: ", newPostRef);
-    // TODO: add conditional check to see  if there is a file upload
-    const fileRef = storeRef(
-      storage,
-      `${STORE_IMAGE_KEY}/${this.state.file.name}`
-    );
     const currentDate = new Date();
-    uploadBytesResumable(fileRef, this.state.file).then(() => {
-      getDownloadURL(fileRef).then((url) => {
-        set(newPostRef, {
-          text: this.state.inputMessage,
-          date: currentDate.toLocaleString("en-GB").slice(0, -3),
-          imgURL: url,
+    // if there is a file upload
+    if (this.state.file) {
+      const fileRef = storeRef(
+        storage,
+        `${STORE_IMAGE_KEY}/${this.state.file.name}`
+      );
+      uploadBytesResumable(fileRef, this.state.file).then(() => {
+        getDownloadURL(fileRef).then((url) => {
+          set(newPostRef, {
+            text: this.state.inputMessage,
+            date: currentDate.toLocaleString("en-GB").slice(0, -3),
+            imgURL: url,
+          });
+          callback();
         });
-        callback();
       });
-    });
+    } else {
+      set(newPostRef, {
+        text: this.state.inputMessage,
+        date: currentDate.toLocaleString("en-GB").slice(0, -3),
+      });
+      callback();
+    }
   };
 
   handleInputSubmit = (e) => {
@@ -81,6 +89,7 @@ class App extends React.Component {
       // reset input text form after submitting
       this.setState({
         inputMessage: "",
+        file: null,
       });
     });
   };
@@ -102,7 +111,7 @@ class App extends React.Component {
     // Convert messages in state to message JSX elements to render
     let postListItems = this.state.posts.map((post) => (
       <div key={post.key} className="post-bubble">
-        <img src={post.imgURL} alt="user-content" />
+        {post.imgURL && <img src={post.imgURL} alt="user-content" />}
         <div>{post.text}</div>
         <div className="post-date">{post.date}</div>
       </div>
