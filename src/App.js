@@ -88,6 +88,7 @@ class App extends React.Component {
               value={this.state.input}
               onChange={this.handleChange}
               autoComplete="off"
+              placeholder="Type here"
             ></input>
             <input type="submit" value="⬆" />
           </form>

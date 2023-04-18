@@ -2,6 +2,8 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .App {
@@ -62,7 +64,9 @@
 
 .message-meta {
   margin-top: 7px;
+  letter-spacing: 0px;
   font-size: 12px;
+  color: rgb(255, 255, 255, 0.5);
 }
 
 form {
@@ -78,6 +82,10 @@ input[type="text"] {
   border: none;
   padding: 15px 15px;
   padding-right: 40px;
+}
+
+input[type="text"]::placeholder {
+  color: rgb(0, 0, 0, 0.3);
 }
 
 input[type="submit"] {
