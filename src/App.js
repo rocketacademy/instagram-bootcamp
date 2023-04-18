@@ -1,5 +1,5 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
 import { MessageBubble } from "./Components/MessageBubble";
@@ -76,8 +76,8 @@ class App extends React.Component {
           <ul className="messages">
             {messageListItems}
             <li
-              ref={(el) => {
-                this.messagesEnd = el;
+              ref={(e) => {
+                this.messagesEnd = e;
               }}
             ></li>
           </ul>

@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 const days = [
   "Sunday",
   "Monday",
@@ -21,10 +23,14 @@ const MessageBubble = (props) => {
     days[date.getDay()]
   } ${hour}:${date.getMinutes()} ${ampm}`;
   return (
-    <li className="message">
+    <motion.li
+      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      className="message"
+    >
       <p className="message-bubble">{props.children.val.content}</p>
       <p className="message-meta">{displayDate}</p>
-    </li>
+    </motion.li>
   );
 };
 
