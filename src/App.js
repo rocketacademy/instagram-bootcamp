@@ -13,6 +13,7 @@ import {
   getDownloadURL,
   ref as storeRef,
   uploadBytesResumable,
+  deleteObject,
 } from "firebase/storage";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -100,8 +101,11 @@ class App extends React.Component {
 
   handleDelete = (e) => {
     const id = e.target.parentElement.id;
-    const messageRef = ref(database, `${DB_POSTS_KEY}/${id}`);
-    remove(messageRef);
+    const imgURL = e.target.parentElement.querySelector("img").src;
+    const postRef = ref(database, `${DB_POSTS_KEY}/${id}`);
+    const imageRef = storeRef(storage, imgURL);
+    remove(postRef);
+    deleteObject(imageRef);
   };
 
   componentDidUpdate() {
@@ -121,7 +125,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="phone">
-          <ul className="messages">
+          <ul className="posts">
             {messageListItems}
             <li
               ref={(e) => {
@@ -130,7 +134,17 @@ class App extends React.Component {
             ></li>
           </ul>
           <form onSubmit={this.handleSubmit}>
-            <input name="image" type="file" onChange={this.handleFileChange} />
+            <label
+              htmlFor="image-upload"
+              className={`image-upload ${this.state.file && "complete"}`}
+            >
+              {this.state.file ? "✓" : "+"}
+            </label>
+            <input
+              id="image-upload"
+              type="file"
+              onChange={this.handleFileChange}
+            />
             <input
               name="input"
               type="text"

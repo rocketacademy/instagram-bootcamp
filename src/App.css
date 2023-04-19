@@ -30,7 +30,7 @@
   overflow: hidden;
 }
 
-.messages {
+.posts {
   list-style-type: none;
   display: flex;
   flex-direction: column;
@@ -43,40 +43,69 @@
   scrollbar-width: thin;
 }
 
-.messages::-webkit-scrollbar {
+.posts::-webkit-scrollbar {
   display: none;
 }
 
-.message {
+.post {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  position: relative;
+  overflow: visible;
 }
 
-.message-bubble {
+.post-content {
   font-size: 20px;
   background-color: #1982fc;
-  padding: 10px 15px 10px;
+  padding: 10px;
   border-radius: 10px;
   width: fit-content;
   text-align: left;
 }
 
-.message-bubble img {
+.post-content img {
   width: 100%;
   border-radius: 5px;
 }
 
-.message-meta {
+.post-meta {
   margin-top: 7px;
   letter-spacing: 0px;
   font-size: 12px;
   color: rgb(255, 255, 255, 0.5);
 }
 
+.post button {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  color: white;
+  background: red;
+  border: none;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+  top: 3px;
+  right: 3px;
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.post button:hover {
+  opacity: 1;
+}
+
 form {
   width: 100%;
   position: relative;
+}
+
+#image-upload {
+  display: none;
 }
 
 input[type="text"] {
@@ -85,15 +114,15 @@ input[type="text"] {
   height: 36px;
   border-radius: 18px;
   border: none;
-  padding: 15px 15px;
-  padding-right: 40px;
+  padding: 15px 40px;
 }
 
 input[type="text"]::placeholder {
   color: rgb(0, 0, 0, 0.3);
 }
 
-input[type="submit"] {
+input[type="submit"],
+.image-upload {
   position: absolute;
   height: 30px;
   width: 30px;
@@ -104,7 +133,24 @@ input[type="submit"] {
   border: none;
   background-color: #1982fc;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+}
+
+input[type="submit"] {
   right: 3px;
+}
+
+.image-upload {
+  left: 3px;
+  font-size: 25px;
+  padding-bottom: 4px;
+}
+
+.complete {
+  background: green;
 }
 
 input:focus {

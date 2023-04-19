@@ -26,17 +26,17 @@ const Post = (props) => {
     <motion.li
       animate={{ opacity: 1, y: 0 }}
       initial={{ opacity: 0, y: 20 }}
-      className="message"
+      className="post"
       id={props.children.key}
     >
-      <div className="message-bubble">
+      <div className="post-content">
         {props.children.val.imgURL && (
           <img src={props.children.val.imgURL} alt="cool thing" />
         )}
         <p>{props.children.val.content}</p>
       </div>
-      <p className="message-meta">{displayDate}</p>
-      <button onClick={props.handleDelete}>Delete</button>
+      <p className="post-meta">{displayDate}</p>
+      <button onClick={props.handleDelete}>𐄂</button>
     </motion.li>
   );
 };
