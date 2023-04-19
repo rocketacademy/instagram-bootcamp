@@ -1,11 +1,23 @@
 import React from "react";
-import { onChildAdded, push, ref } from "firebase/database";
-import { database } from "./firebase";
+import {
+  onChildAdded,
+  onChildRemoved,
+  push,
+  remove,
+  ref,
+} from "firebase/database";
+import { database, storage } from "./firebase";
 import "./App.css";
-import { MessageBubble } from "./Components/MessageBubble";
+import { Post } from "./Components/Post";
+import {
+  getDownloadURL,
+  ref as storeRef,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+const DB_POSTS_KEY = "posts";
+const DB_IMAGES_KEY = "images";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,11 +27,12 @@ class App extends React.Component {
     this.state = {
       messages: [],
       input: "",
+      file: null,
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const messagesRef = ref(database, DB_POSTS_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -27,27 +40,48 @@ class App extends React.Component {
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
-      console.log(data.val());
+    });
+    onChildRemoved(messagesRef, (data) => {
+      const remainingMessages = this.state.messages.filter(
+        (messages) => messages.key !== data.key
+      );
+      this.setState({
+        messages: remainingMessages,
+      });
     });
   }
 
-  writeData = (message) => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
+  writeData = (message, file) => {
+    const postListRef = ref(database, DB_POSTS_KEY);
     const date = new Date();
-    const messageLog = {
-      content: message,
-      date: JSON.stringify(date),
-    };
-    push(messageListRef, messageLog);
-    // const newMessageRef = push(messageListRef, messageLog);
-    // set(newMessageRef, messageLog);
+    if (file) {
+      const imageRef = storeRef(storage, `${DB_IMAGES_KEY}/${file.name}`);
+      //Images upload
+      uploadBytesResumable(imageRef, file).then(() => {
+        getDownloadURL(imageRef).then((url) => {
+          const postLog = {
+            content: message,
+            imgURL: url,
+            date: JSON.stringify(date),
+          };
+          push(postListRef, postLog);
+        });
+      });
+    } else {
+      const postLog = {
+        content: message,
+        date: JSON.stringify(date),
+      };
+      push(postListRef, postLog);
+    }
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    this.writeData(this.state.input);
+    await this.writeData(this.state.input, this.state.file);
     this.setState({
       input: "",
+      file: null,
     });
   };
 
@@ -56,6 +90,18 @@ class App extends React.Component {
     this.setState({
       [name]: value,
     });
+  };
+
+  handleFileChange = (e) => {
+    this.setState({
+      file: e.target.files[0],
+    });
+  };
+
+  handleDelete = (e) => {
+    const id = e.target.parentElement.id;
+    const messageRef = ref(database, `${DB_POSTS_KEY}/${id}`);
+    remove(messageRef);
   };
 
   componentDidUpdate() {
@@ -68,7 +114,9 @@ class App extends React.Component {
 
   render() {
     let messageListItems = this.state.messages.map((message) => (
-      <MessageBubble key={message.key}>{message}</MessageBubble>
+      <Post key={message.key} handleDelete={this.handleDelete}>
+        {message}
+      </Post>
     ));
     return (
       <div className="App">
@@ -82,6 +130,7 @@ class App extends React.Component {
             ></li>
           </ul>
           <form onSubmit={this.handleSubmit}>
+            <input name="image" type="file" onChange={this.handleFileChange} />
             <input
               name="input"
               type="text"
@@ -89,7 +138,8 @@ class App extends React.Component {
               onChange={this.handleChange}
               autoComplete="off"
               placeholder="Type here"
-            ></input>
+            />
+
             <input type="submit" value="⬆" />
           </form>
         </div>
