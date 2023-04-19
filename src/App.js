@@ -1,12 +1,17 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import {
+  onChildAdded,
+  push,
+  ref as databaseRef,
+  set,
+  update,
+} from "firebase/database";
 import { database, storage } from "./firebase";
 import {
-  ref as storeRef,
+  ref as storageRef,
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
-import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -22,11 +27,14 @@ class App extends React.Component {
       messages: [],
       messageInput: "",
       fileInput: null,
+      fileInputValue: "",
+      isMessageLiked: false,
+      numberOfLikes: 0,
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const messagesRef = databaseRef(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
@@ -44,18 +52,24 @@ class App extends React.Component {
   //   set(newMessageRef, "abc");
   // };
 
-  handleChange = (e) => {
+  handleMessageInputChange = (e) => {
     const { value } = e.target;
     this.setState({
       messageInput: value,
     });
   };
 
+  handleFileInputChange = (e) => {
+    this.setState({
+      fileInput: e.target.files[0],
+      fileInputValue: e.target.value,
+    });
+  };
+
   handleSubmit = (e) => {
     e.preventDefault();
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    const fileRef = storeRef(
+
+    const fileRef = storageRef(
       storage,
       `${STORE_FILES_KEY}/${this.state.fileInput.name}`
     );
@@ -63,18 +77,27 @@ class App extends React.Component {
     // Trying to add date (unsuccessfully)
     // const newMessageRef = push(messageListRef);
     // console.log("newMessageRef: ", newMessageRef);
-    const timestamp = new Date();
-    console.log(timestamp.toLocaleString("en-GB").slice(0, -3));
+
+    // console.log(timestamp.toLocaleString("en-GB").slice(0, -3));
 
     uploadBytesResumable(fileRef, this.state.fileInput).then(() => {
       getDownloadURL(fileRef).then((url) => {
+        const messageListRef = databaseRef(database, DB_MESSAGES_KEY);
+        const newMessageRef = push(messageListRef);
+        const timestamp = new Date();
         const newMessage = {
-          message: this.state.messageInput,
+          text: this.state.messageInput,
           timestamp: timestamp.toLocaleString("en-GB").slice(0, -3),
-          file: url,
+          fileLink: url,
+          likes: this.state.numberOfLikes,
         };
         set(newMessageRef, newMessage).then(() => {
-          this.setState({ messageInput: "", fileInput: null });
+          this.setState({
+            messageInput: "",
+            fileInput: null,
+            fileInputValue: "",
+            isMessageLiked: false,
+          });
         });
       });
     });
@@ -82,49 +105,85 @@ class App extends React.Component {
     // push(messageListRef, newMessage);
   };
 
-  handleFileChange = (e) => {
+  // TODO: Fix like button
+  // Only incrementing on refresh
+  handleLikeClick = (e) => {
+    console.log("Add a like");
+    const { id } = e.target;
+    console.log(id);
+    const incrementLikes = this.state.numberOfLikes + 1;
     this.setState({
-      fileInput: e.target.files[0],
+      isMessageLiked: true,
+      numberOfLikes: incrementLikes,
     });
+
+    const likesRef = databaseRef(database, `${DB_MESSAGES_KEY}/${id}`);
+    const updatedLikes = { likes: incrementLikes };
+    update(likesRef, updatedLikes);
+
+    // handleDislikeClick = () => {
+    //   console.log("Remove a like");
+    //   const decrementLikes = this.state.numberOfLikes - 1;
+    //   this.setState({
+    //     isPostLiked: false,
+    //     numberOfLikes: decrementLikes,
+    //   });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <div>
-        <li key={message.key}>
-          {message.val.message} {message.val.timestamp}
-        </li>
+        <li key={message.key}>{message.val.text}</li>
+        <p>{message.val.timestamp}</p>
         <img
-          src={message.val.file}
+          src={message.val.fileLink}
           alt="beautiful sunset"
           width="50vw"
           height="30vh"
         />
+        <button
+          id={message.key}
+          value={this.state.isMessageLiked}
+          onClick={this.handleLikeClick}
+        >
+          👍 {message.val.likes}
+        </button>
+        {/* <button
+          id="dislikeButton"
+          value={this.state.isPostDisliked}
+          onClick={this.handleDislikeClick}
+        >
+          👎
+        </button> */}
       </div>
     ));
+    messageListItems.reverse();
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
           <form onSubmit={this.handleSubmit}>
             <input
-              type="text"
-              value={this.state.messageInput}
-              placeholder="Type something..."
-              onChange={this.handleChange}
-            />
-            <input type="submit" value="➤" />
-            <br />
-            <input
               id="fileInput"
               type="file"
-              onChange={this.handleFileChange}
+              value={this.state.fileInputValue}
+              onChange={this.handleFileInputChange}
             />
+            <br />
+            <input
+              type="text"
+              id="messageInput"
+              value={this.state.messageInput}
+              placeholder="Type something..."
+              onChange={this.handleMessageInputChange}
+            />
+            <input
+              type="submit"
+              value="➤"
+              disabled={!this.state.messageInput}
+            />
+            <br />
 
             {/* <button onClick={this.writeData}>Send</button> */}
           </form>
