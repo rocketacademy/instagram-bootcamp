@@ -1,14 +1,22 @@
 import React from "react";
+import "./App.css";
+
+// Firebase tools
+import { database, storage, auth } from "./firebase";
 import {
   onChildAdded,
   onChildRemoved,
   push,
   remove,
   ref,
+  update,
 } from "firebase/database";
-import { database, storage } from "./firebase";
-import "./App.css";
-import { Post } from "./Components/Post";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import {
   getDownloadURL,
   ref as storeRef,
@@ -16,63 +24,82 @@ import {
   deleteObject,
 } from "firebase/storage";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
+// Components
+import Post from "./Components/Post/Post";
+import SignUpForm from "./Components/SignUp";
+import PostComposer from "./Components/PostComposer";
+
+// Firebase paths
 const DB_POSTS_KEY = "posts";
 const DB_IMAGES_KEY = "images";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
+    // Initialise empty posts array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      posts: [],
       input: "",
       file: null,
+      uid: null,
+      userEmail: null,
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_POSTS_KEY);
+    const postsRef = ref(database, DB_POSTS_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
+    onChildAdded(postsRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
+        // Store message key so we can use it as a key in our list items when rendering posts
+        posts: [...state.posts, { key: data.key, val: data.val() }],
       }));
     });
-    onChildRemoved(messagesRef, (data) => {
-      const remainingMessages = this.state.messages.filter(
-        (messages) => messages.key !== data.key
+    onChildRemoved(postsRef, (data) => {
+      const remainingPosts = this.state.posts.filter(
+        (posts) => posts.key !== data.key
       );
       this.setState({
-        messages: remainingMessages,
+        posts: remainingPosts,
       });
+    });
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        this.setState({
+          uid: uid,
+          userEmail: user.email,
+        });
+      }
     });
   }
 
   writeData = (message, file) => {
     const postListRef = ref(database, DB_POSTS_KEY);
     const date = new Date();
+    const postLog = {
+      creator: "Anonymous",
+      uid: null,
+      content: message,
+      date: JSON.stringify(date),
+      likes: 0,
+    };
+    if (this.state.userEmail) {
+      postLog.creator = this.state.userEmail;
+      postLog.uid = this.state.uid;
+    }
     if (file) {
       const imageRef = storeRef(storage, `${DB_IMAGES_KEY}/${file.name}`);
       //Images upload
       uploadBytesResumable(imageRef, file).then(() => {
         getDownloadURL(imageRef).then((url) => {
-          const postLog = {
-            content: message,
-            imgURL: url,
-            date: JSON.stringify(date),
-          };
+          postLog.imgURL = url;
           push(postListRef, postLog);
         });
       });
     } else {
-      const postLog = {
-        content: message,
-        date: JSON.stringify(date),
-      };
       push(postListRef, postLog);
     }
   };
@@ -100,12 +127,45 @@ class App extends React.Component {
   };
 
   handleDelete = (e) => {
-    const id = e.target.parentElement.id;
-    const imgURL = e.target.parentElement.querySelector("img").src;
+    const post = e.target.parentElement;
+    const id = post.id;
     const postRef = ref(database, `${DB_POSTS_KEY}/${id}`);
-    const imageRef = storeRef(storage, imgURL);
+    if (post.querySelector(".post-image")) {
+      const imgURL = post.querySelector(".post-image").src;
+      const imageRef = storeRef(storage, imgURL);
+      deleteObject(imageRef);
+    }
     remove(postRef);
-    deleteObject(imageRef);
+  };
+
+  handleLikes = (e) => {
+    const id = e.target.offsetParent.id;
+    const postRef = DB_POSTS_KEY + "/" + id;
+    const likedPost = this.state.posts.filter((posts) => posts.key === id)[0];
+    const index = this.state.posts.indexOf(likedPost);
+    likedPost.val.likes += 1;
+    update(ref(database), { [postRef]: likedPost.val });
+    const postCopy = [...this.state.posts];
+    postCopy.splice(index, 1, likedPost);
+    this.setState({
+      posts: postCopy,
+    });
+  };
+
+  handleSignUp = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  handleLogIn = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password);
+  };
+
+  handleLogOut = () => {
+    signOut(auth);
+    this.setState({
+      uid: null,
+      userEmail: null,
+    });
   };
 
   componentDidUpdate() {
@@ -113,49 +173,54 @@ class App extends React.Component {
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.posts.scrollIntoView({ behavior: "smooth" });
   };
 
   render() {
-    let messageListItems = this.state.messages.map((message) => (
-      <Post key={message.key} handleDelete={this.handleDelete}>
+    let messageListItems = this.state.posts.map((message) => (
+      <Post
+        key={message.key}
+        handleDelete={this.handleDelete}
+        handleLikes={this.handleLikes}
+        creator={message.val.creator}
+        uid={this.state.uid}
+      >
         {message}
       </Post>
     ));
     return (
       <div className="App">
         <div className="phone">
+          <div id="header">
+            <h1>Instasham</h1>
+            {this.state.uid ? (
+              <div>
+                <p>{this.state.userEmail}</p>
+                <button onClick={this.handleLogOut}>Log Out</button>
+              </div>
+            ) : (
+              <SignUpForm
+                handleSignUp={this.handleSignUp}
+                handleLogIn={this.handleLogIn}
+              />
+            )}
+          </div>
+
           <ul className="posts">
             {messageListItems}
             <li
               ref={(e) => {
-                this.messagesEnd = e;
+                this.posts = e;
               }}
             ></li>
           </ul>
-          <form onSubmit={this.handleSubmit}>
-            <label
-              htmlFor="image-upload"
-              className={`image-upload ${this.state.file && "complete"}`}
-            >
-              {this.state.file ? "✓" : "+"}
-            </label>
-            <input
-              id="image-upload"
-              type="file"
-              onChange={this.handleFileChange}
-            />
-            <input
-              name="input"
-              type="text"
-              value={this.state.input}
-              onChange={this.handleChange}
-              autoComplete="off"
-              placeholder="Type here"
-            />
-
-            <input type="submit" value="⬆" />
-          </form>
+          <PostComposer
+            handleSubmit={this.handleSubmit}
+            handleFileChange={this.handleFileChange}
+            handleChange={this.handleChange}
+            file={this.state.file}
+            input={this.state.input}
+          />
         </div>
       </div>
     );
