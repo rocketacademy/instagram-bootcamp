@@ -84,7 +84,9 @@ class App extends React.Component {
       uid: null,
       content: message,
       date: JSON.stringify(date),
-      likes: 0,
+      likes: {
+        placeholder: "",
+      },
     };
     if (this.state.userEmail) {
       postLog.creator = this.state.userEmail;
@@ -139,17 +141,24 @@ class App extends React.Component {
   };
 
   handleLikes = (e) => {
-    const id = e.target.offsetParent.id;
-    const postRef = DB_POSTS_KEY + "/" + id;
-    const likedPost = this.state.posts.filter((posts) => posts.key === id)[0];
-    const index = this.state.posts.indexOf(likedPost);
-    likedPost.val.likes += 1;
-    update(ref(database), { [postRef]: likedPost.val });
-    const postCopy = [...this.state.posts];
-    postCopy.splice(index, 1, likedPost);
-    this.setState({
-      posts: postCopy,
-    });
+    if (this.state.uid) {
+      const id = e.target.offsetParent.id;
+      const postRef = DB_POSTS_KEY + "/" + id;
+      const likedPost = this.state.posts.filter((posts) => posts.key === id)[0];
+      const index = this.state.posts.indexOf(likedPost);
+      if (likedPost.val.likes[this.state.uid]) {
+        delete likedPost.val.likes[this.state.uid];
+      } else {
+        likedPost.val.likes[this.state.uid] = true;
+      }
+
+      update(ref(database), { [postRef]: likedPost.val });
+      const postCopy = [...this.state.posts];
+      postCopy.splice(index, 1, likedPost);
+      this.setState({
+        posts: postCopy,
+      });
+    }
   };
 
   handleSignUp = (email, password) => {

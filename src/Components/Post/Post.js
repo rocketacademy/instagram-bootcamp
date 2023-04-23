@@ -8,6 +8,10 @@ const Post = (props) => {
   let hour = formatHour(date.getHours());
   let minute = formatMinute(date.getMinutes());
   let day = formatDay(date.getDay());
+  let likes = null;
+  if (Object.keys(props.children.val.likes).length > 0) {
+    likes = Object.keys(props.children.val.likes).length - 1;
+  }
 
   const displayDate = `${day} ${hour}:${minute} ${ampm}`;
   return (
@@ -40,7 +44,7 @@ const Post = (props) => {
         <p>{props.children.val.content}</p>
         <button onClick={props.handleLikes} className="post-likes">
           <img src="./icons/heart.svg" alt="likes button" />
-          {props.children.val.likes !== 0 && <p>{props.children.val.likes}</p>}
+          {likes > 0 && <p>{likes}</p>}
         </button>
       </div>
       {props.children.val.uid === props.uid && (

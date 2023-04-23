@@ -1,34 +1,28 @@
-import React from "react";
-
-export default class PostComposer extends React.Component {
-  render() {
-    return (
-      <form onSubmit={this.props.handleSubmit}>
-        <label
-          htmlFor="image-upload"
-          className={`image-upload ${this.props.file && "complete"}`}
-        >
-          <img
-            src={`./icons/${this.props.file ? "done.svg" : "camera.svg"}`}
-            alt="upload"
-          />
-        </label>
-        <input
-          id="image-upload"
-          type="file"
-          onChange={this.props.handleFileChange}
+const PostComposer = (props) => {
+  return (
+    <form onSubmit={props.handleSubmit}>
+      <label
+        htmlFor="image-upload"
+        className={`image-upload ${props.file && "complete"}`}
+      >
+        <img
+          src={`./icons/${props.file ? "done.svg" : "camera.svg"}`}
+          alt="upload"
         />
-        <input
-          name="input"
-          type="text"
-          value={this.props.input}
-          onChange={this.props.handleChange}
-          autoComplete="off"
-          placeholder="Type here"
-        />
+      </label>
+      <input id="image-upload" type="file" onChange={props.handleFileChange} />
+      <input
+        name="input"
+        type="text"
+        value={props.input}
+        onChange={props.handleChange}
+        autoComplete="off"
+        placeholder="Type here"
+      />
 
-        <input type="submit" value="⬆" />
-      </form>
-    );
-  }
-}
+      <input type="submit" value="⬆" />
+    </form>
+  );
+};
+
+export default PostComposer;

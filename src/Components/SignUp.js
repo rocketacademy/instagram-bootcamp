@@ -1,60 +1,43 @@
-import React from "react";
+import { useState } from "react";
 
-export default class SignUpForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      emailInput: "",
-      passwordInput: "",
-    };
-  }
+const SignUpForm = (props) => {
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
 
-  handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({
-      [id]: value,
-    });
-  };
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { id } = e.target;
-    const { emailInput, passwordInput } = this.state;
     if (id === "signup") {
-      this.props.handleSignUp(emailInput, passwordInput);
+      props.handleSignUp(emailInput, passwordInput);
     } else if (id === "login") {
-      this.props.handleLogIn(emailInput, passwordInput);
+      props.handleLogIn(emailInput, passwordInput);
     }
-    this.setState({
-      emailInput: "",
-      passwordInput: "",
-    });
   };
 
-  render() {
-    return (
-      <form className="login">
-        <input
-          id="emailInput"
-          type="email"
-          value={this.state.emailInput}
-          onChange={this.handleChange}
-          placeholder="Enter email here"
-        ></input>
-        <input
-          id="passwordInput"
-          type="password"
-          value={this.state.passwordInput}
-          onChange={this.handleChange}
-          placeholder="Enter password"
-        ></input>
-        <button id="signup" onClick={this.handleSubmit}>
-          Sign Up
-        </button>
-        <button id="login" onClick={this.handleSubmit}>
-          Login
-        </button>
-      </form>
-    );
-  }
-}
+  return (
+    <form className="login">
+      <input
+        id="emailInput"
+        type="email"
+        value={emailInput}
+        onChange={(e) => setEmailInput(e.target.value)}
+        placeholder="Enter email here"
+      ></input>
+      <input
+        id="passwordInput"
+        type="password"
+        value={passwordInput}
+        onChange={(e) => setPasswordInput(e.target.value)}
+        placeholder="Enter password"
+      ></input>
+      <button id="signup" onClick={handleSubmit}>
+        Sign Up
+      </button>
+      <button id="login" onClick={handleSubmit}>
+        Login
+      </button>
+    </form>
+  );
+};
+
+export default SignUpForm;
