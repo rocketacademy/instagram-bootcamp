@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import SignUp from "./SignUp";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { Link } from "react-router-dom";
+import { Paper, Stack } from "@mui/material";
 
 class LogIn extends Component {
     constructor(props) {
@@ -49,39 +51,46 @@ class LogIn extends Component {
     render() {
         return (
             <>
-                {this.state.shouldRenderLogin ? (
-                    <>
-                        <form onSubmit={this.handleSubmit}>
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                name="email"
-                                value={this.state.email}
-                                onChange={this.handleChange}
-                            ></input>
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                name="password"
-                                value={this.state.password}
-                                onChange={this.handleChange}
-                            ></input>
-                            <button type="submit">Log In</button>
-                        </form>
-                        <p>No account yet?</p>
-                        <button onClick={this.toggleLoginOrSignUp}>
-                            Create an account
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <SignUp />
-                        <br />
-                        <button onClick={this.toggleLoginOrSignUp}>
-                            Log In Instead
-                        </button>
-                    </>
-                )}
+                <form onSubmit={this.handleSubmit}>
+                    <Stack
+                        p={3}
+                        spacing={2}
+                        alignItems={"center"}
+                        justifyContent={"center"}
+                    >
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                            autoComplete="off"
+                        ></input>
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            name="password"
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                        ></input>
+                        <button type="submit">Log In</button>
+                    </Stack>
+                </form>
+                <Stack
+                    p={3}
+                    spacing={2}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                >
+                    <p>No account yet?</p>
+                    <Link to="/signup">
+                        <button>Create an account</button>
+                    </Link>
+
+                    <Link to="/">
+                        <button>Back to Main</button>
+                    </Link>
+                </Stack>
             </>
         );
     }

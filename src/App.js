@@ -17,6 +17,11 @@ import {
     signOut,
 } from "firebase/auth";
 import LogIn from "./components/LogIn";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import SignUp from "./components/SignUp";
+import Home from "./components/Home";
+import Navbar from "./components/Navbar";
+import SignUpFunc from "./components/SignUpFunc";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -89,7 +94,7 @@ class App extends React.Component {
     };
 
     uploadFile = async (file) => {
-        if (file == null) return;
+        if (file == null) return null;
         const imageRef = sRef(storage, `${STORAGE_IMAGES_KEY}/${file.name}`);
 
         await uploadBytesResumable(imageRef, this.state.fileInputFile);
@@ -110,6 +115,7 @@ class App extends React.Component {
     handleSubmit = async (e) => {
         e.preventDefault();
         let imageURL = await this.uploadFile(this.state.fileInputFile);
+
         this.writeData(this.state.message, imageURL);
         this.sanitizeUIData();
     };
@@ -145,33 +151,37 @@ class App extends React.Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    {this.state.shouldRenderAuthForm ? (
-                        <>
-                            <LogIn />
-                            <br />
-                            <button onClick={this.toggleAuthForm}>
-                                Back to Main
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <Newsfeed messages={this.state.messages} />
-                            <button onClick={this.toggleAuthForm}>
-                                Log In
-                            </button>
-                        </>
-                    )}
-                    {this.state.loggedInUser != null && (
-                        <>
-                            <Composer
-                                handleSubmit={this.handleSubmit}
-                                handleChange={this.handleChange}
-                                handleFileChange={this.handleFileChange}
-                                {...this.state}
-                            />
-                            <button onClick={this.signOutUser}>Sign Out</button>
-                        </>
-                    )}
+                    <BrowserRouter>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Navbar
+                                        loggedInUser={this.state.loggedInUser}
+                                    />
+                                }
+                            >
+                                <Route
+                                    index
+                                    element={
+                                        <Home
+                                            {...this.state}
+                                            handleSubmit={this.handleSubmit}
+                                            handleChange={this.handleChange}
+                                            handleFileChange={
+                                                this.handleFileChange
+                                            }
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="signup"
+                                    element={<SignUpFunc />}
+                                ></Route>
+                                <Route path="login" element={<LogIn />}></Route>
+                            </Route>
+                        </Routes>
+                    </BrowserRouter>
                 </header>
             </div>
         );
