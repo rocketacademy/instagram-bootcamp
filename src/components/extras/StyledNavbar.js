@@ -175,7 +175,7 @@ export default function ResponsiveAppBar({ loggedInUser }) {
                         ))} */}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, backgroundColor: "red" }}>
                         <Tooltip title="Open settings">
                             <IconButton
                                 // onClick={handleOpenUserMenu}

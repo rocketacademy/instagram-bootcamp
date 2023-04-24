@@ -1,6 +1,7 @@
 import { Paper } from "@mui/material";
 import React, { Component } from "react";
 import formatDistance from "date-fns/formatDistance";
+import ActionBar from "./extras/ActionBar";
 
 class Newsfeed extends Component {
     render() {
@@ -23,6 +24,12 @@ class Newsfeed extends Component {
                                     }}
                                 ></img>
                             )}
+                            <ActionBar
+                                loggedInUser={this.props.loggedInUser}
+                                postId={message.key}
+                                handleLike={this.props.handleLike}
+                                likes={message.likes}
+                            />
                             <p>
                                 <strong>{message.author}</strong> {message.msg}
                             </p>

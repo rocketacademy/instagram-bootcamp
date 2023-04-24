@@ -1,5 +1,13 @@
 import React from "react";
-import { onChildAdded, push, ref as dbRef, set } from "firebase/database";
+import {
+    onChildAdded,
+    push,
+    ref as dbRef,
+    set,
+    update,
+    remove,
+    onChildChanged,
+} from "firebase/database";
 import {
     getDownloadURL,
     ref as sRef,
@@ -59,9 +67,37 @@ class App extends React.Component {
                         date: data.val().date,
                         imageURL: data.val().imageURL,
                         author: data.val().author,
+                        likes: data.val().likes,
                     },
                 ],
             }));
+        });
+
+        onChildChanged(messagesRef, (data) => {
+            console.log("child changed");
+            console.log(data.key);
+            console.log(data.val());
+            this.setState((state) => {
+                let copy = [...state.messages];
+                let currMessage = copy.find(
+                    (message) => message.key === data.key
+                );
+
+                let index = copy.indexOf(currMessage);
+
+                state.messages.splice(index, 1, {
+                    key: data.key,
+                    msg: data.val().message,
+                    date: data.val().date,
+                    imageURL: data.val().imageURL,
+                    author: data.val().author,
+                    likes: data.val().likes,
+                });
+
+                return {
+                    copy,
+                };
+            });
         });
 
         onAuthStateChanged(auth, (user) => {
@@ -90,6 +126,7 @@ class App extends React.Component {
             imageURL,
             date: Date.now(),
             author: this.state.loggedInUser.email,
+            likes: 0,
         });
     };
 
@@ -131,9 +168,34 @@ class App extends React.Component {
         });
     };
 
-    toggleAuthForm = () => {
-        this.setState((prevState) => {
-            return { shouldRenderAuthForm: !prevState.shouldRenderAuthForm };
+    handleLike = (postKey, uid) => {
+        const currMessage = this.state.messages.find(
+            (message) => message.key === postKey
+        );
+
+        const likesRef = dbRef(database, `${DB_MESSAGES_KEY}/${postKey}`);
+
+        if (currMessage.likes[uid] === true) {
+            // const userRef = dbRef(
+            //     database,
+            //     `${DB_MESSAGES_KEY}/${postKey}/likes/${uid}`
+            // );
+            // remove(userRef);
+            let updates = { ...currMessage.likes };
+            delete updates[uid];
+            if (Object.keys(updates).length === 0) updates = 0;
+
+            update(likesRef, {
+                likes: updates,
+            });
+            return;
+        }
+
+        update(likesRef, {
+            likes: {
+                ...currMessage.likes,
+                [uid]: true,
+            },
         });
     };
 
@@ -171,6 +233,7 @@ class App extends React.Component {
                                             handleFileChange={
                                                 this.handleFileChange
                                             }
+                                            handleLike={this.handleLike}
                                         />
                                     }
                                 />

@@ -8,7 +8,11 @@ export default class Home extends Component {
     render() {
         return (
             <Container maxWidth={"xs"}>
-                <Newsfeed messages={this.props.messages} />
+                <Newsfeed
+                    messages={this.props.messages}
+                    loggedInUser={this.props.loggedInUser}
+                    handleLike={this.props.handleLike}
+                />
                 {this.props.loggedInUser != null ? (
                     <Composer {...this.props} />
                 ) : (
