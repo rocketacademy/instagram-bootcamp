@@ -1,11 +1,30 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import {
+  onChildAdded,
+  push,
+  ref,
+  set,
+  remove,
+  onChildRemoved,
+  onValue,
+} from "firebase/database";
+import {
+  getDownloadURL,
+  ref as storeRef,
+  uploadBytesResumable,
+  getStorage,
+} from "firebase/storage";
 import { database } from "./firebase";
-import logo from "./logo.png";
+import { storage } from "./firebase";
+import { auth } from "./firebase";
+/* import logo from "./logo.png"; */
 import "./App.css";
+import SignUpForm from "./SignUpForm";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const STORE_IMAGE_KEY = "images";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,56 +34,177 @@ class App extends React.Component {
     this.state = {
       messages: [],
       message: "",
-      date: ""
+
+      fileInputFile: null, //these are for the file upload
+      fileInputValue: "",
+
+      uid: null
     };
   }
 
   componentDidMount() {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
+
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        console.log('this is the signed in user:', user)
+        const uid = user.uid;
+        this.setState({
+          uid: uid,
+          userEmail: user.email
+        })
+      } else {
+        this.setState({
+          uid: null,
+          userEmail: null
+        })
+      }
+    });
+
+
+
+
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
+      console.log("Message added:", data.val());
+
       this.setState((state) => ({
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
     });
+    onChildRemoved(messagesRef, (data) => {
+      console.log("Message Removed:", data.val());
+      //use array.filter() to remove a single message:
+
+      const remainingMessages = this.state.messages.filter(
+        (message) => message.key !== data.key
+      );
+      this.setState({
+        messages: remainingMessages,
+      });
+      console.log("remaining tasks:", remainingMessages);
+    });
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
+    //Upload my file to the storage:
+    const fileRef = storeRef(
+      storage,
+      `${STORE_IMAGE_KEY}/${this.state.fileInputFile.name}`
+    );
+    uploadBytesResumable(fileRef, this.state.fileInputFile).then(() => {
+      getDownloadURL(fileRef).then((url) => {
+        console.log("URL:", url);
+      });
+    });
+
+    //Adding new message to the realtime Database:
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    console.log('newMessageRef:', newMessageRef)
+    console.log("newMessageRef:", newMessageRef);
     set(newMessageRef, this.state.message);
     //Reset input field after writing/submitting
     this.setState({
-      message: ""
-    })
+      message: "",
+    });
   };
 
-  handleChange = (e) => {
-    this.setState({
-      message: e.target.value,
-      date: new Date().toLocaleDateString
+  handleSignup = (email, password) => {
+    createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch((err) => {
+      console.log('error', err)
+      /*  alert('error code:', err.code, 'msg:'.err.message) */
+    });
+  }
+
+  handleLogin = (email, password) => {
+    signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch((err) => {
+      console.log('error', err)
+      /* alert('error code:', err.code, 'msg:'.err.message) */
+    });
+  }
+
+
+  handleLogOut = () => {
+    signOut(auth).then(() => {
+      this.setState({
+        uid: null,
+        userEmail: null
+      })
     })
   }
 
 
+
+
+  handleChange = (e) => {
+    this.setState({
+      message: e.target.value,
+    });
+  };
+
+  handleFileChange = (e) => {
+    console.log(e.target.files[0]);
+    this.setState({
+      fileInputFile: e.target.files[0],
+    });
+  };
+
+  handleDelete = (e) => {
+    const { id } = e.target;
+    console.log(id);
+    const messageRef = ref(database, `${DB_MESSAGES_KEY}/${id}`);
+    remove(messageRef);
+  };
+
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <div>
+        <li key={message.key} >{message.val}</li>
+        <button id={message.key} onClick={this.handleDelete}>
+          Delete
+        </button>
+      </div>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          {this.state.uid ?
+            (<div>
+              <h2>Welcome back {this.state.userEmail}!!!</h2>
+              <br />
+              <button onClick={this.handleLogOut}>Logout</button>
+            </div>)
+            : (<SignUpForm auth={auth} handleSignup={this.handleSignup} handleLogin={this.handleLogin} />)}
+
+          {/*   <img src={logo} className="App-logo" alt="logo" /> */}
+          <br />
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
           {/* TODO: Add input field and add text input as messages in Firebase */}
-
+          <input
+            id="imgInput"
+            name="image"
+            type="file"
+            onChange={this.handleFileChange}
+          //e.target.files is a Filelist object that is an array of file objects
+          //e.target.files[0] is a File object that Firebase Storage can upload
+          />
 
           <input
             id="messageInput"
@@ -73,11 +213,11 @@ class App extends React.Component {
             name="message"
             onChange={this.handleChange}
             value={this.state.message}
-          >
-          </input>
+          />
 
           <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+
+          <ul>{messageListItems}</ul>
         </header>
       </div>
     );
