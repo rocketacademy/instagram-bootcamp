@@ -2,17 +2,24 @@ import { IconButton, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useNavigate } from "react-router-dom";
 
 function ActionBar({ postId, loggedInUser, handleLike, likes }) {
     const [isLiked, setIsLiked] = useState(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        if (likes[loggedInUser.uid]) {
+        if (loggedInUser && likes[loggedInUser.uid]) {
             setIsLiked(true);
         }
     }, []);
 
     const handleClick = () => {
+        if (loggedInUser == null) {
+            navigate("/login");
+            return;
+        }
         handleLike(postId, loggedInUser.uid);
         setIsLiked((prevState) => !prevState);
     };

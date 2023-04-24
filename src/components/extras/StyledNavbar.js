@@ -45,11 +45,10 @@ function stringAvatar(name) {
     };
 }
 
-export default function ResponsiveAppBar({ loggedInUser }) {
+export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
     // const [anchorElNav, setAnchorElNav] =
     //     (React.useState < null) | (HTMLElement > null);
-    // const [anchorElUser, setAnchorElUser] =
-    //     (React.useState < null) | (HTMLElement > null);
+    // const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     // const handleOpenNavMenu = (event) => {
     //     setAnchorElNav(event.currentTarget);
@@ -175,10 +174,11 @@ export default function ResponsiveAppBar({ loggedInUser }) {
                         ))} */}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0, backgroundColor: "red" }}>
+                    <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton
                                 // onClick={handleOpenUserMenu}
+                                onClick={() => signOutUser()}
                                 sx={{ p: 0 }}
                             >
                                 <Avatar
@@ -192,7 +192,7 @@ export default function ResponsiveAppBar({ loggedInUser }) {
                                 </Avatar>
                             </IconButton>
                         </Tooltip>
-                        <Menu
+                        {/* <Menu
                             sx={{ mt: "45px" }}
                             id="menu-appbar"
                             // anchorEl={anchorElUser}
@@ -205,20 +205,20 @@ export default function ResponsiveAppBar({ loggedInUser }) {
                                 vertical: "top",
                                 horizontal: "right",
                             }}
-                            open={false}
+                            // open={anchorElUser}
                             // onClose={handleCloseUserMenu}
-                        >
-                            {/* {settings.map((setting) => (
+                        > */}
+                        {/* {settings.map((setting) => (
                                 <MenuItem
                                     key={setting}
-                                    onClick={handleCloseUserMenu}
+                                    // onClick={handleCloseUserMenu}
                                 >
                                     <Typography textAlign="center">
                                         {setting}
                                     </Typography>
                                 </MenuItem>
                             ))} */}
-                        </Menu>
+                        {/* </Menu> */}
                     </Box>
                 </Toolbar>
             </Container>

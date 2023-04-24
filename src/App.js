@@ -220,6 +220,7 @@ class App extends React.Component {
                                 element={
                                     <Navbar
                                         loggedInUser={this.state.loggedInUser}
+                                        signOutUser={this.signOutUser}
                                     />
                                 }
                             >
