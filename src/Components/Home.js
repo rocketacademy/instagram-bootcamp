@@ -30,7 +30,7 @@ const Home = (props) => {
       <div id="header">
         <h1>Instasham</h1>
         {uid ? (
-          <div>
+          <div className="header-user">
             <p>{userEmail}</p>
             <button onClick={props.handleLogOut}>Log Out</button>
           </div>

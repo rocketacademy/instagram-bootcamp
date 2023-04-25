@@ -53,6 +53,12 @@
   font-weight: 800;
 }
 
+#header .header-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 button {
   height: 30px;
   padding: 10px;
