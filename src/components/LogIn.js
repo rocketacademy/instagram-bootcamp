@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import SignUp from "./SignUp";
+
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+
 import { Link } from "react-router-dom";
-import { Paper, Stack } from "@mui/material";
+import { Navigate } from "react-router-dom";
+import { Stack } from "@mui/material";
 
 class LogIn extends Component {
     constructor(props) {
@@ -15,19 +17,12 @@ class LogIn extends Component {
         };
     }
 
-    toggleLoginOrSignUp = () => {
-        this.setState((prevState) => {
-            return {
-                shouldRenderLogin: !prevState.shouldRenderLogin,
-            };
-        });
-    };
-
     logInUser = (email, password) => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
+                return <Navigate to="/" />;
                 // ...
             })
             .catch((error) => {

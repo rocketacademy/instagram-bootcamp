@@ -1,14 +1,10 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "@mui/material";
-import { Link } from "react-router-dom";
 
-import { useNavigate } from "react-router-dom";
-
-function SignUpFunc(props) {
-    // const [email, setEmail] = useState("");
-    // const [password, setPassword] = useState("");
+const LogInFunc = (props) => {
     const [state, setState] = useState({
         email: "",
         password: "",
@@ -16,27 +12,17 @@ function SignUpFunc(props) {
 
     const navigate = useNavigate();
 
-    const signUpUser = (email, password) => {
-        createUserWithEmailAndPassword(auth, email, password)
+    const logInUser = (email, password) => {
+        signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 // const user = userCredential.user;
-                console.log(userCredential);
                 // ...
             })
             .then(() => navigate("/"))
             .catch((error) => {
-                // const errorCode = error.code;
-                // const errorMessage = error.message;
-                console.log(error.message);
-                alert("Something went wrong... Try again!");
-                // ..
+                alert("Wrong username or password!");
             });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        signUpUser(state.email, state.password);
     };
 
     const handleChange = (e) => {
@@ -45,6 +31,11 @@ function SignUpFunc(props) {
             ...state,
             [name]: value,
         });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        logInUser(state.email, state.password);
     };
 
     return (
@@ -71,18 +62,18 @@ function SignUpFunc(props) {
                         value={state.password}
                         onChange={handleChange}
                     ></input>
-                    <button type="submit">Create Account</button>
+                    <button type="submit">Log In</button>
                 </Stack>
             </form>
-
             <Stack
                 p={3}
                 spacing={2}
                 alignItems={"center"}
                 justifyContent={"center"}
             >
-                <Link to="/login">
-                    <button>Log In Instead</button>
+                <p>No account yet?</p>
+                <Link to="/signup">
+                    <button>Create an account</button>
                 </Link>
 
                 <Link to="/">
@@ -91,6 +82,6 @@ function SignUpFunc(props) {
             </Stack>
         </>
     );
-}
+};
 
-export default SignUpFunc;
+export default LogInFunc;

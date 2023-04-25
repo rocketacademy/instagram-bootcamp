@@ -1,45 +1,37 @@
 import React from "react";
+
 import {
     onChildAdded,
     push,
     ref as dbRef,
     set,
     update,
-    remove,
     onChildChanged,
 } from "firebase/database";
 import {
     getDownloadURL,
     ref as sRef,
-    uploadBytes,
     uploadBytesResumable,
 } from "firebase/storage";
 import { database, storage, auth } from "./firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import "./App.css";
-import Composer from "./components/Composer";
-import Newsfeed from "./components/Newsfeed";
-import {
-    createUserWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut,
-} from "firebase/auth";
-import LogIn from "./components/LogIn";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUp from "./components/SignUp";
+
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import SignUpFunc from "./components/SignUpFunc";
+import LogInFunc from "./components/LogInFunc";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_IMAGES_KEY = "images";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        // Initialise empty messages array in state to keep local state in sync with Firebase
-        // When Firebase changes, update local state, which will update local UI
+
         this.state = {
             messages: [],
             message: "",
@@ -54,13 +46,10 @@ class App extends React.Component {
 
     componentDidMount() {
         const messagesRef = dbRef(database, DB_MESSAGES_KEY);
-        // onChildAdded will return data for every child at the reference and every subsequent new child
+
         onChildAdded(messagesRef, (data) => {
-            // Add the subsequent child to local component state, initialising a new array to trigger re-render
             this.setState((state) => ({
-                // Store message key so we can use it as a key in our list items when rendering messages
                 messages: [
-                    ...state.messages,
                     {
                         key: data.key,
                         msg: data.val().message,
@@ -69,14 +58,13 @@ class App extends React.Component {
                         author: data.val().author,
                         likes: data.val().likes,
                     },
+                    ...state.messages,
                 ],
             }));
         });
 
         onChildChanged(messagesRef, (data) => {
             console.log("child changed");
-            console.log(data.key);
-            console.log(data.val());
             this.setState((state) => {
                 let copy = [...state.messages];
                 let currMessage = copy.find(
@@ -102,7 +90,6 @@ class App extends React.Component {
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log(user);
                 console.log("user is signed in");
                 this.setState({ loggedInUser: user });
             } else {
@@ -112,15 +99,10 @@ class App extends React.Component {
         });
     }
 
-    // Note use of array fields syntax to avoid having to manually bind this method to the class
     writeData = (message, imageURL) => {
         const messageListRef = dbRef(database, DB_MESSAGES_KEY);
         const newMessageRef = push(messageListRef);
 
-        // push(messageListRef, {
-        //     message,
-        //     date: Date.now(),
-        // });
         set(newMessageRef, {
             message,
             imageURL,
@@ -176,11 +158,6 @@ class App extends React.Component {
         const likesRef = dbRef(database, `${DB_MESSAGES_KEY}/${postKey}`);
 
         if (currMessage.likes[uid] === true) {
-            // const userRef = dbRef(
-            //     database,
-            //     `${DB_MESSAGES_KEY}/${postKey}/likes/${uid}`
-            // );
-            // remove(userRef);
             let updates = { ...currMessage.likes };
             delete updates[uid];
             if (Object.keys(updates).length === 0) updates = 0;
@@ -206,7 +183,7 @@ class App extends React.Component {
                 console.log("user signed out");
             })
             .catch((error) => {
-                // An error happened.
+                console.log("error signing out user", error);
             });
     };
 
@@ -243,7 +220,10 @@ class App extends React.Component {
                                     path="signup"
                                     element={<SignUpFunc />}
                                 ></Route>
-                                <Route path="login" element={<LogIn />}></Route>
+                                <Route
+                                    path="login"
+                                    element={<LogInFunc />}
+                                ></Route>
                             </Route>
                         </Routes>
                     </BrowserRouter>

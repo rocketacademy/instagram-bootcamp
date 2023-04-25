@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import { Link } from "react-router-dom";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -65,6 +66,17 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
     // const handleCloseUserMenu = () => {
     //     setAnchorElUser(null);
     // };
+
+    let avatarOrButton;
+    if (loggedInUser == null) {
+        avatarOrButton = (
+            <Link to="/login">
+                <button>Log In</button>
+            </Link>
+        );
+    } else {
+        avatarOrButton = <Avatar>{loggedInUser.email[0].toUpperCase()}</Avatar>;
+    }
 
     return (
         <AppBar position="sticky">
@@ -143,7 +155,7 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
                     <Typography
                         variant="h5"
                         noWrap
-                        component="a"
+                        component="h5"
                         href=""
                         sx={{
                             mr: 2,
@@ -176,21 +188,13 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Sign Out">
                             <IconButton
                                 // onClick={handleOpenUserMenu}
                                 onClick={() => signOutUser()}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar
-                                // {...stringAvatar(
-                                //     loggedInUser ? loggedInUser.email : ""
-                                // )}
-                                >
-                                    {loggedInUser
-                                        ? loggedInUser.email[0].toUpperCase()
-                                        : null}
-                                </Avatar>
+                                {avatarOrButton}
                             </IconButton>
                         </Tooltip>
                         {/* <Menu

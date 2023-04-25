@@ -1,9 +1,13 @@
 import React, { Component } from "react";
 
 class Composer extends Component {
+    handleSubmitAndClose = (e) => {
+        this.props.handleSubmit(e);
+        this.props.handleClose();
+    };
     render() {
         return (
-            <form onSubmit={this.props.handleSubmit}>
+            <form onSubmit={this.handleSubmitAndClose}>
                 <input
                     type="file"
                     value={this.props.fileInputValue}
