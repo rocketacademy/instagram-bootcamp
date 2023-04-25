@@ -80,7 +80,7 @@ function SignUpFunc(props) {
                 alignItems={"center"}
                 justifyContent={"center"}
             >
-                <Link to="/">
+                <Link to="/login">
                     <button>Log In Instead</button>
                 </Link>
 

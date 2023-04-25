@@ -200,6 +200,7 @@ class App extends React.Component {
     };
 
     signOutUser = () => {
+        if (this.state.loggedInUser == null) return;
         signOut(auth)
             .then(() => {
                 console.log("user signed out");

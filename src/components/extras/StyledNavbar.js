@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -66,10 +67,10 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
     // };
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon
+                    <RocketLaunchIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
                     />
                     <Typography
@@ -82,12 +83,12 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
                             display: { xs: "none", md: "flex" },
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            letterSpacing: ".1rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        ROCKETGRAM
                     </Typography>
 
                     <Box
@@ -136,7 +137,7 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
                             ))} */}
                         </Menu>
                     </Box>
-                    <AdbIcon
+                    <RocketLaunchIcon
                         sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
                     />
                     <Typography
@@ -150,12 +151,12 @@ export default function ResponsiveAppBar({ loggedInUser, signOutUser }) {
                             flexGrow: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            letterSpacing: ".1rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        ROCKETGRAM
                     </Typography>
                     <Box
                         sx={{

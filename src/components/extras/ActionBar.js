@@ -12,8 +12,10 @@ function ActionBar({ postId, loggedInUser, handleLike, likes }) {
     useEffect(() => {
         if (loggedInUser && likes[loggedInUser.uid]) {
             setIsLiked(true);
+        } else {
+            setIsLiked(false);
         }
-    }, []);
+    }, [loggedInUser, likes]);
 
     const handleClick = () => {
         if (loggedInUser == null) {
