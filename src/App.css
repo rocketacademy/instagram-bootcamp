@@ -7,7 +7,7 @@
 }
 
 .App {
-  background-color: #282c34;
+  background-color: rgb(255, 249, 240);
   text-align: center;
   display: flex;
   align-items: center;
@@ -17,7 +17,7 @@
 
 .phone {
   position: relative;
-  background-color: #17181c;
+  background-color: #353c59;
   height: 60vh;
   min-height: 550px;
   width: 50vw;
@@ -29,6 +29,7 @@
   justify-content: flex-end;
   padding: 20px;
   gap: 10px;
+  border: 2px solid #353c59;
   overflow: hidden;
 }
 

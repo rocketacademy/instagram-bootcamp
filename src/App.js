@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import "./App.css";
 
 // Firebase tools
@@ -26,57 +26,56 @@ import {
 
 // Components
 import Post from "./Components/Post/Post";
-import SignUpForm from "./Components/SignUp";
+import SignUpForm from "./Components/SignUpForm";
 import PostComposer from "./Components/PostComposer";
 
 // Firebase paths
 const DB_POSTS_KEY = "posts";
 const DB_IMAGES_KEY = "images";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty posts array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      posts: [],
-      input: "",
-      file: null,
-      uid: null,
-      userEmail: null,
-    };
-  }
+const App = () => {
+  const [posts, setPosts] = useState([]);
+  const [input, setInput] = useState("");
+  const [file, setFile] = useState(null);
+  const [uid, setUid] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
+  let postFeedScroll;
 
-  componentDidMount() {
+  // Initialise listeners
+  useEffect(() => {
     const postsRef = ref(database, DB_POSTS_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
+
     onChildAdded(postsRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering posts
-        posts: [...state.posts, { key: data.key, val: data.val() }],
-      }));
+      setPosts((prevPosts) => [
+        ...prevPosts,
+        { key: data.key, val: data.val() },
+      ]);
     });
+    // onChildAdded will return data for every child at the reference and every subsequent new child
+
     onChildRemoved(postsRef, (data) => {
-      const remainingPosts = this.state.posts.filter(
-        (posts) => posts.key !== data.key
+      // const remainingPosts = posts.filter((post) => post.key !== data.key);
+      setPosts((prevPosts) =>
+        prevPosts.filter((post) => post.key !== data.key)
       );
-      this.setState({
-        posts: remainingPosts,
-      });
     });
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
-        this.setState({
-          uid: uid,
-          userEmail: user.email,
-        });
+        setUid(user.uid);
+        setUserEmail(user.email);
       }
     });
-  }
+  }, []);
 
-  writeData = (message, file) => {
+  // Auto scroll to bottom
+  useEffect(() => {
+    postFeedScroll.scrollIntoView({ behavior: "smooth" });
+  }, [postFeedScroll]);
+
+  // Helper Functions
+  const writeData = (message, file) => {
     const postListRef = ref(database, DB_POSTS_KEY);
     const date = new Date();
     const postLog = {
@@ -88,9 +87,9 @@ class App extends React.Component {
         placeholder: "",
       },
     };
-    if (this.state.userEmail) {
-      postLog.creator = this.state.userEmail;
-      postLog.uid = this.state.uid;
+    if (userEmail) {
+      postLog.creator = userEmail;
+      postLog.uid = uid;
     }
     if (file) {
       const imageRef = storeRef(storage, `${DB_IMAGES_KEY}/${file.name}`);
@@ -106,29 +105,22 @@ class App extends React.Component {
     }
   };
 
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    await this.writeData(this.state.input, this.state.file);
-    this.setState({
-      input: "",
-      file: null,
-    });
+    await writeData(input, file);
+    setInput("");
+    setFile(null);
   };
 
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-    });
+  const handleChange = (e) => {
+    setInput(e.target.value);
   };
 
-  handleFileChange = (e) => {
-    this.setState({
-      file: e.target.files[0],
-    });
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
-  handleDelete = (e) => {
+  const handleDelete = (e) => {
     const post = e.target.parentElement;
     const id = post.id;
     const postRef = ref(database, `${DB_POSTS_KEY}/${id}`);
@@ -140,100 +132,84 @@ class App extends React.Component {
     remove(postRef);
   };
 
-  handleLikes = (e) => {
-    if (this.state.uid) {
+  const handleLikes = (e) => {
+    if (uid) {
       const id = e.target.offsetParent.id;
       const postRef = DB_POSTS_KEY + "/" + id;
-      const likedPost = this.state.posts.filter((posts) => posts.key === id)[0];
-      const index = this.state.posts.indexOf(likedPost);
-      if (likedPost.val.likes[this.state.uid]) {
-        delete likedPost.val.likes[this.state.uid];
+      const likedPost = posts.filter((post) => post.key === id)[0];
+      const index = posts.indexOf(likedPost);
+      if (likedPost.val.likes[uid]) {
+        delete likedPost.val.likes[uid];
       } else {
-        likedPost.val.likes[this.state.uid] = true;
+        likedPost.val.likes[uid] = true;
       }
 
       update(ref(database), { [postRef]: likedPost.val });
-      const postCopy = [...this.state.posts];
+      const postCopy = [...posts];
       postCopy.splice(index, 1, likedPost);
-      this.setState({
-        posts: postCopy,
-      });
+      setPosts(postCopy);
     }
   };
 
-  handleSignUp = (email, password) => {
+  const handleSignUp = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password);
   };
 
-  handleLogIn = (email, password) => {
+  const handleLogIn = (email, password) => {
     signInWithEmailAndPassword(auth, email, password);
   };
 
-  handleLogOut = () => {
+  const handleLogOut = () => {
     signOut(auth);
-    this.setState({
-      uid: null,
-      userEmail: null,
-    });
+    setUid(null);
+    setUserEmail(null);
   };
 
-  componentDidUpdate() {
-    this.scrollToBottom();
-  }
+  let postFeed = posts.map((post) => (
+    <Post
+      key={post.key}
+      handleDelete={handleDelete}
+      handleLikes={handleLikes}
+      creator={post.val.creator}
+      uid={uid}
+    >
+      {post}
+    </Post>
+  ));
 
-  scrollToBottom = () => {
-    this.posts.scrollIntoView({ behavior: "smooth" });
-  };
-
-  render() {
-    let messageListItems = this.state.posts.map((message) => (
-      <Post
-        key={message.key}
-        handleDelete={this.handleDelete}
-        handleLikes={this.handleLikes}
-        creator={message.val.creator}
-        uid={this.state.uid}
-      >
-        {message}
-      </Post>
-    ));
-    return (
-      <div className="App">
-        <div className="phone">
-          <div id="header">
-            <h1>Instasham</h1>
-            {this.state.uid ? (
-              <div>
-                <p>{this.state.userEmail}</p>
-                <button onClick={this.handleLogOut}>Log Out</button>
-              </div>
-            ) : (
-              <SignUpForm
-                handleSignUp={this.handleSignUp}
-                handleLogIn={this.handleLogIn}
-              />
-            )}
-          </div>
-
-          <ul className="posts">
-            {messageListItems}
-            <li
-              ref={(e) => {
-                this.posts = e;
-              }}
-            ></li>
-          </ul>
-          <PostComposer
-            handleSubmit={this.handleSubmit}
-            handleFileChange={this.handleFileChange}
-            handleChange={this.handleChange}
-            file={this.state.file}
-            input={this.state.input}
-          />
+  return (
+    <div className="App">
+      <div className="phone">
+        <div id="header">
+          <h1>Instasham</h1>
+          {uid ? (
+            <div>
+              <p>{userEmail}</p>
+              <button onClick={handleLogOut}>Log Out</button>
+            </div>
+          ) : (
+            <SignUpForm handleSignUp={handleSignUp} handleLogIn={handleLogIn} />
+          )}
         </div>
+
+        <ul className="posts">
+          {postFeed}
+          <li
+            ref={(e) => {
+              postFeedScroll = e;
+            }}
+          ></li>
+        </ul>
+        <PostComposer
+          handleSubmit={handleSubmit}
+          handleFileChange={handleFileChange}
+          handleChange={handleChange}
+          file={file}
+          input={input}
+        />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default App;

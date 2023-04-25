@@ -2,15 +2,15 @@ import { motion } from "framer-motion";
 import { formatHour, formatMinute, formatDay } from "../../utils";
 import "./Post.css";
 
-const Post = (props) => {
-  const date = new Date(JSON.parse(props.children.val.date));
+const Post = ({ creator, uid, handleLikes, handleDelete, children }) => {
+  const date = new Date(JSON.parse(children.val.date));
   const ampm = date.getHours() > 12 ? "PM" : "AM";
   let hour = formatHour(date.getHours());
   let minute = formatMinute(date.getMinutes());
   let day = formatDay(date.getDay());
   let likes = null;
-  if (Object.keys(props.children.val.likes).length > 0) {
-    likes = Object.keys(props.children.val.likes).length - 1;
+  if (Object.keys(children.val.likes).length > 0) {
+    likes = Object.keys(children.val.likes).length - 1;
   }
 
   const displayDate = `${day} ${hour}:${minute} ${ampm}`;
@@ -19,7 +19,7 @@ const Post = (props) => {
       animate={{ opacity: 1, y: 0 }}
       initial={{ opacity: 0, y: 20 }}
       className="post"
-      id={props.children.key}
+      id={children.key}
     >
       <div className="post-user">
         <img
@@ -28,27 +28,27 @@ const Post = (props) => {
           alt="profile pic"
         />
         <div className="post-user-name">
-          <p>{props.creator}</p>
+          <p>{creator}</p>
           <p className="post-meta">{displayDate}</p>
         </div>
       </div>
 
-      {props.children.val.imgURL && (
+      {children.val.imgURL && (
         <img
           className="post-image"
-          src={props.children.val.imgURL}
+          src={children.val.imgURL}
           alt="cool thing"
         />
       )}
       <div className="post-content">
-        <p>{props.children.val.content}</p>
-        <button onClick={props.handleLikes} className="post-likes">
+        <p>{children.val.content}</p>
+        <button onClick={handleLikes} className="post-likes">
           <img src="./icons/heart.svg" alt="likes button" />
           {likes > 0 && <p>{likes}</p>}
         </button>
       </div>
-      {props.children.val.uid === props.uid && (
-        <button className="post-delete" onClick={props.handleDelete}>
+      {children.val.uid === uid && (
+        <button className="post-delete" onClick={handleDelete}>
           𐄂
         </button>
       )}
