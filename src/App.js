@@ -6,6 +6,7 @@ import { database, storage, auth } from "./firebase";
 import {
   onChildAdded,
   onChildRemoved,
+  onChildChanged,
   push,
   remove,
   ref,
@@ -45,6 +46,7 @@ const App = () => {
   useEffect(() => {
     const postsRef = ref(database, DB_POSTS_KEY);
 
+    // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(postsRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       setPosts((prevPosts) => [
@@ -52,7 +54,16 @@ const App = () => {
         { key: data.key, val: data.val() },
       ]);
     });
-    // onChildAdded will return data for every child at the reference and every subsequent new child
+
+    onChildChanged(postsRef, (data) => {
+      setPosts((prevPosts) => {
+        const likedPost = prevPosts.filter((post) => post.key === data.key)[0];
+        const index = prevPosts.indexOf(likedPost);
+        const postCopy = [...prevPosts];
+        postCopy.splice(index, 1, likedPost);
+        return postCopy;
+      });
+    });
 
     onChildRemoved(postsRef, (data) => {
       // const remainingPosts = posts.filter((post) => post.key !== data.key);
@@ -137,17 +148,12 @@ const App = () => {
       const id = e.target.offsetParent.id;
       const postRef = DB_POSTS_KEY + "/" + id;
       const likedPost = posts.filter((post) => post.key === id)[0];
-      const index = posts.indexOf(likedPost);
       if (likedPost.val.likes[uid]) {
         delete likedPost.val.likes[uid];
       } else {
         likedPost.val.likes[uid] = true;
       }
-
       update(ref(database), { [postRef]: likedPost.val });
-      const postCopy = [...posts];
-      postCopy.splice(index, 1, likedPost);
-      setPosts(postCopy);
     }
   };
 
