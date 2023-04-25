@@ -94,13 +94,6 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
     //Upload my file to the storage:
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-
-    const msg = {
-      url: null,
-      txt: this.state.message
-    }
-
     const fileRef = storeRef(
       storage,
       `${STORE_IMAGE_KEY}/${this.state.fileInputFile.name}`
@@ -108,18 +101,18 @@ class App extends React.Component {
     uploadBytesResumable(fileRef, this.state.fileInputFile).then(() => {
       getDownloadURL(fileRef).then((url) => {
         console.log("URL:", url);
-        msg.url = url
-      }).then(() => {
-        push(messageListRef, msg);
-        //Reset input field after writing/submitting
-        this.setState({
-          message: "",
-        });
-      })
+      });
     });
 
     //Adding new message to the realtime Database:
-
+    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    const newMessageRef = push(messageListRef);
+    console.log("newMessageRef:", newMessageRef);
+    set(newMessageRef, this.state.message);
+    //Reset input field after writing/submitting
+    this.setState({
+      message: "",
+    });
   };
 
   handleSignup = (email, password) => {
@@ -179,18 +172,17 @@ class App extends React.Component {
 
   render() {
     // Convert messages in state to message JSX elements to render
-    /* let messageListItems = this.state.messages.map((message) => (
+    let messageListItems = this.state.messages.map((message) => (
       <div>
         <li key={message.key} >{message.val}</li>
         <button id={message.key} onClick={this.handleDelete}>
           Delete
         </button>
       </div>
-    )); */
+    ));
     return (
       <div className="App">
         <header className="App-header">
-
           {this.state.uid ?
             (<div>
               <h2>Welcome back {this.state.userEmail}!!!</h2>
@@ -225,7 +217,7 @@ class App extends React.Component {
 
           <button onClick={this.writeData}>Send</button>
 
-          {/* <ul>{messageListItems}</ul> */}
+          <ul>{messageListItems}</ul>
         </header>
       </div>
     );
