@@ -1,13 +1,23 @@
 .App {
-  text-align: center;
+    background-color: rgb(236, 236, 236);
+    min-height: 100vh;
+    padding-bottom: 2rem;
+    position: relative;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.paywall {
+    mask-image: linear-gradient(to bottom, black 55%, rgba(0, 0, 0, 0.01) 90%);
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        black 55%,
+        rgba(0, 0, 0, 0.01) 90%
+    );
+    max-height: 100vh;
+    overflow: hidden;
+    position: relative;
 }
 
-.App-header {
+/* .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -16,4 +26,4 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
+} */
