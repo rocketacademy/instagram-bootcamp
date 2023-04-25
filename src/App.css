@@ -53,6 +53,20 @@
   font-weight: 800;
 }
 
+button {
+  height: 30px;
+  padding: 10px;
+  border-radius: 18px;
+  border: none;
+  background-color: #1982fc;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+}
+
 .posts {
   padding-top: 70px;
   list-style-type: none;
@@ -72,11 +86,6 @@
   display: none;
 }
 
-form {
-  width: 100%;
-  position: relative;
-}
-
 #image-upload {
   display: none;
 }
@@ -88,6 +97,11 @@ form {
   padding: 5px;
   padding-top: 7px;
   border-radius: 15px;
+}
+
+form {
+  width: 100%;
+  position: relative;
 }
 
 input[type="text"] {

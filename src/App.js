@@ -12,12 +12,7 @@ import {
   ref,
   update,
 } from "firebase/database";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import {
   getDownloadURL,
   ref as storeRef,
@@ -26,9 +21,9 @@ import {
 } from "firebase/storage";
 
 // Components
-import Post from "./Components/Post/Post";
-import SignUpForm from "./Components/SignUpForm";
-import PostComposer from "./Components/PostComposer";
+import Home from "./Components/Home";
+import { Routes, Route } from "react-router-dom";
+import LoginForm from "./Components/Login/Login";
 
 // Firebase paths
 const DB_POSTS_KEY = "posts";
@@ -40,7 +35,6 @@ const App = () => {
   const [file, setFile] = useState(null);
   const [uid, setUid] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
-  let postFeedScroll;
 
   // Initialise listeners
   useEffect(() => {
@@ -79,11 +73,6 @@ const App = () => {
       }
     });
   }, []);
-
-  // Auto scroll to bottom
-  useEffect(() => {
-    postFeedScroll.scrollIntoView({ behavior: "smooth" });
-  }, [postFeedScroll]);
 
   // Helper Functions
   const writeData = (message, file) => {
@@ -157,62 +146,36 @@ const App = () => {
     }
   };
 
-  const handleSignUp = (email, password) => {
-    createUserWithEmailAndPassword(auth, email, password);
-  };
-
-  const handleLogIn = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password);
-  };
-
   const handleLogOut = () => {
     signOut(auth);
     setUid(null);
     setUserEmail(null);
   };
 
-  let postFeed = posts.map((post) => (
-    <Post
-      key={post.key}
-      handleDelete={handleDelete}
-      handleLikes={handleLikes}
-      creator={post.val.creator}
-      uid={uid}
-    >
-      {post}
-    </Post>
-  ));
-
   return (
     <div className="App">
       <div className="phone">
-        <div id="header">
-          <h1>Instasham</h1>
-          {uid ? (
-            <div>
-              <p>{userEmail}</p>
-              <button onClick={handleLogOut}>Log Out</button>
-            </div>
-          ) : (
-            <SignUpForm handleSignUp={handleSignUp} handleLogIn={handleLogIn} />
-          )}
-        </div>
-
-        <ul className="posts">
-          {postFeed}
-          <li
-            ref={(e) => {
-              postFeedScroll = e;
-            }}
-          ></li>
-        </ul>
-        <PostComposer
-          handleSubmit={handleSubmit}
-          handleFileChange={handleFileChange}
-          handleChange={handleChange}
-          file={file}
-          input={input}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Home
+                handleSubmit={handleSubmit}
+                handleFileChange={handleFileChange}
+                handleChange={handleChange}
+                handleDelete={handleDelete}
+                handleLikes={handleLikes}
+                handleLogOut={handleLogOut}
+                uid={uid}
+                userEmail={userEmail}
+                posts={posts}
+                file={file}
+                input={input}
+              ></Home>
+            }
+          />
+          <Route path="/login" element={<LoginForm />} />
+        </Routes>
       </div>
     </div>
   );
