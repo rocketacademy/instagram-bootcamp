@@ -1,0 +1,108 @@
+.post {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  text-align: left;
+  gap: 10px;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Post User Profile */
+
+.post .post-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post .post-user-pic {
+  background-color: #1982fc;
+  height: 30px;
+  width: 30px;
+  min-width: 0;
+  padding: 5px;
+  border-radius: 15px;
+}
+
+.post .post-user-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.post .post-user-name p {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.post .post-user-name .post-meta {
+  letter-spacing: 0px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgb(0, 0, 0, 0.5);
+}
+
+/* Post Image */
+
+.post img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+/* Post Content */
+
+.post-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.post-likes {
+  background-color: red;
+  border: none;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.post-content .post-likes img {
+  width: 20px;
+  height: 20px;
+}
+
+.post-likes p {
+  color: white;
+  padding: 0px 5px 2px;
+  font-weight: 700;
+}
+
+/* Delete Button */
+
+.post-delete {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  color: white;
+  background: red;
+  border: none;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 5px 0;
+  top: 10px;
+  right: 10px;
+}
