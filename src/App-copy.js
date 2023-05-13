@@ -20,13 +20,7 @@ import { auth } from "./firebase";
 /* import logo from "./logo.png"; */
 import "./App.css";
 import SignUpForm from "./SignUpForm";
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signOut,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -44,30 +38,34 @@ class App extends React.Component {
       fileInputFile: null, //these are for the file upload
       fileInputValue: "",
 
-      uid: null,
+      uid: null
     };
   }
 
   componentDidMount() {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
 
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        console.log("this is the signed in user:", user);
+        console.log('this is the signed in user:', user)
         const uid = user.uid;
         this.setState({
           uid: uid,
-          userEmail: user.email,
-        });
+          userEmail: user.email
+        })
       } else {
         this.setState({
           uid: null,
-          userEmail: null,
-        });
+          userEmail: null
+        })
       }
     });
+
+
+
 
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
@@ -76,10 +74,7 @@ class App extends React.Component {
 
       this.setState((state) => ({
         // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [
-          ...state.messages,
-          { key: data.key, txt: data.val().txt, url: data.val().url },
-        ],
+        messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
     });
     onChildRemoved(messagesRef, (data) => {
@@ -99,62 +94,61 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
     //Upload my file to the storage:
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    const msg = {
-      url: null,
-      txt: this.state.message,
-    };
-
-    if (this.state.fileInputFile) {
-      const fileRef = storeRef(
-        storage,
-        `${STORE_IMAGE_KEY}/${this.state.fileInputFile.name}`
-      );
-      uploadBytesResumable(fileRef, this.state.fileInputFile).then(() => {
-        getDownloadURL(fileRef)
-          .then((url) => {
-            console.log("URL:", url);
-            msg.url = url;
-          })
-          .then(() => {
-            push(messageListRef, msg);
-            //Reset input field after writing/submitting
-            this.setState({
-              message: "",
-              fileInputFile: null,
-            });
-          });
+    const fileRef = storeRef(
+      storage,
+      `${STORE_IMAGE_KEY}/${this.state.fileInputFile.name}`
+    );
+    uploadBytesResumable(fileRef, this.state.fileInputFile).then(() => {
+      getDownloadURL(fileRef).then((url) => {
+        console.log("URL:", url);
       });
-    } else {
-      push(messageListRef, msg);
-    }
+    });
 
     //Adding new message to the realtime Database:
+    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    const newMessageRef = push(messageListRef);
+    console.log("newMessageRef:", newMessageRef);
+    set(newMessageRef, this.state.message);
+    //Reset input field after writing/submitting
+    this.setState({
+      message: "",
+    });
   };
 
   handleSignup = (email, password) => {
-    createUserWithEmailAndPassword(auth, email, password).catch((err) => {
-      console.log("error", err);
+    createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch((err) => {
+      console.log('error', err)
       /*  alert('error code:', err.code, 'msg:'.err.message) */
     });
-  };
+  }
 
   handleLogin = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password).catch((err) => {
-      console.log("error", err);
+    signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch((err) => {
+      console.log('error', err)
       /* alert('error code:', err.code, 'msg:'.err.message) */
     });
-  };
+  }
+
 
   handleLogOut = () => {
     signOut(auth).then(() => {
       this.setState({
         uid: null,
-        userEmail: null,
-      });
-    });
-  };
+        userEmail: null
+      })
+    })
+  }
+
+
+
 
   handleChange = (e) => {
     this.setState({
@@ -166,7 +160,6 @@ class App extends React.Component {
     console.log(e.target.files[0]);
     this.setState({
       fileInputFile: e.target.files[0],
-      fileInputValue: e.target.value
     });
   };
 
@@ -180,30 +173,23 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        <img style={{ width: "10vw" }} src={message.url} />
-        <p>{message.txt}</p>
+      <div>
+        <li key={message.key} >{message.val}</li>
         <button id={message.key} onClick={this.handleDelete}>
           Delete
         </button>
-      </li>
+      </div>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          {this.state.uid ? (
-            <div>
+          {this.state.uid ?
+            (<div>
               <h2>Welcome back {this.state.userEmail}!!!</h2>
               <br />
               <button onClick={this.handleLogOut}>Logout</button>
-            </div>
-          ) : (
-            <SignUpForm
-              auth={auth}
-              handleSignup={this.handleSignup}
-              handleLogin={this.handleLogin}
-            />
-          )}
+            </div>)
+            : (<SignUpForm auth={auth} handleSignup={this.handleSignup} handleLogin={this.handleLogin} />)}
 
           {/*   <img src={logo} className="App-logo" alt="logo" /> */}
           <br />
@@ -216,7 +202,6 @@ class App extends React.Component {
             name="image"
             type="file"
             onChange={this.handleFileChange}
-          /*  value={this.state.fileInputFile} */
           //e.target.files is a Filelist object that is an array of file objects
           //e.target.files[0] is a File object that Firebase Storage can upload
           />
