@@ -166,6 +166,7 @@ class App extends React.Component {
     console.log(e.target.files[0]);
     this.setState({
       fileInputFile: e.target.files[0],
+      fileInputValue: e.target.value
     });
   };
 
@@ -180,7 +181,7 @@ class App extends React.Component {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>
-        <img style={{ width: "30vw" }} src={message.url} />
+        <img style={{ width: "10vw" }} src={message.url} />
         <p>{message.txt}</p>
         <button id={message.key} onClick={this.handleDelete}>
           Delete
