@@ -58,11 +58,7 @@ class App extends React.Component {
   //When there is an input change
   handleInputChange = (event) => {
     const { name, value } = event.target;
-    let nameCheck = this.state.formData.name.length > 0 ? true : false;
-    let msgCheck = this.state.formData.chat.length > 0 ? true : false;
-    console.log(nameCheck,msgCheck)
     this.setState((prevState) => ({ //updates the state
-      disableState: nameCheck && msgCheck ? false : true,
       formData: {
         ...prevState.formData,
         [name]: value,
@@ -70,19 +66,25 @@ class App extends React.Component {
     }));
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.pokemons !== this.state.pokemons) {
+      console.log('pokemons state has changed.')
+    }
+  }
+
   //When there is an input change
   handleSubmit = (event) => {
     event.preventDefault();
     // Perform the desired action with the form data
-    console.log('Form submitted!');
-    console.log('Name:', this.state.formData.name);
-    console.log('Message:', this.state.formData.chat);
+    // console.log('Form submitted!');
+    // console.log('Name:', this.state.formData.name);
+    // console.log('Message:', this.state.formData.chat);
     let chatLog = this.MessageDateTime() + " " + this.state.formData.name + ": " +this.state.formData.chat;
     this.writeData(chatLog) //writes into the data
     // Reset the form fields
     this.setState({
       formData: {
-        name: '',
+        name: this.state.formData.name,
         chat: '',
       },
     });
@@ -97,6 +99,9 @@ class App extends React.Component {
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>{message.val}</li>
     ));
+
+    let nameCheck = this.state.formData.name.length > 0 ? true : false;
+    let msgCheck = this.state.formData.chat.length > 0 ? true : false;
 
     return (
       <div className="App">
@@ -136,7 +141,7 @@ class App extends React.Component {
           />
         </label>
 
-        <button type="submit" disabled = {this.state.disableState}>Submit</button>
+        <button type="submit" disabled = {nameCheck && msgCheck ? false : true}>Submit</button>
        
         </div>
         </form>
