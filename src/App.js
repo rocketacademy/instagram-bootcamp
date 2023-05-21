@@ -1,11 +1,12 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
-import "./App.css";
+import React from 'react';
+import { onChildAdded, push, ref, set } from 'firebase/database';
+import { database } from './firebase';
+import logo from './logo.png';
+import './App.css';
+import { Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+const DB_MESSAGES_KEY = 'messages';
 
 class App extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      messageInput: '',
     };
   }
 
@@ -33,24 +35,67 @@ class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    const newMessage = {
+      text: this.state.messageInput,
+      dateTime: new Date().toLocaleString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      }),
+    };
+    set(newMessageRef, newMessage);
+    this.setState({ messageInput: '' });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <Row key={message.key}>
+        <Col>{message.val.dateTime}</Col>
+        <Col>{message.val.text}</Col>
+      </Row>
     ));
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+      <div className='App'>
+        <header className='App-header'>
+          <Container>
+            <Row>
+              <Col>
+                <img src={logo} className='App-logo' alt='logo' />
+                {/* TODO: Add input field and add text input as messages in Firebase */}
+                <Form
+                  style={{
+                    border: '1px solid #eeeeee',
+                    padding: '10px',
+                    borderRadius: '5px',
+                  }}
+                >
+                  <Form.Group>
+                    <label>Enter your message:</label>
+                    <br />
+                    <input
+                      type='text'
+                      value={this.state.messageInput}
+                      onChange={(e) =>
+                        this.setState({ messageInput: e.target.value })
+                      }
+                    />
+                  </Form.Group>
+                  <Button
+                    onClick={this.writeData}
+                    type='submit'
+                    variant='primary'
+                  >
+                    Send
+                  </Button>
+                </Form>
+              </Col>
+            </Row>
+            {messageListItems}
+          </Container>
         </header>
       </div>
     );
