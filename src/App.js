@@ -3,7 +3,7 @@ import { onChildAdded, push, ref, set } from 'firebase/database';
 import { database } from './firebase';
 import logo from './logo.png';
 import './App.css';
-import { Button, Col, Container, Form, ListGroup, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = 'messages';
