@@ -1,8 +1,8 @@
 import React from "react";
 import { onChildAdded, push, ref, set, remove } from "firebase/database";
 import { database } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -37,21 +37,31 @@ class App extends React.Component {
     // create another variable for the child at the location where the list of messages are found in the database
     const newMessageRef = push(messageListRef);
     // write data at this child location with the string "abc"
-    set(newMessageRef, this.state.newInput);
+    set(newMessageRef, {
+      text: this.state.newInput,
+      date: new Date().toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "numeric",
+      }),
+    });
     this.setState(() => ({ newInput: "" }));
   };
 
   deleteData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    console.log(this.state.messages);
-    remove(messageListRef)
-      .then(() => {
-        console.log("Data deleted successfully.");
-        this.setState({ messages: [] });
-      })
-      .catch((error) => {
-        console.error("Error deleting data:", error);
-      });
+    const confirmation = window.confirm(
+      "Are you sure you want to delete all data?"
+    );
+    if (confirmation) {
+      const messageListRef = ref(database, DB_MESSAGES_KEY);
+      remove(messageListRef)
+        .then(() => {
+          console.log("Data deleted successfully.");
+          this.setState({ messages: [] });
+        })
+        .catch((error) => {
+          console.error("Error deleting data:", error);
+        });
+    }
   };
 
   handleChange = (e) => {
@@ -61,25 +71,64 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <p key={message.key}>
+        {message.val.date}: {message.val.text}
+      </p>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <input
-            type="text"
-            placeholder="Input text here"
-            value={this.state.newInput}
-            onChange={(e) => this.handleChange(e)}
-          />
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-          <button onClick={this.deleteData}>Delete All</button>
+          <div
+            style={{
+              position: "fixed",
+              bottom: "10vh",
+              width: "50%",
+              display: "flex",
+              textAlign: "left",
+            }}
+          >
+            <ol>{messageListItems}</ol>
+          </div>
+          <div
+            style={{
+              position: "fixed",
+              bottom: "5vh",
+              width: "50%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              placeholder="What's on your mind?"
+              value={this.state.newInput}
+              onChange={(e) => this.handleChange(e)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault(); // Prevent form submission
+                  this.writeData();
+                }
+              }}
+              style={{ width: "100%" }}
+            />
+            <button
+              type="button"
+              class="btn btn-primary btn-lg"
+              onClick={this.writeData}
+              disabled={!this.state.newInput}
+            >
+              Send
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-lg"
+              onClick={this.deleteData}
+              disabled={this.state.messages.length === 0}
+            >
+              Delete
+            </button>
+          </div>
         </header>
       </div>
     );
