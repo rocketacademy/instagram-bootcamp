@@ -14,7 +14,11 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+      name: "",
+      messageInput: "",
+      nameInput: "",
     };
+    this.handleMessageChange = this.handleMessageChange.bind(this);
   }
 
   componentDidMount() {
@@ -30,27 +34,85 @@ class App extends React.Component {
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  handleMessageChange = (event) => {
+    this.setState({ messageInput: event.target.value });
+  };
+
+  handleMessageSubmit = (event) => {
+    event.preventDefault();
+
+    const currentDateTime = new Date().toLocaleString();
+
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    set(
+      newMessageRef,
+      `Name: ${this.state.name} 
+      |Message: ${this.state.messageInput}
+      |DateTime: ${currentDateTime}`
+    );
+  };
+
+  handleNameChange = (event) => {
+    this.setState({ nameInput: event.target.value });
+  };
+
+  handleNameSubmit = (event) => {
+    event.preventDefault();
+
+    this.setState({ name: this.state.nameInput });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <li key={message.key}>
+        {/* Render each part of message in separate lines */}
+        {message.val.split("|").map((parts) => (
+          <div>{parts}</div>
+        ))}
+      </li>
     ));
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
+
+          {/* Prompt user to enter name */}
+          {this.state.name === "" && (
+            <div>
+              <h3>How do we address you?</h3>
+              <form onSubmit={this.handleNameSubmit}>
+                <label>
+                  <input
+                    type="text"
+                    value={this.state.nameInput}
+                    onChange={this.handleNameChange}
+                  />{" "}
+                  <input type="submit" value="Enter" />
+                </label>
+              </form>
+            </div>
+          )}
+
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+          {this.state.name !== "" && (
+            <div>
+              <h3>Message</h3>
+              <form onSubmit={this.handleMessageSubmit}>
+                <label>
+                  <input
+                    type="text"
+                    value={this.state.messageInput}
+                    onChange={this.handleMessageChange}
+                  />{" "}
+                  <input type="submit" value="Send" />
+                </label>
+              </form>
+              <br />
+              <ol>{messageListItems}</ol>
+            </div>
+          )}
         </header>
       </div>
     );
