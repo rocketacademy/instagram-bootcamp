@@ -1,5 +1,5 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref, set, remove } from "firebase/database";
 import { database } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
@@ -38,11 +38,24 @@ class App extends React.Component {
     const newMessageRef = push(messageListRef);
     // write data at this child location with the string "abc"
     set(newMessageRef, this.state.newInput);
+    this.setState(() => ({ newInput: "" }));
+  };
+
+  deleteData = () => {
+    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    console.log(this.state.messages);
+    remove(messageListRef)
+      .then(() => {
+        console.log("Data deleted successfully.");
+        this.setState({ messages: [] });
+      })
+      .catch((error) => {
+        console.error("Error deleting data:", error);
+      });
   };
 
   handleChange = (e) => {
-    const { value } = e.target;
-    this.setState((state) => ({ newInput: value }));
+    this.setState(() => ({ newInput: e.target.value }));
   };
 
   render() {
@@ -66,6 +79,7 @@ class App extends React.Component {
           />
           <button onClick={this.writeData}>Send</button>
           <ol>{messageListItems}</ol>
+          <button onClick={this.deleteData}>Delete All</button>
         </header>
       </div>
     );
