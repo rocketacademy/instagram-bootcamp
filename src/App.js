@@ -14,7 +14,10 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
-     inputValue:""
+     inputValue:"",
+     fileInputFile: null,
+      fileInputValue: "",
+      textInputValue: "",
     };
   }
 
@@ -44,7 +47,13 @@ class App extends React.Component {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, inputValue);
+    this.setState({inputValue:""})
   };
+
+  handleSubmitPicture=(event)=>{
+    event.preventDefault();
+    console.log(this.state.fileInputValue);
+  }
 
   render() {
     // Convert messages in state to message JSX elements to render
@@ -65,9 +74,27 @@ class App extends React.Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          {/* <button onClick={this.writeData}>Send</button> */}
-          <ol>{messageListItems}</ol>
+          
+          <ul>{messageListItems}</ul>
+          <form onSubmit={this.handleSubmitPicture}>
+          {/* File input example */}
+          <input
+            type="file"
+            // Set state's fileInputValue to "" after submit to reset file input
+            value={this.state.fileInputValue}
+            onChange={(e) =>
+              // e.target.files is a FileList object that is an array of File objects
+              // e.target.files[0] is a File object that Firebase Storage can upload
+              this.setState({ fileInputFile: e.target.files[0] })
+            }
+          />
+          {/* Text input example */}
+          <input
+            type="text"
+            value={this.state.textInputValue}
+            onChange={(e) => this.setState({ textInputValue: e.target.value })}
+          />
+        </form>
         </header>
       </div>
     );
