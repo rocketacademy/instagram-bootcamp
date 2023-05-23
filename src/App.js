@@ -1,7 +1,7 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
-import logo from "./logo.png";
+
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -28,6 +28,11 @@ class App extends React.Component {
       }));
     });
   }
+  handleChange(event) {
+    this.setState({ inputValue: event.target.value });
+  }
+  handleSubmit(event) {
+    event.preventDefault();}
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
@@ -44,10 +49,17 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
+        <form onSubmit={this.handleSubmit}>
+            <label>
+              <input
+                type="text"
+                name="inputValue"
+                value={this.state.inputValue}
+                onChange={this.handleChange}
+              />
+            </label>
+            <input type="submit" value="Submit" />
+          </form>
           {/* TODO: Add input field and add text input as messages in Firebase */}
           <button onClick={this.writeData}>Send</button>
           <ol>{messageListItems}</ol>
