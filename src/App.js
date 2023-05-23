@@ -47,7 +47,9 @@ class App extends React.Component {
       <li key={message.key}>{message.val}</li>
     ));
     return (
+     
       <div className="App">
+         
         <header className="App-header">
         <form onSubmit={this.handleSubmit}>
             <label>
