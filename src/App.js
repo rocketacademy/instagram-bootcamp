@@ -14,6 +14,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
+     inputValue:""
     };
   }
 
@@ -26,19 +27,23 @@ class App extends React.Component {
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
+     
     });
   }
-  handleChange(event) {
+
+  handleChange=(event)=> {
+    
     this.setState({ inputValue: event.target.value });
   }
-  handleSubmit(event) {
-    event.preventDefault();}
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const { inputValue } = this.state;
+    
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    set(newMessageRef, inputValue);
   };
 
   render() {
@@ -47,11 +52,9 @@ class App extends React.Component {
       <li key={message.key}>{message.val}</li>
     ));
     return (
-     
       <div className="App">
-         
         <header className="App-header">
-        <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit}>
             <label>
               <input
                 type="text"
@@ -63,7 +66,7 @@ class App extends React.Component {
             <input type="submit" value="Submit" />
           </form>
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          {/* <button onClick={this.writeData}>Send</button> */}
           <ol>{messageListItems}</ol>
         </header>
       </div>
