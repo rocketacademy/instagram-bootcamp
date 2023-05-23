@@ -17,3 +17,14 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.btn {
+  cursor: pointer;
+  background: #eeeeee;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  color: #333333;
+  display: inline;
+  font-size: 12px;
+  width: 20%;
+}
