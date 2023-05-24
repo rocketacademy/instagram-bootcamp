@@ -1,6 +1,4 @@
 import React from "react";
-import { realTimeDatabase } from "./firebase";
-import { onChildAdded, ref as realTimeDatabaseRef } from "firebase/database";
 
 import logo from "./logo.png";
 import "./App.css";
@@ -19,20 +17,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       name: "To update in App.js",
-      messages: [],
     };
-  }
-
-  componentDidMount() {
-    const messagesRef = realTimeDatabaseRef(realTimeDatabase, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
   }
 
   render() {
