@@ -16,6 +16,7 @@ import logo from "./logo.png";
 import "./App.css";
 import UserLogin from "./Component/UserLogin";
 import UploadPost from "./Component/UploadPost";
+import Newsfeed from "./Component/Newsfeed";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -34,7 +35,6 @@ class App extends React.Component {
       fileInputFile: { name: "" },
       fileInputValue: "",
     };
-    this.handleMessageChange = this.handleMessageChange.bind(this);
   }
 
   componentDidMount() {
@@ -110,30 +110,6 @@ class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <div>
-        <li key={message.key}>
-          {/* Render each part of message in separate lines */}
-          <span>Name: {message.val.name}</span>
-          <br />
-          <span>Message: {message.val.message}</span>
-          <br />
-          <span>DateTime: {message.val.dateTime}</span>
-          <br />
-          {message.val.url ? (
-            <img
-              className="postImage"
-              src={message.val.url}
-              alt={message.val.name}
-            />
-          ) : (
-            <p>No images</p>
-          )}
-        </li>
-        <br />
-      </div>
-    ));
     return (
       <div className="App">
         <header className="App-header">
@@ -154,6 +130,7 @@ class App extends React.Component {
               User: {this.state.name}
               <UploadPost
                 handlePostSubmit={this.handlePostSubmit}
+                messageInput={this.state.messageInput}
                 handleMessageChange={this.handleMessageChange}
                 fileInputValue={this.state.fileInputValue}
                 handlePhotoUpload={this.handlePhotoUpload}
@@ -161,7 +138,7 @@ class App extends React.Component {
               />
               <br />
               {/* Renders Newsfeed*/}
-              <ol>{messageListItems}</ol>
+              <Newsfeed messages={this.state.messages} />
             </div>
           )}
         </header>
