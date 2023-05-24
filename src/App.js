@@ -15,6 +15,7 @@ import {
 import logo from "./logo.png";
 import "./App.css";
 import UserLogin from "./Component/UserLogin";
+import UploadPost from "./Component/UploadPost";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -58,7 +59,6 @@ class App extends React.Component {
 
   handleNameSubmit = (e) => {
     e.preventDefault();
-
     this.setState({ name: this.state.nameInput });
   };
 
@@ -139,6 +139,7 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
 
+          {/* Input box for user to enter name, Entered name will be registered in current session */}
           {this.state.name === "" && (
             <UserLogin
               handleNameSubmit={this.handleNameSubmit}
@@ -146,51 +147,20 @@ class App extends React.Component {
               nameInput={this.state.nameInput}
             />
           )}
-
           {/* Input form for user to enter post message, upload photo*/}
           {this.state.name !== "" && (
             <div>
               <br />
               User: {this.state.name}
-              <h3>Message</h3>
-              <form onSubmit={this.handlePostSubmit}>
-                {/* message input */}
-                <input
-                  type="text"
-                  value={this.state.messageInput}
-                  onChange={this.handleMessageChange}
-                />{" "}
-                <br />
-                <br />
-                {/* photo upload */}
-                <div className="inputContainer">
-                  <label>
-                    {this.state.fileInputFile.name !== ""
-                      ? "Change Photo"
-                      : "Select Photo"}{" "}
-                    <br />
-                    <br />
-                    <i class="fa fa-2x fa-camera"></i>
-                    <input
-                      className="inputTag"
-                      type="file"
-                      accept="image/png, image/jpg, image/gif, image/jpeg"
-                      // Set state's fileInputValue to "" after submit to reset file input
-                      value={this.state.fileInputValue}
-                      onChange={this.handlePhotoUpload}
-                    />
-                    <br />
-                  </label>
-                </div>
-                <br />
-                {this.state.fileInputFile.name !== ""
-                  ? `Photo selected: ${this.state.fileInputFile.name}`
-                  : "No file selected"}
-                <br />
-                <br />
-                <input type="submit" value="Post" />
-              </form>
+              <UploadPost
+                handlePostSubmit={this.handlePostSubmit}
+                handleMessageChange={this.handleMessageChange}
+                fileInputValue={this.state.fileInputValue}
+                handlePhotoUpload={this.handlePhotoUpload}
+                fileInputFileName={this.state.fileInputFile.name}
+              />
               <br />
+              {/* Renders Newsfeed*/}
               <ol>{messageListItems}</ol>
             </div>
           )}
