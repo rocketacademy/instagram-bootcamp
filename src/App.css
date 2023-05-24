@@ -17,3 +17,22 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.postImage {
+  width: 50vh;
+  height: 30vh;
+}
+
+.inputContainer {
+  text-align: center;
+  padding: 3%;
+  border: thin solid black;
+}
+
+.inputTag {
+  display: none;
+}
+
+label {
+  cursor: pointer;
+}
