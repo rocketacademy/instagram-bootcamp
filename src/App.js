@@ -14,6 +14,7 @@ import {
 
 import logo from "./logo.png";
 import "./App.css";
+import UserLogin from "./Component/UserLogin";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -47,19 +48,27 @@ class App extends React.Component {
     });
   }
 
-  handleMessageChange = (event) => {
-    this.setState({ messageInput: event.target.value });
+  handleMessageChange = (e) => {
+    this.setState({ messageInput: e.target.value });
   };
 
-  handleNameChange = (event) => {
-    this.setState({ nameInput: event.target.value });
+  handleNameChange = (e) => {
+    this.setState({ nameInput: e.target.value });
   };
 
-  handleNameSubmit = (event) => {
-    event.preventDefault();
+  handleNameSubmit = (e) => {
+    e.preventDefault();
 
     this.setState({ name: this.state.nameInput });
   };
+
+  handlePhotoUpload = (e) =>
+    // e.target.files is a FileList object that is an array of File objects
+    // e.target.files[0] is a File object that Firebase Storage can upload
+    this.setState({
+      fileInputFile: e.target.files[0],
+      fileInputValue: e.target.file,
+    });
 
   writeData = (url) => {
     const PostRef = realTimeDatabaseRef(realTimeDatabase, DB_MESSAGES_KEY);
@@ -130,25 +139,19 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
 
-          {/* Prompt user to enter name */}
           {this.state.name === "" && (
-            <div>
-              <h3>How do we address you?</h3>
-              <form onSubmit={this.handleNameSubmit}>
-                <label>
-                  <input
-                    type="text"
-                    value={this.state.nameInput}
-                    onChange={this.handleNameChange}
-                  />{" "}
-                  <input type="submit" value="Enter" />
-                </label>
-              </form>
-            </div>
+            <UserLogin
+              handleNameSubmit={this.handleNameSubmit}
+              handleNameChange={this.handleNameChange}
+              nameInput={this.state.nameInput}
+            />
           )}
 
+          {/* Input form for user to enter post message, upload photo*/}
           {this.state.name !== "" && (
             <div>
+              <br />
+              User: {this.state.name}
               <h3>Message</h3>
               <form onSubmit={this.handlePostSubmit}>
                 {/* message input */}
@@ -159,6 +162,7 @@ class App extends React.Component {
                 />{" "}
                 <br />
                 <br />
+                {/* photo upload */}
                 <div className="inputContainer">
                   <label>
                     {this.state.fileInputFile.name !== ""
@@ -173,14 +177,7 @@ class App extends React.Component {
                       accept="image/png, image/jpg, image/gif, image/jpeg"
                       // Set state's fileInputValue to "" after submit to reset file input
                       value={this.state.fileInputValue}
-                      onChange={(e) =>
-                        // e.target.files is a FileList object that is an array of File objects
-                        // e.target.files[0] is a File object that Firebase Storage can upload
-                        this.setState({
-                          fileInputFile: e.target.files[0],
-                          fileInputValue: e.target.file,
-                        })
-                      }
+                      onChange={this.handlePhotoUpload}
                     />
                     <br />
                   </label>
