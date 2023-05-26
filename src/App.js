@@ -1,7 +1,11 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { database,storage } from "./firebase";
-import {ref as storageRef, uploadBytes,getDownloadURL} from "firebase/storage";
+import { database, storage } from "./firebase";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 
 import "./App.css";
 
@@ -16,8 +20,8 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       messages: [],
-     inputValue:"",
-     fileInputFile: null,
+      inputValue: "",
+      fileInputFile: null,
       fileInputValue: "",
       textInputValue: "",
     };
@@ -32,27 +36,25 @@ class App extends React.Component {
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
-     
     });
   }
 
-  handleChange=(event)=> {
-    
+  handleChange = (event) => {
     this.setState({ inputValue: event.target.value });
-  }
+  };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
     event.preventDefault();
-    const date= new Date();
-    const timeSent= date.toLocaleString("en-GB");
+    const date = new Date();
+    const timeSent = date.toLocaleString("en-GB");
     console.log(timeSent);
     const { inputValue } = this.state;
-    
+
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, `${timeSent}: ${inputValue} `);
-    this.setState({inputValue:""})
+    this.setState({ inputValue: "" });
   };
 
   writeData = (url) => {
@@ -81,17 +83,20 @@ class App extends React.Component {
       STORAGE_KEY + this.state.fileInputFile.name
     );
 
+    //Take referrence location and file data, so we can store the data online
     uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
+      // retrieve the URL to set the realtime database
       getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
         (url) => {
           this.writeData(url);
+          
         }
       );
     });
   };
- 
 
   render() {
+    const { fileInputValue } = this.state;
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <li key={message.key}>{message.val}</li>
@@ -110,27 +115,32 @@ class App extends React.Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
-          
+
           <ul>{messageListItems}</ul>
-          <form onSubmit={this.handleSubmitPicture}>
+
           {/* File input example */}
+          <label>Image</label>
+          <br />
           <input
             type="file"
-            // Set state's fileInputValue to "" after submit to reset file input
+            name="file"
             value={this.state.fileInputValue}
-            onChange={(e) =>
-              // e.target.files is a FileList object that is an array of File objects
-              // e.target.files[0] is a File object that Firebase Storage can upload
-              this.setState({ fileInputFile: e.target.files[0] })
-            }
+            onChange={(e) => {
+              this.setState({
+                fileInputFile: e.target.files[0],
+                fileInputValue: e.target.files,
+              });
+            }}
           />
+          {console.log(fileInputValue)}
+          <br />
+          <button onClick={this.handleSubmitPicture}>Submit Data</button>
           {/* Text input example */}
           <input
             type="text"
             value={this.state.textInputValue}
             onChange={(e) => this.setState({ textInputValue: e.target.value })}
           />
-        </form>
         </header>
       </div>
     );

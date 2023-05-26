@@ -26,4 +26,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Get a reference to the database service and export the reference for other modules
 export const database = getDatabase(firebaseApp);
+
+// Connect to correct referrence of URL online
 export const storage = getStorage(firebaseApp); 
