@@ -1,11 +1,13 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { database,storage } from "./firebase";
+import {ref as storageRef, uploadBytes,getDownloadURL} from "firebase/storage";
 
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const STORAGE_KEY = "images/";
 
 class App extends React.Component {
   constructor(props) {
@@ -42,18 +44,52 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
     event.preventDefault();
+    const date= new Date();
+    const timeSent= date.toLocaleString("en-GB");
+    console.log(timeSent);
     const { inputValue } = this.state;
     
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, inputValue);
+    set(newMessageRef, `${timeSent}: ${inputValue} `);
     this.setState({inputValue:""})
   };
 
-  handleSubmitPicture=(event)=>{
-    event.preventDefault();
-    console.log(this.state.fileInputValue);
-  }
+  writeData = (url) => {
+    const PostRef = storageRef(database, DB_MESSAGES_KEY);
+    const newPostRef = push(PostRef);
+
+    set(newPostRef, {
+      name: this.state.name,
+      message: this.state.messageInput,
+      dateTime: new Date().toLocaleString(),
+      url: url,
+    });
+
+    this.setState({
+      messageInput: "",
+      fileInputFile: null,
+      fileInputValue: "",
+    });
+  };
+
+  handleSubmitPicture = (e) => {
+    e.preventDefault();
+
+    const fullStorageRef = storageRef(
+      storage,
+      STORAGE_KEY + this.state.fileInputFile.name
+    );
+
+    uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
+      getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
+        (url) => {
+          this.writeData(url);
+        }
+      );
+    });
+  };
+ 
 
   render() {
     // Convert messages in state to message JSX elements to render
