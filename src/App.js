@@ -7,10 +7,10 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Form from "react-bootstrap/Form";
+import InstagramFeed from "./Component/InstagramFeed.js";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -22,25 +22,13 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      // messages: [],
       textInputValue: "",
       date: "",
       time: "",
       fileInputFile: null,
       fileInputValue: "",
     };
-  }
-
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
   }
 
   handleTextInputChange = (event) => {
@@ -93,23 +81,6 @@ class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <Card border="light" bg="light" key={message.key}>
-        <Card.Header as="h4">Post</Card.Header>
-        <Card.Body>
-          <Card.Text>
-            {" "}
-            Description: {message.val.message} <br />
-          </Card.Text>
-        </Card.Body>
-        <Card.Img src={message.val.url} alt={message.val.message} />
-        <Card.Footer className="text-muted">
-          {" "}
-          Date:{message.val.date} - {message.val.time}
-        </Card.Footer>
-      </Card>
-    ));
     return (
       <div className="App">
         <header className="App-header">
@@ -141,7 +112,7 @@ class App extends React.Component {
             </Form.Group>
           </Form>
         </header>
-        <ol>{messageListItems}</ol>
+        <InstagramFeed />
       </div>
     );
   }
