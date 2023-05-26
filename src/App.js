@@ -1,13 +1,16 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database, storage } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Form from "react-bootstrap/Form";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -40,8 +43,15 @@ class App extends React.Component {
     });
   }
 
-  handleChange = (event) => {
+  handleTextInputChange = (event) => {
     this.setState({ textInputValue: event.target.value });
+  };
+
+  handleFileInputChange = (event) => {
+    this.setState({
+      fileInputFile: event.target.files[0],
+      fileInputValue: event.target.value,
+    });
   };
 
   writeData = (url) => {
@@ -80,54 +90,58 @@ class App extends React.Component {
         }
       );
     });
-
-    // Reset input field after submit
-    this.setState({ textInputValue: "" });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        Message: {message.val.message} <br />
-        Date:{message.val.date} - {message.val.time}
-        {message.val.url ? (
-          <img src={message.val.url} alt={message.val.message} />
-        ) : (
-          <p>No images</p>
-        )}
-      </li>
+      <Card border="light" bg="light" key={message.key}>
+        <Card.Header as="h4">Post</Card.Header>
+        <Card.Body>
+          <Card.Text>
+            {" "}
+            Description: {message.val.message} <br />
+          </Card.Text>
+        </Card.Body>
+        <Card.Img src={message.val.url} alt={message.val.message} />
+        <Card.Footer className="text-muted">
+          {" "}
+          Date:{message.val.date} - {message.val.time}
+        </Card.Footer>
+      </Card>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              value={this.state.textInputValue}
-              onChange={this.handleChange}
-            />
-            <input
-              type="submit"
-              value="Send"
-              // Disable Send button when text input is empty
-              disabled={!this.state.textInputValue}
-            />
-            <input
-              type="file"
-              name="file"
-              value={this.state.fileInputValue}
-              onChange={(e) => {
-                this.setState({
-                  fileInputFile: e.target.files[0],
-                  fileInputValue: e.target.file,
-                });
-              }}
-            />
-          </form>
-          <ol>{messageListItems}</ol>
+          <h2>Rocketgram</h2>
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Control
+                value={this.state.textInputValue}
+                onChange={this.handleTextInputChange}
+                type="text"
+                placeholder="What's your photo about?"
+              />
+              <input
+                className="form-control form-control-sm"
+                variant="secondary"
+                type="file"
+                name="file"
+                value={this.state.fileInputValue}
+                onChange={this.handleFileInputChange}
+              />
+              <Button
+                as="input"
+                type="submit"
+                value="Send"
+                // Disable Send button when text input is empty
+                disabled={!this.state.textInputValue}
+                variant="primary"
+              />
+            </Form.Group>
+          </Form>
         </header>
+        <ol>{messageListItems}</ol>
       </div>
     );
   }
