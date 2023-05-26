@@ -1,7 +1,9 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, ref } from "firebase/database";
 import { database } from "../firebase";
-import "../App.css";
+
+// styling
+import "./InstagramFeed.css";
 import Card from "react-bootstrap/Card";
 
 const DB_MESSAGES_KEY = "messages";
@@ -31,7 +33,7 @@ class InstagramFeed extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <Card border="light" bg="light" key={message.key}>
+      <Card border="light" bg="light" key={message.key} className="Card">
         <Card.Header as="h4">Post</Card.Header>
         <Card.Body>
           <Card.Text>
@@ -39,7 +41,11 @@ class InstagramFeed extends React.Component {
             Description: {message.val.message} <br />
           </Card.Text>
         </Card.Body>
-        <Card.Img src={message.val.url} alt={message.val.message} />
+        <Card.Img
+          src={message.val.url}
+          alt={message.val.message}
+          className="Card-Img"
+        />
         <Card.Footer className="text-muted">
           {" "}
           Date:{message.val.date} - {message.val.time}

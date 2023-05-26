@@ -17,17 +17,3 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
-.mb-3 {
-  padding: 1rem; /* Adjust the padding value as per your preference */
-}
-
-.mb-3-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.mb-3-body > * + * {
-  margin-top: 1rem; /* Adjust the margin value as per your preference */
-}
