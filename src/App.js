@@ -1,6 +1,7 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
+import { getDownloadURL, ref as storageRef, uploadBytes,} from "firebase/storage";
+import { database, storage } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
@@ -15,17 +16,18 @@ class App extends React.Component {
     this.state = {
       messages: [],
       disableState: true,
+      fileInputFile: null,
+      fileInputValue: "",
       //Separate dictionary for the formData
       formData: {
         name: '',
         chat: '',
       },
     };
-
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const messagesRef = databaseRef(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     // onChildAdded: Pulls data from the server into local 
     onChildAdded(messagesRef, (data) => {
@@ -41,7 +43,7 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   // Writing data into the server
   writeData = (textInput) => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    const messageListRef = databaseRef(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, textInput);
     // console.log(messageListRef);
@@ -67,9 +69,7 @@ class App extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.pokemons !== this.state.pokemons) {
-      console.log('pokemons state has changed.')
-    }
+    console.log(this.state);
   }
 
   //When there is an input change
@@ -81,8 +81,19 @@ class App extends React.Component {
     // console.log('Message:', this.state.formData.chat);
     let chatLog = this.MessageDateTime() + " " + this.state.formData.name + ": " +this.state.formData.chat;
     this.writeData(chatLog) //writes into the data
+    
+    // 'file' comes from the Blob or File API; On Click: Send file to firebase
+    let file = this.state.fileInputFile;
+    let fileRef = storageRef(storage, this.state.fileInputValue);
+    
+    uploadBytes(fileRef, file).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
+
     // Reset the form fields
     this.setState({
+      fileInputFile: null,
+      fileInputValue: "",
       formData: {
         name: this.state.formData.name,
         chat: '',
@@ -139,8 +150,21 @@ class App extends React.Component {
             value={chat}
             onChange={this.handleInputChange}
           />
+          
         </label>
-
+        <input
+            type="file"
+            // Set state's fileInputValue to "" after submit to reset file input
+            value={this.state.fileInputValue}
+            onChange={(e) =>
+              // e.target.files is a FileList object that is an array of File objects
+              // e.target.files[0] is a File object that Firebase Storage can upload
+              this.setState({ 
+                fileInputFile: e.target.files[0],
+                fileInputValue: e.target.value,
+               })
+            }
+            />
         <button type="submit" disabled = {nameCheck && msgCheck ? false : true}>Submit</button>
        
         </div>
