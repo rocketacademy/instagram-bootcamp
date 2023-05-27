@@ -30,6 +30,7 @@ class NewsFeed extends React.Component {
     });
   }
 
+  //Function: Capitalize the name
   capitalizeFirstLetterOfEachWord = (str) => {
     return str.replace(/^(.)|\s+(.)/g, function(match) {
       return match.toUpperCase();
@@ -42,13 +43,11 @@ class NewsFeed extends React.Component {
   }
 
   render() {
-    
-
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
         
       <li key={message.key}>
-        <img src={message.val.imageLink} alt={message.val.imageLink} className = "postImage"/>
+        <img src={message.val.imageLink} alt={message.val.imageLink} className = "flex-item"/>
         <div>{this.postFormat(message.val.user,message.val.time,message.val.text)}   </div>
       </li>
     ));
