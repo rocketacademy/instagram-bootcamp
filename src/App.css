@@ -20,6 +20,8 @@
 
 .chatInput{
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* or other horizontal alignment values */
 }
 
 .chatPax{
@@ -27,7 +29,7 @@
 }
 
 .messageHist{
-  height:200px;
+  height:400px;
   width:50vmin;
   overflow-y: scroll;
   margin: 0;
@@ -61,4 +63,12 @@ h3{
   display: flex;
   flex-direction: column-reverse;
   list-style-type: none;
+}
+
+.postImage{
+  max-width: 100%;
+}
+
+.flex-item {
+  width: 100%;
 }
