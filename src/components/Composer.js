@@ -60,7 +60,7 @@ class Composer extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   //When there is an input change

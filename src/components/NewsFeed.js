@@ -22,7 +22,7 @@ class NewsFeed extends React.Component {
     // onChildAdded: Pulls data from the server into local 
     onChildAdded(postListRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      console.log(data.val())
+      //console.log(data.val())
       this.setState((state) => ({
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }], //key-value pair
@@ -52,7 +52,7 @@ class NewsFeed extends React.Component {
       </li>
     ));
 
-    console.log(messageListItems);
+    // console.log(messageListItems);
 
 
     return (

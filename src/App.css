@@ -76,3 +76,13 @@ h3{
 .sign-in{
   margin: 10px;
 }
+
+.errorLog{
+  font-size: small;
+  color: red;
+}
+
+.msgLog{
+  font-size: small;
+  color: green;
+}

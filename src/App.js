@@ -1,7 +1,7 @@
 import React from "react";
 import { auth } from "./firebase";
-import {onAuthStateChanged } from "firebase/auth"
-import logo from "./logo.png";
+import {onAuthStateChanged, signOut } from "firebase/auth"
+// import logo from "./logo.png";
 import "./App.css";
 import NewsFeed from "./components/NewsFeed";
 import Composer from "./components/Composer";
@@ -13,27 +13,30 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      loggedInUser: false, //To check if user is logged in (To alter the prompt button)
+      loggedInUser: null, //To check if user is logged in (To alter the prompt button)
       shouldRenderAuthForm: false,
     };
   }
 
   componentDidMount() {
     onAuthStateChanged(auth, (user) => {
+      console.log("Auth State Triggered");
+      // If user is logged in, save logged-in user to state
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
-        // ...
-      } else {
-        // User is signed out
-        // ...
+        console.log(`User Registered: ${user}`)
+        this.setState({ loggedInUser: user });
+        return;
       }
+      // Else set logged-in user in state to null
+      this.setState({ loggedInUser: null });
+      
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state);
+    console.log("App State Updated!");
+    console.log(this.state)
+    console.log(this.state.loggedInUser ? "yes" : "no")
   }
 
   //When an unauthenticated user clicks "Create Account or Sign In" button, 
@@ -45,12 +48,29 @@ class App extends React.Component {
     }));
   };
 
+  signOut = () => {
+    signOut(auth, (user) => {
+      console.log('Signed Out');
+      this.setState({
+        loggedInUser: null, //To check if user is logged in (To alter the prompt button)
+        shouldRenderAuthForm: false,
+      });
+
+    })
+    
+  };
+
 
   render() {
     //Clean strategy learnt from Kai's code is to declare the constants
 
-    const composer = <Composer />
-
+    const composer = (
+      <div>
+        <Composer />
+        <button onClick={this.signOut}> Sign Out </button>
+      </div>
+    
+    )
     const createAccountOrSignInButton = ( //Initial page (everything click it toggle auth form)
       <div>
         <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button> 
@@ -63,9 +83,7 @@ class App extends React.Component {
         {/* Render composer if user logged in, else render auth button */}
         <NewsFeed />
         <br />
-        {this.state.loggedInUser ? composer : createAccountOrSignInButton}
-        
-        
+        {this.state.loggedInUser ? composer : createAccountOrSignInButton}        
       </div>
     ;
 
@@ -75,7 +93,8 @@ class App extends React.Component {
           <h1>Messaging Application</h1>
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          {this.state.shouldRenderAuthForm ? <p>Authorisation Form</p> : composerAndNewsFeed}
+          {this.state.shouldRenderAuthForm ? <AuthForm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed}
+          
         </header>
       </div>
     );

@@ -12,19 +12,19 @@ class AuthForm extends React.Component {
       emailInputValue: "",
       passwordInputValue: "",
       isNewUser: true,
-      errorCode: "",
-      errorMessage: "",
+      messageLog: "",
+      errorMsg: 0,
     };
     
   }
 
   // Use a single method to control email and password form inputs
-  handleInputChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+  handleInputChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value }); //corresponding to the state name from the fields
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
+  handleSubmit = (e) => {
+    e.preventDefault();
 
     const closeAuthForm = () => {
       // Reset auth form state
@@ -32,37 +32,54 @@ class AuthForm extends React.Component {
         emailInputValue: "",
         passwordInputValue: "",
         isNewUser: true,
-        // errorCode: "",
-        // errorMessage: "",
       });
       // Toggle auth form off after authentication
       this.props.toggleAuthForm();
-    };
 
-    const setErrorState = (error) => {
-      this.setState({
-        errorCode: error.code,
-        errorMessage: error.message,
-      });
     };
 
     // Authenticate user on submit
     if (this.state.isNewUser) {
-      createUserWithEmailAndPassword(
+      createUserWithEmailAndPassword( //This will handle the user creation
         auth,
         this.state.emailInputValue,
         this.state.passwordInputValue
       )
-        .then(closeAuthForm)
-        .catch(setErrorState);
-    } else {
-      signInWithEmailAndPassword(
-        auth,
-        this.state.emailInputValue,
-        this.state.passwordInputValue
-      )
-        .then(closeAuthForm)
-        .catch(setErrorState);
+        .then(closeAuthForm) //Once authenticated, it will close
+        .catch((error) => {
+            // Login error, handle the error
+            const errorCode = error.code;
+            // const errorMessage = error.message;
+            // console.log('Creation error: ', errorCode, errorMessage);
+            this.setState({
+                messageLog: 'Creation error:' + errorCode,
+                errorMsg: 2,
+              });
+          });
+    } 
+    
+    else {
+      signInWithEmailAndPassword(auth,this.state.emailInputValue,this.state.passwordInputValue)
+      .then((userCredential) => { //This will handle the existing user sign-in
+        // Login successful, handle the authenticated user
+        const user = userCredential.user;
+        // console.log('Logged in user: ', user);
+        this.setState({
+            messageLog: 'Successfully logged-in!: ' + user,
+            errorMsg: 1,
+          });
+      })
+      .then(closeAuthForm) //Once authenticated, it will close
+      .catch((error) => { 
+        // Login error, handle the error
+        const errorCode = error.code;
+        // const errorMessage = error.message;
+        // console.log('Login error: ', errorCode, errorMessage);
+        this.setState({
+            messageLog: 'Login error: ' + errorCode,
+            errorMsg: 2,
+          });
+      });
     }
   };
 
@@ -73,12 +90,7 @@ class AuthForm extends React.Component {
   render() {
     return (
       <div>
-        {/* <p>
-          {this.state.errorCode ? `Error code: ${this.state.errorCode}` : null}
-        </p>
-        <p>
-          {this.state.errorMessage ? `Error message: ${this.state.errorMessage}` : null}
-        </p> */}
+ 
         <p>Sign in with this form to post.</p>
 
         <form onSubmit={this.handleSubmit}>
@@ -109,17 +121,26 @@ class AuthForm extends React.Component {
             type="submit"
             value={this.state.isNewUser ? "Create Account" : "Sign In"}
             // Disable form submission if email or password are empty
+            // Apparently you can do that when using a boo lean operator on string
             disabled={
               !this.state.emailInputValue || !this.state.passwordInputValue
             }
           />
           <br />
-          <button variant="link" onClick={this.toggleNewOrReturningAuth}>
+          <button onClick={this.toggleNewOrReturningAuth}>
             {this.state.isNewUser
               ? "If you have an account, click here to login"
               : "If you are a new user, click here to create account"}
           </button>
+
         </form>
+
+        <div >
+        <p className = {this.state.errorMsg === 1 ? 'msgLog' : 'errorLog'}>
+          {(this.state.errorMsg !==0 ) ? `${this.state.messageLog}` : null}
+        </p>
+        </div>
+        
       </div>
     );
   }

@@ -22,6 +22,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // Get a reference to the database service and export the reference for other modules
+// Service reference
 export const database = getDatabase(firebaseApp);
 export const storage = getStorage(firebaseApp); 
 export const auth = getAuth(firebaseApp);
