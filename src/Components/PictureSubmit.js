@@ -28,7 +28,7 @@ export default class PictureSubmit extends React.Component {
     set(newPicRef, {
       
       
-      date: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleString("en-GB"),
       url: url,
     });
 
@@ -39,12 +39,7 @@ export default class PictureSubmit extends React.Component {
       fileInputValue: "",
     });
   };
-//   handleChange = (e) => {
-    
-//     let value = e.target.value;
 
-    
-//   };
 
   submit = () => {
     const fullStorageRef = storageRef(

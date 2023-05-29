@@ -32,13 +32,13 @@ export default class PictureList extends React.Component {
             this.state.pics.map((picItem) => (
               <li key={picItem.key}>
                 <div>
-                  <h2>
+                  <h4>
                     {picItem.val.date}
-                  </h2>
+                  </h4>
                   
 
                   {picItem.val.url ? (
-                    <img src={picItem.val.url} alt="pic"/>
+                    <img src={picItem.val.url} width="50%vw" alt="pic"/>
                   ) : (
                     <p>No images</p>
                   )}
