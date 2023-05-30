@@ -54,18 +54,20 @@ export default class MessageSubmit extends React.Component {
     return (
       <div>
           <form onSubmit={this.handleSubmit}>
-            <label>
+            <label>Message</label>
+            <br />
               <input
                 type="text"
                 name="inputValue"
                 value={this.state.inputValue}
                 onChange={this.handleChange}
               />
-            </label>
+            
             <br />
           </form>
-
-          <ul>{messageListItems}</ul>
+          
+        {messageListItems[0] ? (<ul>{messageListItems}</ul>):(<p>No messages to display</p>)}
+          
           </div>
     );
   }

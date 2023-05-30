@@ -16,7 +16,7 @@ export default class PictureSubmit extends React.Component {
 
     this.state = {
       
-      
+      description: "",
       fileInputFile: null,
       fileInputValue: "",
     };
@@ -27,19 +27,27 @@ export default class PictureSubmit extends React.Component {
 
     set(newPicRef, {
       
-      
+      description: this.state.description,
       date: new Date().toLocaleString("en-GB"),
       url: url,
     });
 
     this.setState({
       
-     
+      description: this.state.description,
       fileInputFile: null,
       fileInputValue: "",
     });
   };
 
+  handleChange = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    this.setState({
+      [name]: value,
+    });
+  };
 
   submit = () => {
     const fullStorageRef = storageRef(
@@ -53,9 +61,12 @@ export default class PictureSubmit extends React.Component {
       getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
         (url) => {
           this.writeData(url);
+          this.setState({description:""})
         }
       );
     });
+
+    
   };
 
   render() {
@@ -63,9 +74,18 @@ export default class PictureSubmit extends React.Component {
       <div>
        
 
-        
+       <label>Image Description</label>
         <br />
-        <label>Image</label>
+        <input
+          type="text"
+          name="description"
+          value={this.state.description}
+          placeholder="Insert Picture Description"
+          onChange={(e) => this.handleChange(e)}
+        />
+        <br />
+        
+        <label>Image File</label>
         <br />
         <input
           type="file"
