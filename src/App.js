@@ -14,8 +14,12 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
  
+  // user is like state in class components, setUser is like setState
   const [user, setUser] = useState({});
+  console.log(user);
 
+  // useEffect triggers when the particular component re-renders similiar to ComponentDidMount and ComponentDidUpdate in class components
+  // As useEffect is only one function instead of two, stricter restrictions are needed
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       //console.log(user);
@@ -44,7 +48,7 @@ function App() {
         ) : null}
 
         {isLoggedIn ? (<div><MessageSubmit />
-          <PictureSubmit /><PictureList /></div>) : <UserAuth />}
+          <PictureSubmit email={user.email}/><PictureList /></div>) : <UserAuth />}
           
           
           

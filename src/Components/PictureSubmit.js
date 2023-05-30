@@ -11,8 +11,8 @@ const REALTIME_DATABASE_KEY = "pics";
 const STORAGE_KEY = "images/";
 
 export default class PictureSubmit extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       
@@ -21,12 +21,12 @@ export default class PictureSubmit extends React.Component {
       fileInputValue: "",
     };
   }
-  writeData = (url) => {
+  writeData = (url,email) => {
     const picListRef = ref(database, REALTIME_DATABASE_KEY);
     const newPicRef = push(picListRef);
 
     set(newPicRef, {
-      
+      email,
       description: this.state.description,
       date: new Date().toLocaleString("en-GB"),
       url: url,
@@ -49,7 +49,7 @@ export default class PictureSubmit extends React.Component {
     });
   };
 
-  submit = () => {
+  submit = (email) => {
     const fullStorageRef = storageRef(
       storage,
       STORAGE_KEY + this.state.fileInputFile.name
@@ -60,7 +60,7 @@ export default class PictureSubmit extends React.Component {
       // retrieve the URL to set the realtime database
       getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
         (url) => {
-          this.writeData(url);
+          this.writeData(url,email);
           this.setState({description:""})
         }
       );
@@ -70,6 +70,7 @@ export default class PictureSubmit extends React.Component {
   };
 
   render() {
+    const {email}=this.props;
     return (
       <div>
        
@@ -99,7 +100,7 @@ export default class PictureSubmit extends React.Component {
           }}
         />
         <br />
-        <button onClick={this.submit}>Submit Data</button>
+        <button onClick={()=>this.submit(email)}>Submit Data</button>
       </div>
     );
   }

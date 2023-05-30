@@ -11,14 +11,14 @@ export default function UserAuth() {
 
   const signUp = async () => {
     const user = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(user);
+    console.log("sign up"+user);
     setEmail("");
     setPassword("");
   };
 
   const signIn = async () => {
     const user = await signInWithEmailAndPassword(auth, email, password);
-    console.log(user);
+    console.log("sign in"+user);
     setEmail("");
     setPassword("");
   };
