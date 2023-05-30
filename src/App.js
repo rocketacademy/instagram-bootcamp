@@ -13,11 +13,12 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+ 
   const [user, setUser] = useState({});
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
+      //console.log(user);
       if (user) {
         setIsLoggedIn(true);
         setUser(user);

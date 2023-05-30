@@ -6,8 +6,8 @@ import { database } from "../firebase";
 const REALTIME_DATABASE_KEY = "pics";
 
 export default class PictureList extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       pics: [],
@@ -34,14 +34,14 @@ export default class PictureList extends React.Component {
                 <div>
                   
                   
-                  <h4>{picItem.val.description}</h4>
+                  <h4>User posted: {picItem.val.description}</h4>
                   {picItem.val.url ? (
                     <img src={picItem.val.url} width="50%vw"  alt="pic"/>
                   ) : (
                     <p>No images</p>
                   )}
                   <h5>
-                    {picItem.val.date}
+                    on {picItem.val.date}
                   </h5>
                 </div>
               </li>
