@@ -5,8 +5,8 @@ import { database } from "../firebase";
 const DB_MESSAGES_KEY = "messages";
 
 export default class MessageSubmit extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       messages: [],
       inputValue: "",
@@ -32,6 +32,7 @@ export default class MessageSubmit extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
+    const displayName=this.props.displayName;
     event.preventDefault();
     const date = new Date();
     const timeSent = date.toLocaleString("en-GB");
@@ -40,12 +41,13 @@ export default class MessageSubmit extends React.Component {
 
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, `${timeSent}: ${inputValue} `);
+    set(newMessageRef, `${timeSent} ${displayName} sent:\n ${inputValue} `);
 
     this.setState({ inputValue: "" });
   };
 
   render() {
+    
     //const { fileInputValue } = this.state;
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (

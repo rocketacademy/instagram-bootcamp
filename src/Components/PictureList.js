@@ -34,7 +34,7 @@ export default class PictureList extends React.Component {
                 <div>
                   
                   
-                  <h4>{picItem.val.email} posted: {picItem.val.description}</h4>
+                  <h4>{picItem.val.displayName} posted: {picItem.val.description}</h4>
                   {picItem.val.url ? (
                     <img src={picItem.val.url} width="400px"  alt="pic"/>
                   ) : (
