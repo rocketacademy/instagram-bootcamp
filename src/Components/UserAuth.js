@@ -9,9 +9,12 @@ import {
 export default function UserAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName]=useState("");
+  const [displayName, setDisplayName] = useState("");
 
   const signUp = async (displayName) => {
+    if (!displayName || !email || !password) {
+      alert("Please do not leave the fields empty");
+    }
     const user = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, { displayName }).then(() => {
       console.log("Profile updated successfully.");
@@ -21,10 +24,12 @@ export default function UserAuth() {
       setPassword("");
     });
     console.log(user);
-  
   };
 
   const signIn = async () => {
+    if (!email || !password) {
+      alert("Please do not leave the fields empty");
+    }
     const user = await signInWithEmailAndPassword(auth, email, password);
     console.log(user);
     setDisplayName("");
@@ -34,6 +39,7 @@ export default function UserAuth() {
 
   return (
     <div>
+      <br />
       <label>Username</label>
       <br />
       <input
@@ -62,7 +68,7 @@ export default function UserAuth() {
       />
       <br />
 
-      <button onClick={()=>signUp(displayName)}>SignUp</button>
+      <button onClick={() => signUp(displayName)}>SignUp</button>
       <button onClick={signIn}>SignIn</button>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-
+import "../App.css";
 import { onChildAdded, ref } from "firebase/database";
 import { database } from "../firebase";
 
@@ -30,13 +30,13 @@ export default class PictureList extends React.Component {
         <ul>
           {this.state.pics && this.state.pics.length > 0 ? (
             this.state.pics.map((picItem) => (
-              <li key={picItem.key}>
+              <li key={picItem.key} className="Pic-box">
                 <div>
                   
                   
                   <h4>{picItem.val.displayName} posted: {picItem.val.description}</h4>
                   {picItem.val.url ? (
-                    <img src={picItem.val.url} width="400px"  alt="pic"/>
+                    <img src={picItem.val.url} width="200px" alt="pic"/>
                   ) : (
                     <p>No images</p>
                   )}
