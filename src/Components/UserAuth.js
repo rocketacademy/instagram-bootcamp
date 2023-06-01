@@ -13,11 +13,15 @@ export default function UserAuth() {
 
   const signUp = async (displayName) => {
     const user = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(auth.currentUser, {displayName})
+    await updateProfile(auth.currentUser, { displayName }).then(() => {
+      console.log("Profile updated successfully.");
+      // Continue with the rest of the app logic here
+      setDisplayName("");
+      setEmail("");
+      setPassword("");
+    });
     console.log(user);
-    setDisplayName("");
-    setEmail("");
-    setPassword("");
+  
   };
 
   const signIn = async () => {

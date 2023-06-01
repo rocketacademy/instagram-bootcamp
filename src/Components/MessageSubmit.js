@@ -32,7 +32,7 @@ export default class MessageSubmit extends React.Component {
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
-    const displayName=this.props.displayName;
+    const displayName = this.props.displayName;
     event.preventDefault();
     const date = new Date();
     const timeSent = date.toLocaleString("en-GB");
@@ -41,36 +41,41 @@ export default class MessageSubmit extends React.Component {
 
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, `${timeSent} ${displayName} sent:\n ${inputValue} `);
+    set(newMessageRef, `${timeSent} <br>${displayName}: ${inputValue} `);
 
     this.setState({ inputValue: "" });
   };
 
   render() {
-    
     //const { fileInputValue } = this.state;
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <li
+        key={message.key}
+        dangerouslySetInnerHTML={{ __html: message.val }}
+      ></li>
     ));
     return (
       <div>
-          <form onSubmit={this.handleSubmit}>
-            <label>Message</label>
-            <br />
-              <input
-                type="text"
-                name="inputValue"
-                value={this.state.inputValue}
-                onChange={this.handleChange}
-              />
-            
-            <br />
-          </form>
-          
-        {messageListItems[0] ? (<ul>{messageListItems}</ul>):(<p>No messages to display</p>)}
-          
-          </div>
+        <form onSubmit={this.handleSubmit}>
+          <label>Message</label>
+          <br />
+          <input
+            type="text"
+            name="inputValue"
+            value={this.state.inputValue}
+            onChange={this.handleChange}
+          />
+
+          <br />
+        </form>
+
+        {messageListItems[0] ? (
+          <ul>{messageListItems}</ul>
+        ) : (
+          <p>No messages to display</p>
+        )}
+      </div>
     );
   }
 }

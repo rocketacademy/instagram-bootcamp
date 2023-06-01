@@ -16,8 +16,7 @@ function App() {
  
   // user is like state in class components, setUser is like setState
   const [user, setUser] = useState({});
-  console.log(user.displayName);
-
+  
   // useEffect triggers when the particular component re-renders similiar to ComponentDidMount and ComponentDidUpdate in class components
   // As useEffect is only one function instead of two, stricter restrictions are needed
   useEffect(() => {
@@ -47,8 +46,8 @@ function App() {
           </button>
         ) : null}
 
-        {isLoggedIn ? (<div><MessageSubmit displayName={user.displayName}/>
-          <PictureSubmit displayName={user.displayName}/><PictureList /></div>) : <UserAuth />}
+        {isLoggedIn ? (user.displayName ? (<div><MessageSubmit displayName={user.displayName}/>
+          <PictureSubmit displayName={user.displayName}/><PictureList /></div>):<p>Press F5 to refresh the page if username is not displayed</p>) : <UserAuth />}
           
           
           
