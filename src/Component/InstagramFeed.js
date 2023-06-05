@@ -32,8 +32,15 @@ class InstagramFeed extends React.Component {
 
   render() {
     // Convert messages in state to message JSX elements to render
+
     let messageListItems = this.state.messages.map((message) => (
-      <Card border="light" bg="light" key={message.key} className="Card">
+      <Card
+        border="light"
+        bg="light"
+        key={message.key}
+        className="Card"
+        // style={{ width: "24rem" }}
+      >
         <Card.Header as="h4">Post</Card.Header>
         <Card.Body>
           <Card.Text>

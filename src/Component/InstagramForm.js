@@ -83,8 +83,7 @@ class InstagramForm extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h2>Rocketgram</h2>
+        <div className="Form-container">
           <Form onSubmit={this.handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Control
@@ -111,7 +110,7 @@ class InstagramForm extends React.Component {
               />
             </Form.Group>
           </Form>
-        </header>
+        </div>
       </div>
     );
   }
