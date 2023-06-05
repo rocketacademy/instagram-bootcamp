@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { auth } from "../firebase";
 // import { useNavigate } from "react-router-dom";
@@ -63,48 +64,14 @@ const AuthField = (props) => {
     setIsNewUser(!isNewUser);
   };
 
-  // class AuthField extends React.Component {
-  //   constructor(props) {
-  //     super(props);
-  //     this.state = {
-  //       emailInputValue: "",
-  //       passwordInputValue: "",
-  //       isNewUser: true,
-  //       errorCode: "",
-  //       errorMessage: "",
-  //     };
-  //   }
-
-  // Use a single method to control email and password form inputs
-
-  // const setErrorState = (error) => {
-  //   this.setState({
-  //     errorCode: error.code,
-  //     errorMessage: error.message,
-  //   });
-  // };
-
-  // Authenticate user on submit
-  // if (this.state.isNewUser) {
-  //   createUserWithEmailAndPassword(
-  //     auth,
-  //     this.state.emailInputValue,
-  //     this.state.passwordInputValue
-  //   )
-  //     .then(closeAuthForm)
-  //     .catch(setErrorState);
-  // } else {
-  //   signInWithEmailAndPassword(
-  //     auth,
-  //     this.state.emailInputValue,
-  //     this.state.passwordInputValue
-  //   )
-  //     .then(closeAuthForm)
-  //     .catch(setErrorState);
-  // };
-
-  // toggleNewOrReturningAuth = () => {
-  //   this.setState((state) => ({ isNewUser: !state.isNewUser }));
+  // const handleSignOut = () => {
+  //   signOut(auth)
+  //     .then(() => {
+  //       // Log out successful, perform any additional actions if needed
+  //     })
+  //     .catch((error) => {
+  //       // Handle any errors that occur during sign out
+  //     });
   // };
 
   return (
@@ -150,6 +117,10 @@ const AuthField = (props) => {
         <Button variant="link" onClick={toggleNewOrReturningAuth}>
           {isNewUser ? "Returning? Click here to login" : "Create an account"}
         </Button>
+        {/* <br />
+        <Button variant="danger" onClick={handleSignOut}>
+          Log Out
+        </Button> */}
       </Form>
     </div>
   );
