@@ -1,19 +1,19 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  // The value of `databaseURL` depends on the location of the database
+  apiKey: "AIzaSyCZUS58FDXTgyBnw7lj9FhlNiz-_x6lwXQ",
+  authDomain: "caleb-instagram-7db30.firebaseapp.com",
   databaseURL:
-    "https://instagram-b5d2d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "instagram-b5d2d",
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+    "https://caleb-instagram-7db30-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "caleb-instagram-7db30",
+  storageBucket: "caleb-instagram-7db30.appspot.com",
+  messagingSenderId: "241996060780",
+  appId: "1:241996060780:web:ced11e38d63d57800aa049",
 };
 
 // Initialize Firebase
@@ -21,3 +21,5 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Get a reference to the database service and export the reference for other modules
 export const database = getDatabase(firebaseApp);
+export const storage = getStorage(firebaseApp);
+export const auth = getAuth(firebaseApp);
