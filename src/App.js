@@ -6,6 +6,7 @@ import "./App.css";
 import NewsFeed from "./components/NewsFeed";
 import Composer from "./components/Composer";
 import AuthForm from "./components/AuthForm";
+import {Button} from 'react-bootstrap';
 
 class App extends React.Component {
   constructor(props) {
