@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
 } from "firebase/auth";
 import { auth } from "../firebase";
-// import { useNavigate } from "react-router-dom";
 
 //styling
 import "../App.css";
@@ -39,8 +37,6 @@ const AuthField = (props) => {
       setIsNewUser(true);
       setErrorCode("");
       setErrorMessage("");
-      // Navigate back to news feed
-      // navigate("/");
     };
 
     const setErrorState = (error) => {
@@ -63,16 +59,6 @@ const AuthField = (props) => {
   const toggleNewOrReturningAuth = () => {
     setIsNewUser(!isNewUser);
   };
-
-  // const handleSignOut = () => {
-  //   signOut(auth)
-  //     .then(() => {
-  //       // Log out successful, perform any additional actions if needed
-  //     })
-  //     .catch((error) => {
-  //       // Handle any errors that occur during sign out
-  //     });
-  // };
 
   return (
     <div>
@@ -117,10 +103,6 @@ const AuthField = (props) => {
         <Button variant="link" onClick={toggleNewOrReturningAuth}>
           {isNewUser ? "Returning? Click here to login" : "Create an account"}
         </Button>
-        {/* <br />
-        <Button variant="danger" onClick={handleSignOut}>
-          Log Out
-        </Button> */}
       </Form>
     </div>
   );

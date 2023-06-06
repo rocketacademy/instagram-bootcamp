@@ -1,0 +1,21 @@
+.navbar {
+  background-color: #586693;
+  color: rgb(255, 255, 255);
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 16px;
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  color: #171717;
+}
+
+.nav-link {
+  text-decoration: none;
+  margin: 0 10px;
+  color: #050505;
+}

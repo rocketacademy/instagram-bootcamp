@@ -46,6 +46,7 @@ class InstagramFeed extends React.Component {
           <Card.Text>
             {" "}
             Description: {message.val.message} <br />
+            {/* <Link to={`/posts/${post.id}`}>Read More</Link> */}
           </Card.Text>
         </Card.Body>
         <Card.Img

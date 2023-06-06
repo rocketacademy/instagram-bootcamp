@@ -4,26 +4,26 @@ import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
-// const firebaseConfig = {
-//   apiKey: process.env.REACT_APP_API_KEY,
-//   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-//   databaseURL: process.env.REACT_APP_DATABASE_URL,
-//   projectId: process.env.REACT_APP_PROJECT_ID,
-//   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-//   messagingSenderId: process.env.REACT_APP_MESSAGE_SENDER_ID,
-//   appId: process.env.REACT_APP_APP_ID,
-// };
-
 const firebaseConfig = {
-  apiKey: "AIzaSyBwzx_52za3BM109NgVuJomKdrDF8Lnbrs",
-  authDomain: "rocketgram-98b44.firebaseapp.com",
-  databaseURL:
-    "https://rocketgram-98b44-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "rocketgram-98b44",
-  storageBucket: "rocketgram-98b44.appspot.com",
-  messagingSenderId: "572134929616",
-  appId: "1:572134929616:web:27f15b7e09e047a49e9ad5",
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGE_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
 };
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBwzx_52za3BM109NgVuJomKdrDF8Lnbrs",
+//   authDomain: "rocketgram-98b44.firebaseapp.com",
+//   databaseURL:
+//     "https://rocketgram-98b44-default-rtdb.asia-southeast1.firebasedatabase.app",
+//   projectId: "rocketgram-98b44",
+//   storageBucket: "rocketgram-98b44.appspot.com",
+//   messagingSenderId: "572134929616",
+//   appId: "1:572134929616:web:27f15b7e09e047a49e9ad5",
+// };
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
