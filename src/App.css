@@ -2,18 +2,128 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
 .App-header {
-  background-color: #282c34;
+  background-color: #363c48;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(10px + 1vmin);
   color: white;
+}
+
+.App-logo {
+  height: 18vmin;
+  width: 18vmin;
+  pointer-events: none;
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.button {
+  background-color: #363c48; /* Set the background color */
+  color: #9bb4d0; /* Set the text color */
+  padding: 8px 20px; /* Set the padding */
+  border: 1px solid #9bb4d0; /* Remove the border */
+  border-radius: 15px; /* Add border radius */
+  font-size: 16px; /* Set the font size */
+  text-decoration: none; /* Remove underline */
+  position: absolute;
+  top: 60%;
+  left: 45%;
+  transform: translateX(-50%);
+  height: 36px;
+  width: 280px;
+}
+
+.button:hover {
+  background-color: #363c48; /* Change background color on hover */
+  color: #fff; /* Change text color on hover */
+}
+
+.composerAndNewsFeed-Container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.composer-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto; /* Center the composer container */
+  max-width: 400px; /* Set the maximum width as desired */
+}
+
+#Composer-Header {
+  color: rgb(237, 253, 237);
+  font-size: calc(10px + 2vmin);
+}
+
+#Composer-Text {
+  color: rgb(255, 253, 237);
+  font-size: calc(12px + 1vmin);
+}
+
+#Composer-InputFile {
+  width: 85%;
+  margin-left: auto; /* Add margin to the left, pushing it to the right */
+}
+
+#posts-heading {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw; /* Set the desired width for the container */
+  display: block;
+  text-align: left;
+  color: rgb(237, 253, 237);
+  font-size: calc(10px + 2vmin);
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.horizontal-scrollable-card-deck-container {
+  position: absolute;
+  top: 53%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw; /* Set the desired width for the container */
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.horizontal-scrollable-card-deck {
+  display: flex;
+  padding: 10px;
+}
+
+.post-card {
+  border: 0.2px solid rgb(255, 255, 255, 0.2); /* Add border to the card */
+  height: 35vh; /* Set the desired height */
+  width: 15vw; /* Set the desired height */
+  margin-right: 18px;
+  padding: 15px 12px;
+  flex: 0 0 auto; /* Prevent cards from resizing */
+  font-size: 18px;
+  color: rgb(237, 253, 237);
+}
+
+.max-height-image {
+  height: 25vh;
+  max-width: 20vh;
+  object-fit: cover;
+}
+
+.card-author-email {
+  overflow-wrap: break-word; /* Wrap the text to the next line */
+}
+
+.card-text {
+  overflow-wrap: break-word; /* Wrap the text to the next line */
 }

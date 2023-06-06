@@ -1,0 +1,59 @@
+.auth-div {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: calc(12px + 1vmin);
+  max-width: 320px; /* Adjust the max width as needed */
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column; /* Change the flex direction to column */
+  align-items: flex-start; /* Align items to the start */
+  text-align: left; /* Align form elements to the left */
+  width: 100%;
+  max-width: 320px; /* Adjust the max width as needed */
+}
+
+.auth-form .input-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  justify-content: space-between;
+}
+
+.auth-form .input-container label {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+  width: 100%;
+  margin-bottom: 18px;
+  height: 22px; /* Adjust the height as desired */
+}
+
+.auth-buttons {
+  background-color: #363c48; /* Set the background color */
+  color: #9bb4d0; /* Set the text color */
+  padding: 8px 12px; /* Set the padding */
+  border: 1px solid #9bb4d0; /* Remove the border */
+  border-radius: 0px; /* Add border radius */
+  font-size: calc(3px + 1vmin); /* Set the font size */
+  text-decoration: none; /* Remove underline */
+}
+
+.auth-form .auth-buttons + .auth-buttons {
+  margin-top: 1px;
+}
+
+.error-msg {
+  left: 65%;
+  width: 320px; /* Adjust the max width as needed */
+  align-items: flex-start; /* Align items to the start */
+  text-align: left; /* Align form elements to the left */
+  overflow-wrap: break-word;
+  margin-bottom: 10px;
+}
