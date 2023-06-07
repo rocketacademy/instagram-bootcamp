@@ -5,8 +5,11 @@ import {onAuthStateChanged, signOut } from "firebase/auth"
 import "./App.css";
 import NewsFeed from "./components/NewsFeed";
 import Composer from "./components/Composer";
-import AuthForm from "./components/AuthForm";
-import {Button} from 'react-bootstrap';
+import AuthForm from "./components/AuthForm2";
+import Home from "./components/Home";
+import Error from "./components/Error";
+import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
+// import {Button} from 'react-bootstrap';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,7 +18,7 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       loggedInUser: null, //To check if user is logged in (To alter the prompt button)
-      shouldRenderAuthForm: false,
+      // shouldRenderAuthForm: false,
     };
   }
 
@@ -43,18 +46,18 @@ class App extends React.Component {
   //When an unauthenticated user clicks "Create Account or Sign In" button, 
   //App can call toggleAuthForm and render the auth form instead of the news feed.
   //Once the user authenticates, auth form logic can call toggleAuthForm again for App to render composer and news feed instead of auth form.
-  toggleAuthForm = () => {
-    this.setState((state) => ({
-      shouldRenderAuthForm: !state.shouldRenderAuthForm, //change the state
-    }));
-  };
+  // toggleAuthForm = () => {
+  //   this.setState((state) => ({
+  //     shouldRenderAuthForm: !state.shouldRenderAuthForm, //change the state
+  //   }));
+  // };
 
   signOut = () => {
     signOut(auth, (user) => {
       console.log('Signed Out');
       this.setState({
         loggedInUser: null, //To check if user is logged in (To alter the prompt button)
-        shouldRenderAuthForm: false,
+        // shouldRenderAuthForm: false,
       });
 
     })
@@ -65,26 +68,29 @@ class App extends React.Component {
   render() {
     //Clean strategy learnt from Kai's code is to declare the constants
 
-    const composer = (
-      <div>
-        <Composer />
-        <button onClick={this.signOut}> Sign Out </button>
-      </div>
+    // const composer = (
+    //   <div>
+    //     <Composer />
+    //     <button onClick={this.signOut}> Sign Out </button>
+    //   </div>
     
-    )
-    const createAccountOrSignInButton = ( //Initial page (everything click it toggle auth form)
-      <div>
-        <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button> 
-        <br />
-      </div>
-    );
+    // )
+
+    // const createAccountOrSignInButton = ( //Initial page (everything click it toggle auth form)
+    //   <div>
+    //     {/* <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>  */}
+    //     <br />
+    //   </div>
+    // );
 
     const composerAndNewsFeed = //If not logged in show the initial page; else; show composer
       <div>
         {/* Render composer if user logged in, else render auth button */}
+        <div>You're signed in! Start chattting. </div>
         <NewsFeed />
-        <br />
-        {this.state.loggedInUser ? composer : createAccountOrSignInButton}        
+        <Composer />
+        <button onClick={this.signOut}> Sign Out </button>
+        {/* {this.state.loggedInUser ? composer : createAccountOrSignInButton}         */}
       </div>
     ;
 
@@ -92,10 +98,22 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <h1>Messaging Application</h1>
+
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          {this.state.shouldRenderAuthForm ? <AuthForm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed}
-          
+          {/* {this.state.shouldRenderAuthForm ? <AuthForm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed} */}
+          <BrowserRouter>
+          <div>
+            <Link to="/">Home</Link>
+            <Link to="/project/AuthForm">Login</Link>
+          </div>
+
+          <Routes>
+            <Route path="/" element={this.state.loggedInUser ? composerAndNewsFeed:<><Home/><NewsFeed/></>} />
+            <Route path="/project/AuthForm" element={<AuthForm />} />
+            <Route path="*" element={<Error />} />
+          </Routes>
+        </BrowserRouter>
         </header>
       </div>
     );

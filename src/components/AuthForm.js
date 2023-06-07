@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -6,6 +6,7 @@ import {
 import { auth } from "../firebase";
 
 class AuthForm extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
