@@ -8,12 +8,13 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { useState } from "react";
+import Grid from "@mui/material/Grid";
 
 // Save the Firebase post folder name as a constant to avoid bugs due to misspelling
 const DB_POST_FOLDER_NAME = "posts";
 const IMAGE_FOLDER_NAME = "images";
 
-export default function Composer({ username }) {
+export default function Composer({ username, isLoggedIn }) {
   const [currPost, setCurrPost] = useState("");
   const [fileInputFile, setFileInputFile] = useState("");
   const [fileInputValue, setFileInputValue] = useState("");
@@ -24,12 +25,10 @@ export default function Composer({ username }) {
     set(newPostRef, {
       posts: currPost,
       date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
       url: url,
       author: username,
+      likeCounts: 0,
+      likeBy: "",
     });
 
     setCurrPost("");
@@ -56,25 +55,33 @@ export default function Composer({ username }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="currPost"
-        value={currPost}
-        placeholder="Input your post"
-        onChange={(e) => setCurrPost(e.target.value)}
-      />
-      <br />
-      <input
-        type="file"
-        name="file"
-        value={fileInputValue}
-        onChange={(e) => {
-          setFileInputFile(e.target.files[0]);
-          setFileInputValue(e.target.value);
-        }}
-      />
-      <input type="submit" name="submit" />
-    </form>
+    <Grid>
+      {isLoggedIn ? (
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="currPost"
+            value={currPost}
+            placeholder="Input your post"
+            onChange={(e) => setCurrPost(e.target.value)}
+          />
+          <br />
+          <input
+            type="file"
+            name="file"
+            value={fileInputValue}
+            onChange={(e) => {
+              setFileInputFile(e.target.files[0]);
+              setFileInputValue(e.target.value);
+            }}
+          />
+          <input type="submit" name="submit" />
+        </form>
+      ) : (
+        <>
+          <h3>Click on the navigation bar to login to post!</h3>
+        </>
+      )}
+    </Grid>
   );
 }
