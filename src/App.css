@@ -9,7 +9,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 92vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,14 +18,27 @@
   color: white;
 }
 
+footer {
+  background-color: white;
+  min-height: 8vh;
+}
+
 .chatInput{
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* or other horizontal alignment values */
+  width: 80%;
+  margin: 0px auto 10px;
+  
 }
 
 .chatPax{
   margin: 5px;
+}
+
+.chat-file-upload{
+  width: 50%;
+  margin-right: 10px;
 }
 
 .messageHist{
@@ -55,9 +68,10 @@ messageHist
   text-align: left;
 }
 
-h3{
-  margin: 0;
-}
+/* h3, h4,p{
+  margin: 10px;
+  padding: 0;
+} */
 
 .invertedList{
   display: flex;
@@ -92,3 +106,12 @@ h3{
 a {
   padding: 3vw;
 }
+
+.no-margin{
+  margin: 0 auto;
+}
+
+.composer-form{
+  margin-top: 10px;
+}
+

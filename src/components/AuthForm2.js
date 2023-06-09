@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Form, FormControl,FormText } from 'react-bootstrap';
 
 import {
   createUserWithEmailAndPassword,
@@ -84,34 +85,38 @@ if (isNewUser) {
         <div>
    
           <p>Sign in with this form to post.</p>
-  
+          
           <form onSubmit={handleSubmit}>
             <label>
               <span>Email: </span>
+            </label>
               <input
                 type="email"
                 name="emailInputValue"
                 value={emailInputValue}
                 onChange={handleInputChangeEmail}
+                className="form-control"
               />
-            </label>
-            <br />
   
-            <label>
-              <span>Password: </span>
+            <label >
+              <span >Password: </span>
+            </label>
+
               <input
                 type="password"
                 name="passwordInputValue"
                 value={passwordInputValue}
                 onChange={handleInputChangePass}
+                className="form-control"
               />
-            </label>
+            
   
             <br />
   
             <input
               type="submit"
               value={isNewUser ? "Create Account" : "Sign In"}
+              class="btn btn-primary mb-3"
               // Disable form submission if email or password are empty
               // Apparently you can do that when using a boo lean operator on string
               disabled={
@@ -119,11 +124,11 @@ if (isNewUser) {
               }
             />
             <br />
-            <button onClick={toggleNewOrReturningAuth}>
+            <Button onClick={toggleNewOrReturningAuth}>
               {isNewUser
                 ? "If you have an account, click here to login"
                 : "If you are a new user, click here to create account"}
-            </button>
+            </Button>
   
           </form>
   

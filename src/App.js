@@ -8,8 +8,10 @@ import Composer from "./components/Composer";
 import AuthForm from "./components/AuthForm2";
 import Home from "./components/Home";
 import Error from "./components/Error";
+import Navigation from "./components/Navigation";
 import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
-// import {Button} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -89,32 +91,33 @@ class App extends React.Component {
         <div>You're signed in! Start chattting. </div>
         <NewsFeed />
         <Composer />
-        <button onClick={this.signOut}> Sign Out </button>
+        {/* <button onClick={this.signOut}> Sign Out </button> */}
         {/* {this.state.loggedInUser ? composer : createAccountOrSignInButton}         */}
       </div>
     ;
 
     return (
       <div className="App">
+        <Navigation loggedInUser={this.state.loggedInUser} signOut={this.signOut}/>
         <header className="App-header">
           <h1>Messaging Application</h1>
 
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          {/* {this.state.shouldRenderAuthForm ? <AuthForm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed} */}
+          {/* {this.state.shouldRenderAuthForm ? <AuthFnpmorm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed} */}
           <BrowserRouter>
-          <div>
-            <Link to="/">Home</Link>
-            <Link to="/project/AuthForm">Login</Link>
-          </div>
-
           <Routes>
-            <Route path="/" element={this.state.loggedInUser ? composerAndNewsFeed:<><Home/><NewsFeed/></>} />
+            <Route path="/" element={this.state.loggedInUser ? composerAndNewsFeed:<><Home/> <br/><NewsFeed/></>} />
             <Route path="/project/AuthForm" element={<AuthForm />} />
             <Route path="*" element={<Error />} />
           </Routes>
         </BrowserRouter>
         </header>
+
+        <footer>
+        <p>&copy; 2023 Messaging App. All rights reserved.</p>
+        <p>Designed by Dexter Chew</p>
+        </footer>
       </div>
     );
   }

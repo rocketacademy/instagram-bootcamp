@@ -2,6 +2,7 @@ import React from "react";
 import { onChildAdded, ref as databaseRef } from "firebase/database";
 import { database} from "../firebase";
 import "../App.css";
+import {Card} from 'react-bootstrap';
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const POSTS_FOLDER_NAME = "posts";
@@ -37,18 +38,25 @@ class NewsFeed extends React.Component {
     });
   }
   
-  postFormat = (name,time,msg) => {
-    let chatLog = time + " " + this.capitalizeFirstLetterOfEachWord(name) + ": " + msg;
+  postFormat = (name,time) => {
+    let chatLog = time + " " + this.capitalizeFirstLetterOfEachWord(name) + ": ";
     return chatLog
   }
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-        
       <li key={message.key}>
-        <img src={message.val.imageLink} alt={message.val.imageLink} className = "flex-item"/>
-        <div>{this.postFormat(message.val.user,message.val.time,message.val.text)}   </div>
+        {this.postFormat(message.val.user,message.val.time)} 
+      <Card>  
+        <Card.Body>  
+             
+            <Card.Text >  
+            {message.val.text}
+            </Card.Text>
+        </Card.Body>  
+        <Card.Img variant="top" src={message.val.imageLink} alt={message.val.imageLink} className = "flex-item no-margin"/>  
+      </Card>  
       </li>
     ));
 

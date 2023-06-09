@@ -3,6 +3,7 @@ import { push, ref as databaseRef, set } from "firebase/database";
 import { getDownloadURL, ref as storageRef, uploadBytes} from "firebase/storage";
 import { database, storage } from "../firebase";
 import "../App.css";
+import { Button, Form} from 'react-bootstrap';
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 //const DB_MESSAGES_KEY = "messages"; //Previous texts only folder
@@ -139,25 +140,25 @@ class Composer extends React.Component {
     let msgCheck = this.state.formData.chat.length > 0 ? true : false;
 
     return (
-        <div>
+        <div className="composer-form">
         <form onSubmit={this.handleSubmit}>
           <p>Join the conversation:</p>
-        
         <div className="chatInput">
-        <label className="chatPax">
+
+        <div className="chatPax">
           <p className="formLabel">Name:</p>
-          <input
+          <Form.Control
             type="text"
             name="name"
             value={name}
             onChange={this.handleInputChange}
             required
           />
-        </label>
+        </div>
 
-        <label className="chatPax">
-          <p className="formLabel">Chat:</p>
-          <input
+        <div className="chatPax">
+          <p className="formLabel ">Chat:</p>
+          <Form.Control
             type="text"
             name="chat"
             value={chat}
@@ -165,10 +166,10 @@ class Composer extends React.Component {
             required
           />
           
-        </label>
-
-        <div className="flex-item">
-        <input
+        </div>
+        
+        <div className="chat-file-upload">
+        <Form.Control 
             type="file"
             // Set state's fileInputValue to "" after submit to reset file input
             value={this.state.fileInputValue}
@@ -181,8 +182,10 @@ class Composer extends React.Component {
                })
             }
             />
-        <button type="submit" disabled = {nameCheck && msgCheck ? false : true}>Submit</button>
+
         </div>
+        <Button type="submit" disabled = {nameCheck && msgCheck ? false : true}>Submit</Button>
+
        
         </div>
         </form>
