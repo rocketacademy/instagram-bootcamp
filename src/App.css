@@ -9,7 +9,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 92vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,3 +17,101 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+footer {
+  background-color: white;
+  min-height: 8vh;
+}
+
+.chatInput{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* or other horizontal alignment values */
+  width: 80%;
+  margin: 0px auto 10px;
+  
+}
+
+.chatPax{
+  margin: 5px;
+}
+
+.chat-file-upload{
+  width: 50%;
+  margin-right: 10px;
+}
+
+.messageHist{
+  height:400px;
+  width:50vmin;
+  overflow-y: scroll;
+  margin: 0 auto;
+  text-align: left;
+  word-wrap: break-all;
+  font-size: calc(10px + 1vmin);
+}
+
+.messageHist::-webkit-scrollbar {
+  width: 0.5em; /* Set the width of the scrollbar */
+}
+messageHist
+.container::-webkit-scrollbar-track {
+  background-color: transparent; /* Set the background color of the scrollbar track */
+}
+
+.messageHist::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Set the color of the scrollbar thumb */
+}
+
+.formLabel{
+  margin: 0;
+  text-align: left;
+}
+
+/* h3, h4,p{
+  margin: 10px;
+  padding: 0;
+} */
+
+.invertedList{
+  display: flex;
+  flex-direction: column-reverse;
+  list-style-type: none;
+  margin: 0 auto;
+}
+
+.postImage{
+  max-width: 100%;
+}
+
+.flex-item {
+  width: 100%;
+}
+
+.sign-in{
+  margin: 10px;
+}
+
+.errorLog{
+  font-size: small;
+  color: red;
+}
+
+.msgLog{
+  font-size: small;
+  color: green;
+}
+
+
+a {
+  padding: 3vw;
+}
+
+.no-margin{
+  margin: 0 auto;
+}
+
+.composer-form{
+  margin-top: 10px;
+}
+

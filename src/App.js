@@ -1,11 +1,17 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+import { auth } from "./firebase";
+import {onAuthStateChanged, signOut } from "firebase/auth"
+// import logo from "./logo.png";
 import "./App.css";
+import NewsFeed from "./components/NewsFeed";
+import Composer from "./components/Composer";
+import AuthForm from "./components/AuthForm2";
+import Home from "./components/Home";
+import Error from "./components/Error";
+import Navigation from "./components/Navigation";
+import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.css';
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
 
 class App extends React.Component {
   constructor(props) {
@@ -13,45 +19,105 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      loggedInUser: null, //To check if user is logged in (To alter the prompt button)
+      // shouldRenderAuthForm: false,
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
+    onAuthStateChanged(auth, (user) => {
+      console.log("Auth State Triggered");
+      // If user is logged in, save logged-in user to state
+      if (user) {
+        console.log(`User Registered: ${user}`)
+        this.setState({ loggedInUser: user });
+        return;
+      }
+      // Else set logged-in user in state to null
+      this.setState({ loggedInUser: null });
+      
     });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+  componentDidUpdate(prevProps, prevState) {
+    console.log("App State Updated!");
+    console.log(this.state)
+    console.log(this.state.loggedInUser ? "yes" : "no")
+  }
+
+  //When an unauthenticated user clicks "Create Account or Sign In" button, 
+  //App can call toggleAuthForm and render the auth form instead of the news feed.
+  //Once the user authenticates, auth form logic can call toggleAuthForm again for App to render composer and news feed instead of auth form.
+  // toggleAuthForm = () => {
+  //   this.setState((state) => ({
+  //     shouldRenderAuthForm: !state.shouldRenderAuthForm, //change the state
+  //   }));
+  // };
+
+  signOut = () => {
+    signOut(auth, (user) => {
+      console.log('Signed Out');
+      this.setState({
+        loggedInUser: null, //To check if user is logged in (To alter the prompt button)
+        // shouldRenderAuthForm: false,
+      });
+
+    })
+    
   };
 
+
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
+    //Clean strategy learnt from Kai's code is to declare the constants
+
+    // const composer = (
+    //   <div>
+    //     <Composer />
+    //     <button onClick={this.signOut}> Sign Out </button>
+    //   </div>
+    
+    // )
+
+    // const createAccountOrSignInButton = ( //Initial page (everything click it toggle auth form)
+    //   <div>
+    //     {/* <button onClick={this.toggleAuthForm}>Create Account Or Sign In</button>  */}
+    //     <br />
+    //   </div>
+    // );
+
+    const composerAndNewsFeed = //If not logged in show the initial page; else; show composer
+      <div>
+        {/* Render composer if user logged in, else render auth button */}
+        <div>You're signed in! Start chattting. </div>
+        <NewsFeed />
+        <Composer />
+        {/* <button onClick={this.signOut}> Sign Out </button> */}
+        {/* {this.state.loggedInUser ? composer : createAccountOrSignInButton}         */}
+      </div>
+    ;
+
     return (
       <div className="App">
+        <Navigation loggedInUser={this.state.loggedInUser} signOut={this.signOut}/>
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
+          <h1>Messaging Application</h1>
+
+          {/* <img src={logo} className="App-logo" alt="logo" /> */}
           {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+          {/* {this.state.shouldRenderAuthForm ? <AuthFnpmorm toggleAuthForm={this.toggleAuthForm} /> : composerAndNewsFeed} */}
+          <BrowserRouter>
+          <Routes>
+            <Route path="/" element={this.state.loggedInUser ? composerAndNewsFeed:<><Home/> <br/><NewsFeed/></>} />
+            <Route path="/project/AuthForm" element={<AuthForm />} />
+            <Route path="*" element={<Error />} />
+          </Routes>
+        </BrowserRouter>
         </header>
+
+        <footer>
+        <p>&copy; 2023 Messaging App. All rights reserved.</p>
+        <p>Designed by Dexter Chew</p>
+        </footer>
       </div>
     );
   }
