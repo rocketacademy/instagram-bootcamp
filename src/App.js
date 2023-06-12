@@ -7,6 +7,7 @@ import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import MyNavbar from "./Components/MyNavBar";
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -45,13 +46,14 @@ function App() {
           <div></div>
         ) : (
           <div>
-            Please enter your username, email and password to sign-up
+            Please set your preferred display name, email and password to sign-up
             <br />
-            You may leave the username field blank if you are signing-in
+            You may leave the display name field blank if you are signing-in
             <UserAuth />
           </div>
         )}
       </header>
+
     </div>
   );
 }

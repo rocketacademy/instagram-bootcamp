@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "../App.css";
+
 import { auth } from "../firebase";
 import {
   signInWithEmailAndPassword,
@@ -9,7 +11,15 @@ import {
 export default function UserAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  //const [passwordType, setPasswordType] = useState("password");
   const [displayName, setDisplayName] = useState("");
+  // const togglePassword = () => {
+  //   if (passwordType === "password") {
+  //     setPasswordType("text");
+  //     return;
+  //   }
+  //   setPasswordType("password");
+  // };
 
   const signUp = async (displayName) => {
     if (!displayName || !email || !password) {
@@ -40,13 +50,13 @@ export default function UserAuth() {
   return (
     <div>
       <br />
-      <label>Username</label>
+      <label>Display Name</label>
       <br />
       <input
         type="text"
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="Username Here"
+        placeholder="Display Name Here"
       />
       <br />
       <label>Email</label>
@@ -61,11 +71,22 @@ export default function UserAuth() {
       <label>Password</label>
       <br />
       <input
-        type="text"
+        type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password Here"
       />
+      {/* <button
+        className="btn btn-outline-primary"
+        onClick={togglePassword}
+      >
+        {passwordType === "password" ? (
+          <i className="bi bi-eye-slash"></i>
+        ) : (
+          <i className="bi bi-eye"></i>
+        )}
+      </button> */}
+   
       <br />
 
       <button onClick={() => signUp(displayName)}>SignUp</button>

@@ -8,19 +8,19 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: azure;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
 }
 
 .Pic-box{
   display: flex;
-  background-color: azure;
+  background-color: grey;
   color: black;
   justify-content: center;
   flex-direction: row;
@@ -31,4 +31,10 @@
   padding: 2px;
   border: 3px solid;
   border-color: goldenrod;
+}
+
+.Navigation-btns{
+  display:inline;
+  
+  margin: 20px;
 }
