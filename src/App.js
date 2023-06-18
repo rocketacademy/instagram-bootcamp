@@ -6,18 +6,20 @@ import NewsFeed from "./Components/NewsFeed";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import AuthForm from "./Components/AuthForm";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
 
 function App() {
   const [likeClicked, setLikeClicked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [shouldRenderAuthForm, toggleAuthForm] = useState(false);
+  const [shouldRenderAuthForm, setShouldRenderAuthForm] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, (loggedInUser) => {
       console.log(loggedInUser);
       if (loggedInUser) {
-        toggleAuthForm(false);
+        setShouldRenderAuthForm(false);
         setLoggedInUser(loggedInUser);
       }
     });
@@ -43,8 +45,22 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
 
+        {loggedInUser && (
+          <Navbar>
+            <Container>
+              <Navbar.Brand href="#home">Signed in as: </Navbar.Brand>
+              <Navbar.Toggle />
+              <Navbar.Collapse className="justify-content-end">
+                <Navbar.Text>
+                  <a href="#login">{loggedInUser.email}</a>
+                </Navbar.Text>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
+        )}
+
         {!loggedInUser && !shouldRenderAuthForm && (
-          <button onClick={() => toggleAuthForm((state) => !state)}>
+          <button onClick={() => setShouldRenderAuthForm((state) => !state)}>
             Create Account or Sign In
           </button>
         )}
@@ -58,7 +74,7 @@ function App() {
             onClick={() => {
               signOut(auth);
               setLoggedInUser(null);
-              toggleAuthForm(false);
+              setShouldRenderAuthForm(false);
             }}
           >
             Logout!
