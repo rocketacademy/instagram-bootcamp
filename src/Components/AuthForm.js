@@ -4,8 +4,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthForm() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,6 +17,7 @@ export default function AuthForm() {
     console.log(user);
     setEmail("");
     setPassword("");
+    navigate("/newsfeed");
   };
 
   const signIn = async () => {
@@ -21,6 +25,7 @@ export default function AuthForm() {
     console.log(user);
     setEmail("");
     setPassword("");
+    navigate("/newsfeed");
   };
 
   return (
