@@ -17,3 +17,12 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+/*Own CSS*/
+.MuiInputBase-input {
+  background: papayawhip;
+}
+
+.MuiTextField-root {
+  background: papayawhip;
+}

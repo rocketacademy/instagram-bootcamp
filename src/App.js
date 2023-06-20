@@ -1,56 +1,89 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+// import { push, ref, set } from "firebase/database";
+// import { database } from "./firebase";
 import "./App.css";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+//import UI component from Mui
+import { Button } from "@mui/material";
+import ChatIcon from "@mui/icons-material/Chat";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+// import CssBaseline from "@mui/material/CssBaseline";
+// import TextField from "@mui/material/TextField";
+// import Box from "@mui/material/Box";
+// import Typography from "@mui/material/Typography";
+// import makeStyles from "@mui/material/styles";
+// import Container from "@mui/material/Container";
+
+import MessageList from "./Component/MesssageList";
+import ChatCall from "./Component/ChatCall";
+import PostForm from "./Component/PostForm";
+import PostList from "./Component/PostList";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      currentPage: "home",
+      userID: "",
+      chatroom: false,
+      postroom: false,
     };
   }
 
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
-  }
-
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+  handleClick = (e) => {
+    const { name } = e.target;
+    if (name === "chatroom") {
+      this.setState({
+        chatroom: true,
+        postroom: false,
+      });
+    } else if (name === "postroom") {
+      this.setState({
+        postroom: true,
+        chatroom: false,
+      });
+    }
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
+    const { chatroom, postroom } = this.state;
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+          <h2>Welcome to Rocketgram! 🚀</h2>
+          <h3>Choose a page to visit.</h3>
+          <Button
+            variant="contained"
+            endIcon={<ChatIcon />}
+            name="chatroom"
+            onClick={this.handleClick}
+          >
+            Chatroom
+          </Button>
+          <Button
+            variant="contained"
+            endIcon={<PostAddIcon />}
+            name="postroom"
+            onClick={this.handleClick}
+          >
+            Posts
+          </Button>
+          {chatroom && (
+            <div>
+              <MessageList />
+              <br />
+              <ChatCall />
+            </div>
+          )}
+          {postroom && (
+            <div>
+              <PostForm />
+              <br />
+              <PostList />
+            </div>
+          )}
         </header>
       </div>
     );
