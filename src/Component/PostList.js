@@ -1,4 +1,11 @@
 import React from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import { CardActionArea } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 import { onChildAdded, ref } from "firebase/database";
 import { database } from "../firebase";
@@ -12,6 +19,7 @@ export default class PostList extends React.Component {
 
     this.state = {
       posts: [],
+      expanded: false,
     };
   }
 
@@ -27,34 +35,40 @@ export default class PostList extends React.Component {
 
   render() {
     return (
-      <div>
-        <ol>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
           {this.state.posts && this.state.posts.length > 0 ? (
             this.state.posts.map((postItem) => (
-              <li key={postItem.key}>
-                <div>
-                  <h4>
-                    {postItem.val.date} - {postItem.val.userID}
-                  </h4>
-                  <p>{postItem.val.post}</p>
-
-                  {postItem.val.url ? (
-                    <img
-                      src={postItem.val.url}
-                      alt={postItem.val.name}
-                      width="200"
-                    />
-                  ) : (
-                    <p>No images</p>
-                  )}
-                </div>
-              </li>
+              <Grid item xs={12} textAlign="center">
+                <Card sx={{ maxWidth: 345 }}>
+                  <CardActionArea>
+                    {postItem.val.url ? (
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={postItem.val.url}
+                        alt={postItem.val.name}
+                      />
+                    ) : (
+                      <p>No images</p>
+                    )}
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {postItem.val.date} - {postItem.val.userID}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {postItem.val.post}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
             ))
           ) : (
             <p>No posts yet. Make one now! 🤗</p>
           )}
-        </ol>
-      </div>
+        </Grid>
+      </Box>
     );
   }
 }

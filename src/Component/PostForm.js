@@ -107,6 +107,7 @@ export default class ChatCall extends React.Component {
           size="small"
           value={this.state.fileInputValue}
           onChange={(e) => {
+            console.log(e.target);
             this.setState({
               fileInputFile: e.target.files[0],
               fileInputValue: e.target.file,
@@ -114,8 +115,6 @@ export default class ChatCall extends React.Component {
           }}
           focused
         />
-        <br />
-
         <br />
         <button onClick={this.submit}>Send</button>
       </div>
