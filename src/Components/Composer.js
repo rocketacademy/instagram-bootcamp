@@ -16,7 +16,7 @@ function Composer({ email }) {
   const [fileInputFile, setFileInputFile] = useState(null);
   const [fileInputValue, setFileInputValue] = useState("");
 
-  const writeData = (url) => {
+  const writeData = (url, fileStorageRef) => {
     const postRef = databaseRef(database, POST_KEY);
     const newPostRef = push(postRef);
     set(newPostRef, {
@@ -25,6 +25,7 @@ function Composer({ email }) {
       url: url,
       email: email,
       likeCount: 0,
+      imageRef: String(fileStorageRef),
     });
 
     setTextInput("");
@@ -42,7 +43,7 @@ function Composer({ email }) {
 
     uploadBytes(fileStorageRef, fileInputFile)
       .then(() => getDownloadURL(fileStorageRef))
-      .then((url) => writeData(url));
+      .then((url) => writeData(url, fileStorageRef));
   };
 
   return (
