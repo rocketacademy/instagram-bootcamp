@@ -26,3 +26,9 @@
 .MuiTextField-root {
   background: papayawhip;
 }
+
+.align_center {
+  text-align: center;
+  display: flex;
+  justify-content: center !important;
+}

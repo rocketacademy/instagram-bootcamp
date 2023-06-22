@@ -35,11 +35,11 @@ export default class PostList extends React.Component {
 
   render() {
     return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
+      <div className="align_center">
+        <Box>
           {this.state.posts && this.state.posts.length > 0 ? (
             this.state.posts.map((postItem) => (
-              <Grid item xs={12} textAlign="center">
+              <div>
                 <Card sx={{ maxWidth: 345 }}>
                   <CardActionArea>
                     {postItem.val.url ? (
@@ -62,13 +62,14 @@ export default class PostList extends React.Component {
                     </CardContent>
                   </CardActionArea>
                 </Card>
-              </Grid>
+                <br />
+              </div>
             ))
           ) : (
             <p>No posts yet. Make one now! 🤗</p>
           )}
-        </Grid>
-      </Box>
+        </Box>
+      </div>
     );
   }
 }

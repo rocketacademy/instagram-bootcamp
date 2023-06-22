@@ -47,7 +47,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Box sx={{ flexGrow: 1, width: 450 }}>
+          <Box sx={{ flexGrow: 1, width: 600 }}>
             <Grid container spacing={2} justify="center">
               <Grid item xs={12}>
                 <h2>Welcome to Rocketgram! 🚀</h2>
