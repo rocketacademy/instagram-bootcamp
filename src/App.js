@@ -58,24 +58,16 @@ class App extends React.Component {
 
   handleSignup = () => {
     createUserWithEmailAndPassword(auth, this.state.email, this.state.password)
-      .then((userCred) => {
-        console.log("success");
-        console.log(userCred);
-      })
+      .then((userCred) => {})
       .catch((err) => {
-        console.log(err);
         alert(err);
       });
   };
 
   handleLogin = () => {
     signInWithEmailAndPassword(auth, this.state.email, this.state.password)
-      .then((userCred) => {
-        console.log("success");
-        console.log(userCred);
-      })
+      .then((userCred) => {})
       .catch((err) => {
-        console.log(err);
         alert(err);
       });
   };
