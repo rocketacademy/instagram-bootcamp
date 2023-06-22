@@ -13,7 +13,15 @@ import {
   deleteObject,
   ref as storageRef,
 } from "firebase/storage";
-import { database, storage } from "./firebase";
+
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+
+import { database, storage, auth } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
@@ -32,8 +40,51 @@ class App extends React.Component {
       name: "",
       fileInputFile: null,
       fileInputValue: "",
+      isLoggedIn: false,
+      user: {},
+      email: "",
+      password: "",
     };
   }
+
+  handleInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    this.setState({
+      [name]: value,
+    });
+  };
+
+  handleSignup = () => {
+    createUserWithEmailAndPassword(auth, this.state.email, this.state.password)
+      .then((userCred) => {
+        console.log("success");
+        console.log(userCred);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err);
+      });
+  };
+
+  handleLogin = () => {
+    signInWithEmailAndPassword(auth, this.state.email, this.state.password)
+      .then((userCred) => {
+        console.log("success");
+        console.log(userCred);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err);
+      });
+  };
+
+  handleSignOut = () => {
+    signOut(auth).then(() => {
+      console.log("Signout success woooo");
+    });
+  };
 
   componentDidMount() {
     const studentsRef = databaseRef(database, DB_STUDENTS_KEY);
@@ -57,6 +108,15 @@ class App extends React.Component {
         students: NewStudentArray,
       });
     });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+        this.setState({ isLoggedIn: true, user: user });
+      } else {
+        this.setState({ isLoggedIn: false, user: {} });
+      }
+    });
   }
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
@@ -79,13 +139,14 @@ class App extends React.Component {
         getDownloadURL(storageRefInstance).then((url) => {
           console.log(url);
           console.log(storageRefInstance._location.path_);
-
+          console.log("submission:", this.state.user);
           // 3
           set(newStudentRef, {
             name: this.state.name,
             date: new Date().toLocaleString(),
             url: url,
             ref: String(storageRefInstance),
+            user: this.state.user.email,
           });
 
           this.setState({
@@ -107,7 +168,7 @@ class App extends React.Component {
           {student.val.date}- {student.val.name}
         </h3>
         <div>
-          {" "}
+          <h4>{student.val.user}</h4>
           <img
             style={{ height: "50vh" }}
             src={student.val.url}
@@ -140,34 +201,67 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
+          {!this.state.isLoggedIn ? (
+            <div>
+              <label>Email</label>
+              <input
+                value={this.state.email}
+                name="email"
+                type="text"
+                placeholder="email here please"
+                onChange={this.handleInput}
+              />
+              <label>Password</label>
+              <input
+                value={this.state.password}
+                name="password"
+                type="text"
+                placeholder="password here please"
+                onChange={this.handleInput}
+              />
+              <button onClick={this.handleLogin}>Login</button>
+              <button onClick={this.handleSignup}>Signup</button>
+            </div>
+          ) : (
+            <div>
+              <button onClick={this.handleSignOut}>Log me out!</button>
+            </div>
+          )}
+
           <img src={logo} className="App-logo" alt="logo" />
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          <input
-            type="text"
-            value={this.state.name}
-            onChange={(e) => {
-              this.setState({
-                name: e.target.value,
-              });
-            }}
-            placeholder="Add a name here"
-          />
 
-          <input
-            type="file"
-            value={this.state.fileInputValue}
-            onChange={(e) => {
-              console.log(e.target.value);
-              this.setState({
-                fileInputFile: e.target.files[0],
-                fileInputValue: e.target.value,
-              });
-            }}
-            placeholder="add file here"
-          />
-          <button onClick={this.writeData}>Send</button>
+          {this.state.isLoggedIn ? (
+            <div>
+              <h2>Welcome back {this.state.user.email}</h2>
+              <input
+                type="text"
+                value={this.state.name}
+                onChange={(e) => {
+                  this.setState({
+                    name: e.target.value,
+                  });
+                }}
+                placeholder="Add a name here"
+              />
+
+              <input
+                type="file"
+                value={this.state.fileInputValue}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  this.setState({
+                    fileInputFile: e.target.files[0],
+                    fileInputValue: e.target.value,
+                  });
+                }}
+                placeholder="add file here"
+              />
+              <button onClick={this.writeData}>Send</button>
+            </div>
+          ) : null}
           {studentListItems}
         </header>
       </div>
