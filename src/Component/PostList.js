@@ -5,7 +5,6 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 
 import { onChildAdded, ref } from "firebase/database";
 import { database } from "../firebase";
@@ -34,11 +33,15 @@ export default class PostList extends React.Component {
   }
 
   render() {
+    const { posts } = this.state;
+    const postsCopy = posts.slice();
+    const reversedPosts = postsCopy.reverse();
+    console.log(reversedPosts);
     return (
       <div className="align_center">
         <Box>
-          {this.state.posts && this.state.posts.length > 0 ? (
-            this.state.posts.map((postItem) => (
+          {reversedPosts && reversedPosts.length > 0 ? (
+            reversedPosts.map((postItem) => (
               <div>
                 <Card sx={{ maxWidth: 345 }}>
                   <CardActionArea>
@@ -53,7 +56,11 @@ export default class PostList extends React.Component {
                       <p>No images</p>
                     )}
                     <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
+                      <Typography
+                        gutterBottom
+                        variant="subtitle1"
+                        component="div"
+                      >
                         {postItem.val.date} - {postItem.val.userID}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">

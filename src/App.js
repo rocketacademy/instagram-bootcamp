@@ -6,21 +6,18 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 
 //import UI component from Mui
-// import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-// import Paper from "@mui/material/Paper";
+import { Box, Grid } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
-import { Button } from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import MessageList from "./Component/MesssageList";
+import MessageList from "./Component/MessageList";
 import ChatCall from "./Component/ChatCall";
 import PostForm from "./Component/PostForm";
 import PostList from "./Component/PostList";
-import { TextField } from "@mui/material";
+import Navbar from "./Component/UI/Navbar";
 
 class App extends React.Component {
   constructor() {
@@ -31,7 +28,7 @@ class App extends React.Component {
       currentPage: "home",
       userID: "",
       chatroom: false,
-      postroom: false,
+      postroom: true,
       isLoggedIn: false,
       email: "",
       displayName: "",
@@ -41,26 +38,33 @@ class App extends React.Component {
   }
 
   componentDidMount = () => {
+    const { displayName } = this.state;
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log(user);
-        const uid = user.uid;
+        updateProfile(user, {
+          displayName: displayName,
+        }).then(() =>
+          console.log("Profile Updated!").catch((error) => {
+            console.log("Update profile error : ", error);
+          })
+        );
+        const uid = user.email;
         this.setState({ userID: uid, isLoggedIn: true });
       } else {
         console.log("Logged out!");
-        this.setState({ userID: "", isLoggedIn: false });
+        this.setState({ userID: "", isLoggedIn: false, displayName: "" });
       }
     });
   };
 
-  handleClick = (e) => {
-    const { name } = e.target;
-    if (name === "chatroom") {
+  handleClick = (name) => {
+    if (name === "Chatroom") {
       this.setState({
         chatroom: true,
         postroom: false,
       });
-    } else if (name === "postroom") {
+    } else if (name === "Posts") {
       this.setState({
         postroom: true,
         chatroom: false,
@@ -82,6 +86,7 @@ class App extends React.Component {
       console.log("Sign up success!");
       console.log(userCred);
       const user = userCred.user;
+
       console.log(user);
       // ...
     });
@@ -132,155 +137,195 @@ class App extends React.Component {
     const { login, signup } = this.state.pages;
     return (
       <div className="App">
+        <Navbar pageClick={this.handleClick} />
         <header className="App-header">
           <h2>Welcome to Rocketgram! 🚀</h2>
+          <Grid container xs={12} lg={8} justifyContent="center">
+            <Grid item xs={6} lg={6}>
+              {postroom && this.state.isLoggedIn ? (
+                <Box bgcolor="inherit" p={2}>
+                  <div justify="center">
+                    <PostForm userID={this.state.displayName} />
+                    <br />
+                  </div>
+                </Box>
+              ) : chatroom && this.state.isLoggedIn ? (
+                <Box bgcolor="inherit" p={2}>
+                  <ChatCall userID={this.state.displayName} />
+                </Box>
+              ) : !this.state.isLoggedIn && login ? (
+                <Box textAlign="left">
+                  <Grid item xs={10}>
+                    <p>Please login to chat or post.</p>
+                    <p>If you are a new user, please click on Sign Up.</p>
+                  </Grid>
+                  <Grid>
+                    <Box xs={7} lg={6}>
+                      <Grid item xs={10} sm={7} md={5} lg={5} xl={5}>
+                        <TextField
+                          type="text"
+                          name="email"
+                          label="Email"
+                          color="secondary"
+                          variant="filled"
+                          value={this.state.email}
+                          onChange={this.handleInput}
+                          size="small"
+                          InputProps={{ sx: { height: 45 } }}
+                          focused
+                          required
+                        />
+                        <br />
+                        <TextField
+                          type="password"
+                          name="password"
+                          label="Password"
+                          color="secondary"
+                          variant="filled"
+                          value={this.state.password}
+                          onChange={this.handleInput}
+                          size="small"
+                          InputProps={{ sx: { height: 45 } }}
+                          focused
+                          required
+                        />
+                        <br />
+                        <Box
+                          component="span"
+                          m={1}
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          width="20"
+                        >
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={this.handleLogin}
+                            size="small"
+                          >
+                            Submit
+                          </Button>
 
-          {!this.state.isLoggedIn && login ? (
-            <div>
-              <h3>Please login to chat or post.</h3>
-              <h4>If you are a new user, please click on Sign Up.</h4>
-              <Button
-                name="signup"
-                variant="contained"
-                onClick={this.changePage}
-              >
-                Sign Up
-              </Button>
-              <div>
-                <br />
-                <TextField
-                  type="text"
-                  name="email"
-                  label="Email"
-                  color="secondary"
-                  variant="filled"
-                  value={this.state.email}
-                  onChange={this.handleInput}
-                  size="small"
-                  focused
-                  required
-                />
-                <br />
-                <TextField
-                  type="password"
-                  name="password"
-                  label="Password"
-                  color="secondary"
-                  variant="filled"
-                  value={this.state.password}
-                  onChange={this.handleInput}
-                  size="small"
-                  focused
-                  required
-                />
-                <br />
-                <Button variant="contained" onClick={this.handleLogin}>
-                  Login
-                </Button>
-              </div>
-            </div>
-          ) : !this.state.isLoggedIn && signup ? (
-            <div>
-              <h3>Please sign up to chat or post.</h3>
-              <h4>To login, please click on Login.</h4>
-              <Button
-                name="login"
-                variant="contained"
-                onClick={this.changePage}
-              >
-                Login
-              </Button>
-              <br />
-              <br />
-              <TextField
-                type="text"
-                name="displayName"
-                label="Display Name"
-                color="secondary"
-                variant="filled"
-                value={this.state.displayName}
-                onChange={this.handleInput}
-                size="small"
-                focused
-                required
-              />
-              <br />
-              <TextField
-                type="text"
-                name="email"
-                label="Email"
-                color="secondary"
-                variant="filled"
-                value={this.state.email}
-                onChange={this.handleInput}
-                size="small"
-                focused
-                required
-              />
-              <br />
+                          <Button
+                            name="signup"
+                            color="secondary"
+                            variant="contained"
+                            size="small"
+                            onClick={this.changePage}
+                          >
+                            Sign Up
+                          </Button>
+                        </Box>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                </Box>
+              ) : !this.state.isLoggedIn && signup ? (
+                <Box textAlign="left">
+                  <Grid item xs={10}>
+                    <p>Please sign up to chat or post.</p>
+                    <p>To login, please click on Login.</p>
+                  </Grid>
+                  <Grid>
+                    <Box xs={7} lg={6}>
+                      <Grid item xs={10} sm={7} md={5} lg={5} xl={5}>
+                        <TextField
+                          type="text"
+                          name="displayName"
+                          label="Display Name"
+                          color="secondary"
+                          variant="filled"
+                          value={this.state.displayName}
+                          onChange={this.handleInput}
+                          size="small"
+                          focused
+                          required
+                        />
+                        <br />
+                        <TextField
+                          type="text"
+                          name="email"
+                          label="Email"
+                          color="secondary"
+                          variant="filled"
+                          value={this.state.email}
+                          onChange={this.handleInput}
+                          size="small"
+                          focused
+                          required
+                        />
+                        <br />
 
-              <TextField
-                type="password"
-                name="password"
-                label="Password"
-                color="secondary"
-                variant="filled"
-                value={this.state.password}
-                onChange={this.handleInput}
-                size="small"
-                focused
-                required
-              />
-              <br />
-              <Button variant="contained" onClick={this.handleSignup}>
-                Sign Up
-              </Button>
-            </div>
-          ) : this.state.isLoggedIn ? (
-            <div>
-              <h3>Choose a page to visit.</h3>
+                        <TextField
+                          type="password"
+                          name="password"
+                          label="Password"
+                          color="secondary"
+                          variant="filled"
+                          value={this.state.password}
+                          onChange={this.handleInput}
+                          size="small"
+                          focused
+                          required
+                        />
 
-              <Button
-                variant="contained"
-                endIcon={<ChatIcon />}
-                name="chatroom"
-                onClick={this.handleClick}
-              >
-                Chatroom
-              </Button>
-
-              <Button
-                variant="contained"
-                endIcon={<PostAddIcon />}
-                name="postroom"
-                onClick={this.handleClick}
-              >
-                Posts
-              </Button>
-
-              <Button variant="contained" onClick={this.handleLogout}>
-                Logout
-              </Button>
-
-              {chatroom && (
+                        <Box
+                          component="span"
+                          m={1}
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          width="20"
+                        >
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            size="small"
+                            onClick={this.handleSignup}
+                          >
+                            Submit
+                          </Button>
+                          <Button
+                            name="login"
+                            variant="contained"
+                            color="secondary"
+                            size="small"
+                            onClick={this.changePage}
+                          >
+                            Login
+                          </Button>
+                        </Box>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                </Box>
+              ) : this.state.isLoggedIn ? (
                 <div>
-                  <MessageList />
-                  <br />
-                  <ChatCall userID={this.state.userID} />
+                  <Button variant="contained" onClick={this.handleLogout}>
+                    Logout
+                  </Button>
                 </div>
+              ) : (
+                ""
               )}
-
-              {postroom && (
-                <div justify="center">
-                  <PostForm userID={this.state.userID} />
-                  <br />
-                  <PostList />
-                </div>
-              )}
-            </div>
-          ) : (
-            "No page available. Sorry!"
-          )}
+            </Grid>
+            <Grid item>
+              <Box bgcolor="inherit" p={2}>
+                {chatroom ? (
+                  <div>
+                    <MessageList />
+                  </div>
+                ) : postroom ? (
+                  <div>
+                    <PostList />
+                  </div>
+                ) : (
+                  "No list available"
+                )}
+              </Box>
+            </Grid>
+          </Grid>
         </header>
       </div>
     );

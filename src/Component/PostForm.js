@@ -1,7 +1,8 @@
 import React from "react";
 import { push, ref, set } from "firebase/database";
 import { database, storage } from "../firebase";
-import TextField from "@mui/material/TextField";
+import { TextField, Button } from "@mui/material";
+
 import {
   ref as storageRef,
   uploadBytes,
@@ -19,7 +20,7 @@ export default class ChatCall extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       post: "",
-      userID: "",
+      userID: this.props,
       fileInputFile: null,
       fileInputValue: "",
     };
@@ -27,29 +28,24 @@ export default class ChatCall extends React.Component {
 
   handleChange = (e) => {
     const { name, value } = e.target;
-    this.setState(
-      {
-        [name]: value,
-      },
-      () => {
-        console.log(`${name}: ${value}`);
-      }
-    );
+    this.setState({
+      [name]: value,
+    });
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = (url) => {
+    const { userID } = this.props;
     const postListRef = ref(database, DB_POSTS_KEY);
     const newPostRef = push(postListRef);
     set(newPostRef, {
-      userID: this.state.userID,
+      userID: userID,
       post: this.state.post,
-      date: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleString(),
       url: url,
     });
 
     this.setState({
-      userID: "",
       post: "",
       fileInputFile: null,
       fileInputValue: "",
@@ -74,19 +70,7 @@ export default class ChatCall extends React.Component {
   render() {
     return (
       <div>
-        <br />
-        <TextField
-          name="userID"
-          label="UserID"
-          color="secondary"
-          variant="standard"
-          value={this.state.userID}
-          onChange={(e) => this.handleChange(e)}
-          size="small"
-          focused
-          required
-        />
-        <br />
+        <p>You can make a post now!</p>
         <TextField
           name="post"
           label="New Post"
@@ -96,6 +80,8 @@ export default class ChatCall extends React.Component {
           onChange={(e) => this.handleChange(e)}
           size="small"
           focused
+          multiline
+          minRows={1}
           required
         />
         <br />
@@ -116,7 +102,14 @@ export default class ChatCall extends React.Component {
           focused
         />
         <br />
-        <button onClick={this.submit}>Send</button>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="small"
+          onClick={this.submit}
+        >
+          Send
+        </Button>
       </div>
     );
   }
