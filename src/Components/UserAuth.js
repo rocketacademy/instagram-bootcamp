@@ -11,15 +11,8 @@ import {
 export default function UserAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const [passwordType, setPasswordType] = useState("password");
+
   const [displayName, setDisplayName] = useState("");
-  // const togglePassword = () => {
-  //   if (passwordType === "password") {
-  //     setPasswordType("text");
-  //     return;
-  //   }
-  //   setPasswordType("password");
-  // };
 
   const signUp = async (displayName) => {
     if (!displayName || !email || !password) {
@@ -76,17 +69,7 @@ export default function UserAuth() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password Here"
       />
-      {/* <button
-        className="btn btn-outline-primary"
-        onClick={togglePassword}
-      >
-        {passwordType === "password" ? (
-          <i className="bi bi-eye-slash"></i>
-        ) : (
-          <i className="bi bi-eye"></i>
-        )}
-      </button> */}
-   
+
       <br />
 
       <button onClick={() => signUp(displayName)}>SignUp</button>
