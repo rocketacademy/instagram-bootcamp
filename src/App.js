@@ -19,9 +19,6 @@ function RequireAuth({ children, redirectTo, loggedInUser }) {
 }
 
 function App() {
-  const [likeClicked, setLikeClicked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
   const [loggedInUser, setLoggedInUser] = useState({});
 
   useEffect(() => {
@@ -31,19 +28,6 @@ function App() {
       }
     });
   }, [loggedInUser]);
-
-  const handleLikeCount = () => {
-    setLikeCount((state) =>
-      state.likeClicked ? state.likeCount + 1 : state.likeCount - 1
-    );
-  };
-
-  const handleLikeButton = () => {
-    setLikeClicked(
-      (state) => !state.likeClicked,
-      () => handleLikeCount()
-    );
-  };
 
   return (
     <div className="App">
@@ -89,10 +73,13 @@ function App() {
               element={
                 <>
                   <RequireAuth loggedInUser={loggedInUser}>
-                    <Composer email={loggedInUser.email} />
+                    <Composer
+                      email={loggedInUser.email}
+                      loggedInUser={loggedInUser.uid}
+                    />
                   </RequireAuth>
 
-                  <NewsFeed onclick={handleLikeButton} />
+                  <NewsFeed loggedInUser={loggedInUser.uid} />
                 </>
               }
             />
@@ -102,9 +89,12 @@ function App() {
               element={
                 <>
                   <RequireAuth loggedInUser={loggedInUser}>
-                    <Composer email={loggedInUser.email} />
+                    <Composer
+                      email={loggedInUser.email}
+                      loggedInUser={loggedInUser.uid}
+                    />
                   </RequireAuth>
-                  <NewsFeed onClick={handleLikeButton} />
+                  <NewsFeed loggedInUser={loggedInUser.uid} />
                 </>
               }
             />

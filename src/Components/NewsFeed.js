@@ -7,34 +7,30 @@ import {
   remove,
   onChildAdded,
   onChildRemoved,
+  update,
 } from "firebase/database";
 import { useState, useEffect } from "react";
 
 const POST_KEY = "posts";
 
-function NewsFeed() {
-  // Initialise empty posts array in state to keep local state in sync with Firebase
-  // When Firebase changes, update local state, which will update local UI
+function NewsFeed({ loggedInUser }) {
   const [posts, setPosts] = useState([]);
+  const [userLikes, setUserLikes] = useState({});
 
   useEffect(() => {
     const postRef = databaseRef(database, POST_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(postRef, (data) => {
-      console.log(data);
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      setPosts((state) =>
-        // Store posts key so we can use it as a key in our card items when rendering posts
-        [...state, { key: data.key, val: data.val() }]
-      );
+      setPosts((state) => [...state, { key: data.key, val: data.val() }]);
+      setUserLikes((likes) => ({
+        ...likes,
+        [data.key]: data.val().likes || {},
+      }));
     });
   }, []);
 
   useEffect(() => {
     const postRef = databaseRef(database, POST_KEY);
-    // Delete the deleted post & image from state so it is no longer rendered
     onChildRemoved(postRef, (removedOldData) => {
-      console.log("data onChildRemoved", removedOldData);
       const postsCopy = [...posts];
       const newPosts = postsCopy.filter(
         (post) => post.key !== removedOldData.key
@@ -43,49 +39,83 @@ function NewsFeed() {
     });
   }, [posts]);
 
-  // Convert posts in state to JSX elements to render
-  console.log(posts);
-  let postItems = posts.map((post) => (
-    <Card key={post.key}>
-      {post.val.url ? (
-        <>
-          <Card.Img variant="top" src={post.val.url} className="Card-img" />
-          <Button variant="white" onClick={onclick}>
-            ❤ {post.val.likeCount}
+  useEffect(() => {
+    // Update userLikes state when the loggedInUser changes
+    setUserLikes((prevUserLikes) => ({
+      ...prevUserLikes,
+      [loggedInUser]: prevUserLikes[loggedInUser] || {},
+    }));
+  }, [loggedInUser]);
+
+  const handleLikeButton = (postKey) => {
+    const liked = userLikes[postKey]?.[loggedInUser] || false;
+
+    // Toggle the like status for the logged-in user and the specific post
+    const updatedLikes = {
+      ...userLikes,
+      [postKey]: {
+        ...userLikes[postKey],
+        [loggedInUser]: !liked,
+      },
+    };
+    setUserLikes(updatedLikes);
+
+    // Calculate the new like count for the post
+    const likeCount = Object.values(updatedLikes[postKey]).filter(
+      Boolean
+    ).length;
+
+    const postLikeRef = databaseRef(database, `${POST_KEY}/${postKey}`);
+    update(postLikeRef, {
+      likes: updatedLikes[postKey],
+      likeCount: likeCount,
+    });
+  };
+
+  let postItems = posts.map((post) => {
+    const likes = userLikes[post.key] || {};
+    const likeCount = Object.values(likes).filter(Boolean).length;
+
+    return (
+      <Card key={post.key}>
+        {post.val.url ? (
+          <>
+            <Card.Img variant="top" src={post.val.url} className="Card-img" />
+            <Button variant="white" onClick={() => handleLikeButton(post.key)}>
+              ❤ {likeCount}
+            </Button>
+          </>
+        ) : (
+          <p>No images</p>
+        )}
+
+        <Card.Body>
+          <Card.Title>Author: {post.val.email}</Card.Title>
+          <Card.Text>Date: {post.val.date} </Card.Text>
+          <Card.Text>{post.val.textInput} </Card.Text>
+          <Button
+            variant="dark"
+            onClick={(e) => {
+              const imageDeletionRef = storageRef(storage, post.val.imageRef);
+              deleteObject(imageDeletionRef).then(() => {
+                console.log("image deleted");
+              });
+
+              const postDeletionRef = databaseRef(
+                database,
+                `${POST_KEY}/${post.key}`
+              );
+              remove(postDeletionRef).then(() => {
+                console.log("entire post deleted");
+              });
+            }}
+          >
+            Delete
           </Button>
-        </>
-      ) : (
-        <p>No images</p>
-      )}
-
-      <Card.Body>
-        <Card.Title>Author: {post.val.email}</Card.Title>
-        <Card.Text>Date: {post.val.date} </Card.Text>
-        <Card.Text>{post.val.textInput} </Card.Text>
-        <Button
-          variant="dark"
-          onClick={(e) => {
-            // Delete image from storage
-            const imageDeletionRef = storageRef(storage, post.val.imageRef);
-            deleteObject(imageDeletionRef).then(() => {
-              console.log("image deleted");
-            });
-
-            // Delete an entire post from database
-            const postDeletionRef = databaseRef(
-              database,
-              `${POST_KEY}/${post.key}`
-            );
-            remove(postDeletionRef).then(() => {
-              console.log("entire post deleted");
-            });
-          }}
-        >
-          Delete
-        </Button>
-      </Card.Body>
-    </Card>
-  ));
+        </Card.Body>
+      </Card>
+    );
+  });
 
   return (
     <div>

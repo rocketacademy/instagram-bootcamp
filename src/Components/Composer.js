@@ -6,12 +6,13 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 // Save the Firebase post folder name as a constant to avoid bugs due to misspelling
 const POST_KEY = "posts";
 const STORAGE_KEY = "images/";
 
-function Composer({ email }) {
+function Composer({ email, loggedInUser }) {
   const [textInput, setTextInput] = useState("");
   const [fileInputFile, setFileInputFile] = useState(null);
   const [fileInputValue, setFileInputValue] = useState("");
@@ -19,12 +20,16 @@ function Composer({ email }) {
   const writeData = (url, fileStorageRef) => {
     const postRef = databaseRef(database, POST_KEY);
     const newPostRef = push(postRef);
+    // Initialize likes object with the key being a computed property name. Depending on who the loggedInUser is, the likes object key will be that user's uid.
+    const likes = {
+      [loggedInUser]: false,
+    };
     set(newPostRef, {
       textInput: textInput,
       date: new Date().toLocaleString(),
       url: url,
       email: email,
-      likeCount: 0,
+      likes: likes,
       imageRef: String(fileStorageRef),
     });
 
@@ -36,10 +41,9 @@ function Composer({ email }) {
   const submit = (e) => {
     e.preventDefault();
 
-    const fileStorageRef = storageRef(
-      storage,
-      STORAGE_KEY + fileInputFile.name
-    );
+    // Use uuid npm package to generate a unique string + the local file name so even if a same pic with the same file name is uploaded twice, the newer pic will not overwrite the older one and both pic can be stored and rendered independently
+    const uniqueFileName = `${fileInputFile.name}.${uuidv4()}`;
+    const fileStorageRef = storageRef(storage, STORAGE_KEY + uniqueFileName);
 
     uploadBytes(fileStorageRef, fileInputFile)
       .then(() => getDownloadURL(fileStorageRef))
