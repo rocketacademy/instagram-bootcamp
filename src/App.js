@@ -6,9 +6,10 @@ import NewsFeed from "./Components/NewsFeed";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import AuthForm from "./Components/AuthForm";
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
+import {Container} from "react-bootstrap";
+import {Navbar} from "react-bootstrap";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
+import Post from "./Components/Post";
 
 export const UserContext = React.createContext({});
 
@@ -98,6 +99,7 @@ function App() {
                 </>
               }
             />
+            <Route path="/post/:id" element={<Post />} />
           </Routes>
         </UserContext.Provider>
       </header>

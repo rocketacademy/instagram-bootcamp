@@ -1,4 +1,5 @@
-import Card from "react-bootstrap/Card";
+import { useState, useEffect } from "react";
+import {Card} from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { ref as storageRef, deleteObject } from "firebase/storage";
 import { database, storage } from "../firebase";
@@ -9,7 +10,7 @@ import {
   onChildRemoved,
   update,
 } from "firebase/database";
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const POST_KEY = "posts";
 
@@ -112,6 +113,9 @@ function NewsFeed({ loggedInUser }) {
           >
             Delete
           </Button>
+          <Link to={`/post/${post.key}`}>
+            <Button variant="dark">View Post</Button>
+          </Link>
         </Card.Body>
       </Card>
     );
