@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./App.css";
 import { auth } from "./firebase";
 import {
@@ -8,328 +8,148 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
-//import UI component from Mui
-import { Box, Grid } from "@mui/material";
-import { Button, TextField } from "@mui/material";
+import ChatCallHooks from "./Pages/ChatCallHooks";
+import PostForm from "./Pages/PostForm";
+import Navbar from "./Component/Navbar";
+import Welcome from "./Pages/Welcome";
+import SignUp from "./Pages/SignUp";
+import ErrorPage from "./Pages/ErrorPage";
+import Login from "./Pages/Login";
+import Profile from "./Pages/Profile";
+import Swal from "sweetalert2";
 
-import MessageList from "./Component/MessageList";
-import ChatCall from "./Component/ChatCall";
-import PostForm from "./Component/PostForm";
-import PostList from "./Component/PostList";
-import Navbar from "./Component/UI/Navbar";
+export const UserContext = React.createContext(null);
 
-class App extends React.Component {
-  constructor() {
-    super();
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      currentPage: "home",
-      userID: "",
-      chatroom: false,
-      postroom: true,
-      isLoggedIn: false,
-      email: "",
-      displayName: "",
-      password: "",
-      pages: { login: true, signup: false, forgetpassword: false },
+export default function App() {
+  const [userID, setUserID] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState("false");
+  const [displayName, setDisplayName] = useState("");
+  const [avatarURL, setAvatarURL] = useState("");
+  const navigate = useNavigate();
+  const user = useMemo(() => {
+    return {
+      userID: userID,
+      displayName: displayName,
+      isLoggedIn: isLoggedIn,
+      avatarURL: avatarURL,
     };
-  }
+  }, [userID, displayName, isLoggedIn, avatarURL]);
 
-  componentDidMount = () => {
-    const { displayName } = this.state;
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      console.log("Auth State Changed!");
       if (user) {
-        console.log(user);
-        updateProfile(user, {
-          displayName: displayName,
-        }).then(() =>
-          console.log("Profile Updated!").catch((error) => {
-            console.log("Update profile error : ", error);
-          })
-        );
-        const uid = user.email;
-        this.setState({ userID: uid, isLoggedIn: true });
+        setIsLoggedIn(true);
+        const uid = user.uid;
+        setUserID(uid);
+        if (user.displayName !== null) {
+          setDisplayName(user.displayName);
+          console.log(displayName);
+        }
       } else {
-        console.log("Logged out!");
-        this.setState({ userID: "", isLoggedIn: false, displayName: "" });
+        setIsLoggedIn(false);
+        setDisplayName("");
+        setUserID(null);
       }
     });
-  };
+  });
 
-  handleClick = (name) => {
-    if (name === "Chatroom") {
-      this.setState({
-        chatroom: true,
-        postroom: false,
-      });
-    } else if (name === "Posts") {
-      this.setState({
-        postroom: true,
-        chatroom: false,
-      });
-    }
-  };
-
-  handleInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({
-      [name]: value,
-    });
-  };
-
-  handleSignup = () => {
-    const { email, password } = this.state;
+  const handleSignup = (email, password, name) => {
+    console.log(email, password, name);
     createUserWithEmailAndPassword(auth, email, password).then((userCred) => {
       console.log("Sign up success!");
       console.log(userCred);
-      const user = userCred.user;
-
-      console.log(user);
-      // ...
+      setIsLoggedIn(true);
+      setUserID(userCred.user.uid);
+      console.log("Name is ", name);
+      setDisplayName(name);
+      updateProfile(auth.currentUser, {
+        displayName: displayName,
+        photoURL: "",
+      })
+        .then(() => {
+          console.log("Profile Updated! ", displayName);
+          Swal.fire({
+            icon: "success",
+            title: "Yay!",
+            text: "Successfully signed up!",
+            footer: "You can now check out the profile page",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate("/instagram-bootcamp/");
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
   };
 
-  handleLogin = () => {
-    const { email, password } = this.state;
+  const handleLogin = (email, password) => {
     signInWithEmailAndPassword(auth, email, password).then((userCred) => {
       console.log("success sign in!");
       console.log(userCred);
-      const user = userCred.user;
+      const user = userCred;
       console.log(user);
+      setIsLoggedIn(true);
+      setUserID(user.user.uid);
+      navigate("/instagram-bootcamp");
     });
   };
 
-  handleLogout = () => {
+  const handleLogout = () => {
     signOut(auth).then(() => {
       console.log("success sign OUT!");
-      this.setState({
-        currentPage: "home",
-        userID: "",
-        chatroom: false,
-        postroom: false,
-        isLoggedIn: false,
-        email: "",
-        displayName: "",
-        password: "",
-        pages: { login: true, signup: false, forgetpassword: false },
-      });
+      setUserID("");
+      setIsLoggedIn(false);
+      setDisplayName("");
+      setAvatarURL("");
+      navigate("/instagram-bootcamp");
     });
   };
 
-  changePage = (e) => {
-    const name = e.target.name;
-    let newPage = {};
-    if (name === "signup") {
-      newPage = { login: false, signup: true, forgetpassword: false };
-    } else if (name === "login") {
-      newPage = { login: true, signup: false, forgetpassword: false };
+  useEffect(() => {
+    const currUser = auth.currentUser;
+    if (currUser !== null) {
+      setAvatarURL(currUser.photoURL);
+      console.log(avatarURL);
+      console.log(currUser.photoURL);
+      user.avatarURL = currUser.photoURL;
     }
-    this.setState({
-      pages: newPage,
-    });
-  };
+  }, [setAvatarURL, avatarURL, user]);
 
-  render() {
-    const { chatroom, postroom } = this.state;
-    const { login, signup } = this.state.pages;
-    return (
+  return (
+    <UserContext.Provider value={user}>
       <div className="App">
-        <Navbar pageClick={this.handleClick} />
+        <Navbar logout={handleLogout} avatarURL={avatarURL} />
         <header className="App-header">
           <h2>Welcome to Rocketgram! 🚀</h2>
-          <Grid container xs={12} lg={8} justifyContent="center">
-            <Grid item xs={6} lg={6}>
-              {postroom && this.state.isLoggedIn ? (
-                <Box bgcolor="inherit" p={2}>
-                  <div justify="center">
-                    <PostForm userID={this.state.displayName} />
-                    <br />
-                  </div>
-                </Box>
-              ) : chatroom && this.state.isLoggedIn ? (
-                <Box bgcolor="inherit" p={2}>
-                  <ChatCall userID={this.state.displayName} />
-                </Box>
-              ) : !this.state.isLoggedIn && login ? (
-                <Box textAlign="left">
-                  <Grid item xs={10}>
-                    <p>Please login to chat or post.</p>
-                    <p>If you are a new user, please click on Sign Up.</p>
-                  </Grid>
-                  <Grid>
-                    <Box xs={7} lg={6}>
-                      <Grid item xs={10} sm={7} md={5} lg={5} xl={5}>
-                        <TextField
-                          type="text"
-                          name="email"
-                          label="Email"
-                          color="secondary"
-                          variant="filled"
-                          value={this.state.email}
-                          onChange={this.handleInput}
-                          size="small"
-                          InputProps={{ sx: { height: 45 } }}
-                          focused
-                          required
-                        />
-                        <br />
-                        <TextField
-                          type="password"
-                          name="password"
-                          label="Password"
-                          color="secondary"
-                          variant="filled"
-                          value={this.state.password}
-                          onChange={this.handleInput}
-                          size="small"
-                          InputProps={{ sx: { height: 45 } }}
-                          focused
-                          required
-                        />
-                        <br />
-                        <Box
-                          component="span"
-                          m={1}
-                          display="flex"
-                          justifyContent="space-between"
-                          alignItems="center"
-                          width="20"
-                        >
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={this.handleLogin}
-                            size="small"
-                          >
-                            Submit
-                          </Button>
-
-                          <Button
-                            name="signup"
-                            color="secondary"
-                            variant="contained"
-                            size="small"
-                            onClick={this.changePage}
-                          >
-                            Sign Up
-                          </Button>
-                        </Box>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                </Box>
-              ) : !this.state.isLoggedIn && signup ? (
-                <Box textAlign="left">
-                  <Grid item xs={10}>
-                    <p>Please sign up to chat or post.</p>
-                    <p>To login, please click on Login.</p>
-                  </Grid>
-                  <Grid>
-                    <Box xs={7} lg={6}>
-                      <Grid item xs={10} sm={7} md={5} lg={5} xl={5}>
-                        <TextField
-                          type="text"
-                          name="displayName"
-                          label="Display Name"
-                          color="secondary"
-                          variant="filled"
-                          value={this.state.displayName}
-                          onChange={this.handleInput}
-                          size="small"
-                          focused
-                          required
-                        />
-                        <br />
-                        <TextField
-                          type="text"
-                          name="email"
-                          label="Email"
-                          color="secondary"
-                          variant="filled"
-                          value={this.state.email}
-                          onChange={this.handleInput}
-                          size="small"
-                          focused
-                          required
-                        />
-                        <br />
-
-                        <TextField
-                          type="password"
-                          name="password"
-                          label="Password"
-                          color="secondary"
-                          variant="filled"
-                          value={this.state.password}
-                          onChange={this.handleInput}
-                          size="small"
-                          focused
-                          required
-                        />
-
-                        <Box
-                          component="span"
-                          m={1}
-                          display="flex"
-                          justifyContent="space-between"
-                          alignItems="center"
-                          width="20"
-                        >
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            onClick={this.handleSignup}
-                          >
-                            Submit
-                          </Button>
-                          <Button
-                            name="login"
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            onClick={this.changePage}
-                          >
-                            Login
-                          </Button>
-                        </Box>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                </Box>
-              ) : this.state.isLoggedIn ? (
-                <div>
-                  <Button variant="contained" onClick={this.handleLogout}>
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                ""
-              )}
-            </Grid>
-            <Grid item>
-              <Box bgcolor="inherit" p={2}>
-                {chatroom ? (
-                  <div>
-                    <MessageList />
-                  </div>
-                ) : postroom ? (
-                  <div>
-                    <PostList />
-                  </div>
-                ) : (
-                  "No list available"
-                )}
-              </Box>
-            </Grid>
-          </Grid>
+          <Routes>
+            <Route path="/instagram-bootcamp" element={<Welcome />} />
+            <Route
+              path="/instagram-bootcamp/signup"
+              element={<SignUp signup={handleSignup} />}
+            />
+            <Route
+              path="/instagram-bootcamp/login"
+              element={<Login handleLogin={handleLogin} />}
+            />
+            <Route path="/instagram-bootcamp/profile" element={<Profile />} />
+            <Route
+              path="/instagram-bootcamp/chat"
+              element={<ChatCallHooks />}
+            />
+            <Route
+              path="/instagram-bootcamp/posts"
+              element={<PostForm />}
+            ></Route>
+            <Route path="*" element={<ErrorPage />}></Route>
+          </Routes>
         </header>
       </div>
-    );
-  }
+    </UserContext.Provider>
+  );
 }
-
-export default App;

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: #dbd0c9;
 }
 
 .App-logo {
@@ -8,14 +9,14 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #dbd0c9;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
 }
 
 /*Own CSS*/
@@ -31,4 +32,10 @@
   text-align: center;
   display: flex;
   justify-content: center !important;
+}
+
+.login_signup_buttons {
+  display: flex;
+  /* flex-direction: column;
+  align-items: center; */
 }
