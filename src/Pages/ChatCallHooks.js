@@ -92,7 +92,6 @@ export default function ChatCallHooks() {
         </div>
       ) : (
         <div>
-          {" "}
           <h3>Please login if you wish to chat. ↗️ </h3>
         </div>
       )}

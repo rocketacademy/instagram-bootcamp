@@ -13,7 +13,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 
-export default function Profile() {
+export default function Profile(props) {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [photoURL, setPhotoURL] = useState("");
@@ -29,25 +29,39 @@ export default function Profile() {
     if (currUser !== null) {
       setDisplayName(currUser.displayName);
       setEmail(currUser.email);
-      setPhotoURL(currUser.photoURL);
     } else {
       setEmail(user.email);
     }
   }, [currUser, user.email]);
 
   const updateUserProfile = (url) => {
-    if (displayName !== "" && photoURL !== "") {
+    // if user updates display name and avatar photo
+    if (displayName !== "" && props.avatarURL !== "") {
       updateProfile(currUser, {
         displayName: displayName,
         photoURL: url,
       })
         .then(() => {
-          console.log("Profile Updated!");
-          console.log(`Photo URL set :`, photoURL);
-          user.photoURL = photoURL;
+          console.log("Name updated w photo!");
+          console.log(`Photo URL set :`, props.avatarURL);
+          console.log(`Photo URL on getAuth is : `, currUser.photoURL);
         })
         .catch((error) => {
           console.log("Error Updating Profile: ", error);
+        });
+    }
+    // if user updates display name only and not avatar photo
+    if (displayName !== "" && (photoURL === "" || photoURL === null)) {
+      setPhotoURL(props.avatarURL);
+      updateProfile(currUser, {
+        displayName: displayName,
+        photoURL: photoURL,
+      })
+        .then(() => {
+          console.log("Display Name Updated!");
+        })
+        .catch((error) => {
+          console.log("Error Updating Display Name: ", error);
         });
     }
 
@@ -57,7 +71,7 @@ export default function Profile() {
           console.log("Email updated : ", email);
         })
         .catch((error) => {
-          console.log("Error Updating : ", error);
+          console.log("Error Updating email : ", error);
         });
     }
     if (newPassword !== "") {
@@ -66,7 +80,7 @@ export default function Profile() {
           console.log("Password updated : ", newPassword);
         })
         .catch((error) => {
-          console.log("Error occured with password update :", error);
+          console.log("Error updating password :", error);
         });
     }
 
@@ -75,13 +89,17 @@ export default function Profile() {
     setFileInputValue("");
   };
 
+  const handleFileInputChange = (event) => {
+    setFileInputFile(event.target.files[0]);
+    setFileInputValue(event.target.file);
+  };
+
   const submit = () => {
     if (
       fileInputFile === null &&
       displayName === "" &&
       newPassword === "" &&
-      email === "" &&
-      photoURL === ""
+      email === ""
     ) {
       Swal.fire({
         icon: "error",
@@ -98,18 +116,29 @@ export default function Profile() {
       );
 
       uploadBytes(fullStorageRef, fileInputFile).then((snapshot) => {
-        getDownloadURL(fullStorageRef, fileInputFile.name).then((url) => {
-          console.log("file uploaded successfully!");
-          updateUserProfile(url);
-          setPhotoURL(url);
-        });
+        getDownloadURL(fullStorageRef, fileInputFile.name)
+          .then((url) => {
+            console.log("file uploaded successfully: ", url);
+            props.setAvatarURL(url);
+            setPhotoURL(props.avatarURL);
+            console.log("Photo url on auth is : ", photoURL);
+            updateUserProfile(url);
+            Swal.fire({
+              icon: "success",
+              title: "Avatar Updated!",
+              text: "You have successfully uploaded your avatar.",
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            updateUserProfile("");
+            Swal.fire({
+              icon: "error",
+              title: "Ooops!",
+              text: "Avatar was not uploaded successfully. Please check and try again.",
+            });
+          });
       });
-    }
-
-    if (photoURL !== "") {
-      updateUserProfile(photoURL);
-    } else {
-      updateUserProfile("");
     }
   };
 
@@ -170,11 +199,7 @@ export default function Profile() {
           size="small"
           value={fileInputValue}
           InputProps={{ sx: { height: 45 } }}
-          onChange={(e) => {
-            console.log(e.target);
-            setFileInputFile(e.target.files[0]);
-            setFileInputValue(e.target.file);
-          }}
+          onChange={(event) => handleFileInputChange(event)}
           focused
         />
         <br />

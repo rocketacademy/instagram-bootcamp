@@ -13,6 +13,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import CardHeader from "@mui/material/CardHeader";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { UserContext } from "../App";
 import { useContext } from "react";
@@ -69,7 +70,6 @@ export default function Navbar({ logout, avatarURL }) {
               variant="h6"
               noWrap
               component="a"
-              href="/"
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -155,7 +155,16 @@ export default function Navbar({ logout, avatarURL }) {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="user" src={avatarURL} />
+                  <CardHeader
+                    sx={{
+                      "& .MuiCardHeader-title": {
+                        //could also be placed inside header class
+                        color: "#FFFFFF",
+                      },
+                    }}
+                    title={user.displayName}
+                    action={<Avatar alt="user" src={avatarURL} />}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu

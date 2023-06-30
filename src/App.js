@@ -33,9 +33,8 @@ export default function App() {
       userID: userID,
       displayName: displayName,
       isLoggedIn: isLoggedIn,
-      avatarURL: avatarURL,
     };
-  }, [userID, displayName, isLoggedIn, avatarURL]);
+  }, [userID, displayName, isLoggedIn]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -43,10 +42,17 @@ export default function App() {
       if (user) {
         setIsLoggedIn(true);
         const uid = user.uid;
+        console.log("this is user in onAuthSChanged: ", user);
         setUserID(uid);
+        if (user.photoURL !== null) {
+          setAvatarURL(user.photoURL);
+          console.log("This is user.photoURL: ", user.photoURL);
+          console.log("Photo URL from getAuth fetched : ", avatarURL);
+        }
+
         if (user.displayName !== null) {
           setDisplayName(user.displayName);
-          console.log(displayName);
+          console.log("Dislay name from getAuth fetched: ", displayName);
         }
       } else {
         setIsLoggedIn(false);
@@ -84,6 +90,7 @@ export default function App() {
         })
         .catch((error) => {
           console.log(error);
+          alert("Error! Please use at least 6 characters for password.");
         });
     });
   };
@@ -111,16 +118,6 @@ export default function App() {
     });
   };
 
-  useEffect(() => {
-    const currUser = auth.currentUser;
-    if (currUser !== null) {
-      setAvatarURL(currUser.photoURL);
-      console.log(avatarURL);
-      console.log(currUser.photoURL);
-      user.avatarURL = currUser.photoURL;
-    }
-  }, [setAvatarURL, avatarURL, user]);
-
   return (
     <UserContext.Provider value={user}>
       <div className="App">
@@ -137,7 +134,12 @@ export default function App() {
               path="/instagram-bootcamp/login"
               element={<Login handleLogin={handleLogin} />}
             />
-            <Route path="/instagram-bootcamp/profile" element={<Profile />} />
+            <Route
+              path="/instagram-bootcamp/profile"
+              element={
+                <Profile setAvatarURL={setAvatarURL} avatarURL={avatarURL} />
+              }
+            />
             <Route
               path="/instagram-bootcamp/chat"
               element={<ChatCallHooks />}

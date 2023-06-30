@@ -80,7 +80,6 @@ export default function Login(props) {
           </Box>
         </Grid>
       </Box>
-      ;
     </div>
   );
 }

@@ -57,6 +57,7 @@ export default function SignUp(props) {
                 variant="filled"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                placeholder="min. 6 characters"
                 size="small"
                 InputProps={{ sx: { height: 45 } }}
                 focused
