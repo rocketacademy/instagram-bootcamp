@@ -1,60 +1,190 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+import { useEffect, useState } from "react";
 import "./App.css";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+import Newsfeed from "./Newsfeed";
+import Authform from "./Authform";
+import PostForm from "./CreatePost";
+import PostCard from "./Postcard";
+import Error from "./Error";
 
+import { auth } from "./firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
+import { Routes, Link, Route, Navigate } from "react-router-dom";
+
+import Button from "@mui/material/Button";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import logo from "./logo.png";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+function RequireAuth({ children, redirectTo, user }) {
+  console.log(user);
+  const isAuthenticated = user.uid && user.accessToken;
+  return isAuthenticated ? children : <Navigate to={redirectTo} />;
+}
+
+function App() {
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (userObj) => {
+      if (userObj) {
+        setUser(userObj);
+      }
+    });
+  }, [user]);
+
+  return (
+    <div className="App">
+      <Navbar fixed="top" bg="light" expand="lg">
+        <Container fluid>
+          <Navbar.Brand className="justify-content-start" as={Link} to="/">
+            <img
+              alt=""
+              src={logo}
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+            />{" "}
+            Rocket Gram
+          </Navbar.Brand>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-start">
+            {" "}
+            <Nav className="me-auto">
+              <Nav.Link as={Link} to="/posts">
+                Newsfeed
+              </Nav.Link>
+              <Nav.Link as={Link} to="/posts/create">
+                Create New Post
+              </Nav.Link>
+              {user.uid && user.accessToken ? null : (
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+          <Navbar.Collapse className="justify-content-end">
+            {user.email !== undefined ? (
+              <Navbar.Text>
+                Signed in as: {user.email}&nbsp;&nbsp;&nbsp;&nbsp;
+              </Navbar.Text>
+            ) : (
+              <Navbar.Text>
+                Signed in as: Guest&nbsp;&nbsp;&nbsp;&nbsp;
+              </Navbar.Text>
+            )}
+            {user.uid && user.accessToken ? (
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() =>
+                  signOut(auth).then(() => {
+                    setUser({});
+                  })
+                }
+              >
+                signOut
+              </Button>
+            ) : null}
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <header className="App-header">
+        <Routes>
+          <Route
+            path="/"
+            element={user.uid && user.accessToken ? <Newsfeed /> : <Authform />}
+          />
+          <Route path="/login" element={<Authform />} />
+          <Route path="/posts">
+            <Route
+              index={true}
+              element={
+                <Newsfeed
+                  username={user.uid && user.accessToken ? user.email : ""}
+                />
+              }
+            />
+            <Route path="/posts/:id" element={<PostCard />} />
+            <Route
+              path="create"
+              element={
+                <RequireAuth redirectTo="/login" user={user}>
+                  <PostForm useremail={user.email} />
+                </RequireAuth>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Error />} />
+        </Routes>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+/*
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      isLoggedIn: false,
+      user: {},
     };
   }
 
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
+    onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      if (user) {
+        this.setState({ isLoggedIn: true, user: user });
+      }
     });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
+  componentDidUpdate() {
+
+  }
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
     return (
       <div className="App">
+        <NavbarComponent useremail={this.state.user.email} />
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+          {this.state.isLoggedIn === true && (
+            <h2>Welcome back {this.state.user.email}</h2>
+          )}
+
+          {this.state.isLoggedIn === true && (
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={(e) => {
+                this.setState({ isLoggedIn: false });
+                signOut(auth);
+                this.setState({ user: {} });
+              }}
+            >
+              Logout!
+            </Button>
+          )}
+          <br />
+          {this.state.isLoggedIn === false ? (
+            <Authform />
+          ) : (
+            <PostForm useremail={this.state.user.email} />
+          )}
+          <br />
+          <Newsfeed username={this.state.isLoggedIn === true ? this.state.user.email : ""}/>
         </header>
       </div>
     );
   }
 }
-
-export default App;
+*/
