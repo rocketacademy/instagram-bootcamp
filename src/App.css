@@ -16,4 +16,11 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding-top: 100px;
+}
+
+.cardImage {
+  width: 50vw;
+  height: 30vh;
+  object-fit: contain;
 }
