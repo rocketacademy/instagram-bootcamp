@@ -1,0 +1,40 @@
+/* .Card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Card-Img {
+  width: 50vw;
+  height: 30vh;
+} */
+
+.card-feed {
+  display: grid;
+  /* grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); */
+  justify-content: center;
+  grid-gap: 20px;
+  padding: 0% 25%;
+}
+
+/* Add styles for individual cards */
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  width: 100%;
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.card-text {
+  font-size: 14px;
+  margin-bottom: 0;
+}
