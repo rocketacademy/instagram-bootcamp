@@ -34,31 +34,32 @@ class InstagramFeed extends React.Component {
     // Convert messages in state to message JSX elements to render
 
     let messageListItems = this.state.messages.map((message) => (
-      <Card
-        border="light"
-        bg="light"
-        key={message.key}
-        className="Card"
-        // style={{ width: "24rem" }}
-      >
-        <Card.Header as="h4">Post</Card.Header>
-        <Card.Body>
-          <Card.Text>
+      <div className="card-feed">
+        <Card
+          border="light"
+          bg="light"
+          key={message.key}
+          className="card"
+          // style={{ width: "24rem" }}
+        >
+          <Card.Header as="h4">Post</Card.Header>
+          <Card.Body>
+            <Card.Text className="card-text">
+              {" "}
+              Description: {message.val.message} <br />
+            </Card.Text>
+          </Card.Body>
+          <Card.Img
+            src={message.val.url}
+            alt={message.val.message}
+            className="card-image"
+          />
+          <Card.Footer className="text-muted">
             {" "}
-            Description: {message.val.message} <br />
-            {/* <Link to={`/posts/${post.id}`}>Read More</Link> */}
-          </Card.Text>
-        </Card.Body>
-        <Card.Img
-          src={message.val.url}
-          alt={message.val.message}
-          className="Card-Img"
-        />
-        <Card.Footer className="text-muted">
-          {" "}
-          Date:{message.val.date} - {message.val.time}
-        </Card.Footer>
-      </Card>
+            Date:{message.val.date} - {message.val.time}
+          </Card.Footer>
+        </Card>
+      </div>
     ));
     messageListItems.reverse();
     return messageListItems;

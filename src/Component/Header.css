@@ -8,7 +8,13 @@
   border-radius: 16px;
 }
 
+.brand {
+  margin-right: 10px;
+}
+
 .auth-links {
+  margin-left: auto;
+  margin-right: 10px;
   display: flex;
   align-items: center;
   color: #171717;

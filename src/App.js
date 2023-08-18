@@ -33,13 +33,8 @@ const App = () => {
 
   // Initialise components to render in variables for organisational purposes
   const authForm = <AuthField />;
-  const composer = <InstagramForm loggedInUser={loggedInUser} />;
-  // const createAccountOrSignInButton = (
-  //   <div>
-  //     <Link to="authform">Create Account Or Sign In</Link>
-  //     <br />
-  //   </div>
-  // );
+  // const composer = <InstagramForm loggedInUser={loggedInUser} />;
+  const composer = <InstagramForm />;
   const composerAndNewsFeed = (
     <div>
       {/* Render composer if user logged in, else render nothing */}
@@ -52,15 +47,16 @@ const App = () => {
   return (
     <div className="App">
       <AuthProvider>
-        <header className="App-header">
+        <div className="app-container">
           <br />
           <Header />
-          <Routes>
-            <Route path="/" element={composerAndNewsFeed} />
-            <Route path="authform" element={authForm} />
-            {/* <Route path="/authField" element={<AuthField />} /> */}
-          </Routes>
-        </header>
+          <div className="content-container">
+            <Routes>
+              <Route path="/" element={composerAndNewsFeed} />
+              <Route path="authform" element={authForm} />
+            </Routes>
+          </div>
+        </div>
       </AuthProvider>
     </div>
   );

@@ -2,12 +2,7 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
+/* .App-header {
   background-color: #282c34;
   min-height: 60vh;
   display: flex;
@@ -16,6 +11,17 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+} */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content-container {
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .Form-container {

@@ -14,7 +14,8 @@ const Header = () => {
     if (user) {
       return (
         <>
-          <span>{user.email}</span>
+          <span style={{ marginRight: "10px" }}>{user.email}</span>
+
           <Button variant="secondary" onClick={handleSignOut}>
             Sign Out
           </Button>
@@ -23,7 +24,6 @@ const Header = () => {
     } else {
       return (
         <>
-          {/* <Link to="/authField">Sign In/Create New Account</Link> */}
           <Link to="/authform">Create Account Or Sign In</Link>
         </>
       );
@@ -33,7 +33,9 @@ const Header = () => {
   return (
     <Navbar bg="light" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand href="/">Rocketgram</Navbar.Brand>
+        <Navbar.Brand className="brand" href="/">
+          Rocketgram
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
