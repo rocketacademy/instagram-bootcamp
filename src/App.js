@@ -1,8 +1,11 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+
 import logo from "./logo.png";
 import "./App.css";
+
+import AuthForm from "./Component/AuthForm";
+import UploadPost from "./Component/UploadPost";
+import Newsfeed from "./Component/Newsfeed";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -13,44 +16,35 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      messages: [],
+      name: "To update in App.js",
+      loggedInUser: false,
     };
   }
 
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
-  }
-
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
-
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
+
+          {/* Input box for user to enter name, Entered name will be registered in current session */}
+          {!this.state.loggedInUser && <AuthForm />}
+
+          {/* Input form for user to enter post message, upload photo*/}
+          {this.state.loggedInUser && (
+            <div>
+              <br />
+              User: {this.state.name}
+              <UploadPost DB_MESSAGES_KEY={DB_MESSAGES_KEY} />
+              <br />
+            </div>
+          )}
+
+          {/* Renders Newsfeed*/}
+          <Newsfeed
+            messages={this.state.messages}
+            DB_MESSAGES_KEY={DB_MESSAGES_KEY}
+          />
         </header>
       </div>
     );
