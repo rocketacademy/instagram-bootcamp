@@ -10,6 +10,8 @@ const firebaseConfig = {
   storageBucket: "cwkoo-rocketgram.appspot.com",
   messagingSenderId: `${process.env.REACT_APP_SENDER_ID}`,
   appId: `${process.env.REACT_APP_APP_ID}`,
+  databaseURL:
+    "https://cwkoo-rocketgram-default-rtdb.asia-southeast1.firebasedatabase.app/",
 };
 
 // Initialize Firebase
