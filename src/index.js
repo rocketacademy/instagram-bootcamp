@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { MantineProvider, useMantineTheme } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import "./index.css";
 import App from "./App";
 
