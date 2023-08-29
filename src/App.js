@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { database, storage } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
 
