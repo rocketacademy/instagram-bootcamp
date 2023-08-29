@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database, storage } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -11,7 +10,9 @@ function App() {
   // Initialise empty messages array in state to keep local state in sync with Firebase
   // When Firebase changes, update local state, which will update local UI
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [message, setMessage] = useState("");
+  const [fileValue, setFileValue] = useState("");
+  const [file, setFile] = useState(null);
 
   const messagesRef = useRef(ref(database, DB_MESSAGES_KEY));
 
@@ -34,14 +35,18 @@ function App() {
     });
   }, []);
 
-  const handleInputChange = (event) => {
-    setInput(event.target.value);
+  const handleMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
   };
 
   const handleSubmit = () => {
     const newMessageRef = push(messagesRef.current);
     const timestamp = new Date().toISOString();
-    set(newMessageRef, { message: input, timestamp }).then(() =>
+    set(newMessageRef, { message, timestamp }).then(() =>
       console.log("Set successful")
     );
   };
@@ -59,14 +64,18 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <h1>Rocketgram</h1>
         <form onSubmit={handleSubmit}>
-          <input type="text" value={input} onChange={handleInputChange} />
-          <br />
-          <button type="submit">Send</button>
+          <p>
+            Enter message{" "}
+            <input type="text" value={message} onChange={handleMessageChange} />
+          </p>
+          <p>
+            <input type="file" value={fileValue} onChange={handleFileChange} />
+          </p>
+          <p>
+            <button type="submit">Send</button>
+          </p>
         </form>
         <ol>{messageListItems}</ol>
       </header>
