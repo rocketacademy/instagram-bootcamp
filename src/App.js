@@ -83,14 +83,19 @@ function App() {
   // Convert messages in state to message JSX elements to render
   let cards = messages.map((message) => {
     return (
-      <Card radius="lg">
+      <Card radius="lg" maw="400px">
         <Card.Section>
-          <Image src={message.url} height={240} width={240} />
+          <Image src={message.url} height="25vh" withPlaceholder />
         </Card.Section>
 
-        <Text size="md">{message.message}</Text>
-
-        <Text size="xs">{message.timestamp.toLocaleString("en-SG")}</Text>
+        <Card.Section>
+          <Text size="md" my="xs">
+            {message.message}
+          </Text>
+          <Text size="xs" mb="xs">
+            {message.timestamp.toLocaleString("en-SG")}
+          </Text>
+        </Card.Section>
       </Card>
     );
   });
@@ -118,8 +123,8 @@ function App() {
             <button type="submit">Send</button>
           </p>
         </form>
-        <Space h="md" />
-        <Flex gap="xl" justify="center" wrap="wrap" m="md">
+        <Space h="sm" />
+        <Flex gap="xl" justify="center" wrap="wrap" m="xl">
           {cards}
         </Flex>
       </header>
