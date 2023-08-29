@@ -6,6 +6,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { database, storage } from "./firebase";
+import { Card, Image, Text, Title, Flex } from "@mantine/core";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -79,22 +80,24 @@ function App() {
   };
 
   // Convert messages in state to message JSX elements to render
-  let messageListItems = messages.map((message) => {
-    console.log(message.url);
+  let cards = messages.map((message) => {
     return (
-      <li key={message.key}>
-        {message.message} <a href={message.url}>image</a>
-        <span className="timestamp">
-          {message.timestamp.toLocaleString("en-SG")}
-        </span>
-      </li>
+      <Card>
+        <Card.Section>
+          <Image src={message.url} height={160} />
+        </Card.Section>
+
+        <Text size="xl">{message.message}</Text>
+
+        <Text size="sm">{message.timestamp.toLocaleString("en-SG")}</Text>
+      </Card>
     );
   });
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Rocketgram</h1>
+        <Title order={1}>Rocketgram</Title>
         <form onSubmit={handleSubmit}>
           <p>
             Enter message{" "}
@@ -112,7 +115,7 @@ function App() {
             <button type="submit">Send</button>
           </p>
         </form>
-        <ol>{messageListItems}</ol>
+        <Flex>{cards}</Flex>
       </header>
     </div>
   );
