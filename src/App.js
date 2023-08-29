@@ -27,7 +27,7 @@ function App() {
           {
             key: data.key,
             message,
-            timestamp: new Date(data.val().timestamp),
+            timestamp: new Date(timestamp),
           },
         ]
       );
