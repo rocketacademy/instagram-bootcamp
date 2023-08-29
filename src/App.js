@@ -50,7 +50,9 @@ function App() {
   let messageListItems = messages.map((message) => (
     <li key={message.key}>
       {message.message}{" "}
-      <span className="timestamp">{message.timestamp.toLocaleString()}</span>
+      <span className="timestamp">
+        {message.timestamp.toLocaleString("en-SG")}
+      </span>
     </li>
   ));
 
