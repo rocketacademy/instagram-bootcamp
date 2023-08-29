@@ -84,7 +84,7 @@ function App() {
   // Convert messages in state to message JSX elements to render
   let cards = messages.map((message) => {
     return (
-      <Card radius="lg" maw="33vmin">
+      <Card radius="lg" w="33vmin">
         <Card.Section>
           <Image src={message.url} height="33vmin" withPlaceholder />
         </Card.Section>
