@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadBytes,
+} from "firebase/storage";
 import { database, storage } from "./firebase";
 import "./App.css";
 
@@ -11,10 +17,9 @@ function App() {
   // When Firebase changes, update local state, which will update local UI
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [fileValue, setFileValue] = useState("");
   const [file, setFile] = useState(null);
 
-  const messagesRef = useRef(ref(database, DB_MESSAGES_KEY));
+  const messagesRef = useRef(databaseRef(database, DB_MESSAGES_KEY));
 
   useEffect(() => {
     // onChildAdded will return data for every child at the reference and every subsequent new child
@@ -40,14 +45,23 @@ function App() {
   };
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const newFile = event.target.files[0];
+    console.log(newFile);
+    setFile(newFile);
   };
 
   const handleSubmit = () => {
     const newMessageRef = push(messagesRef.current);
     const timestamp = new Date().toISOString();
+
+    const newFileRef = storageRef(storage, "files/${file.name}");
+
+    uploadBytes(newFileRef, file)
+      .then((snapshot) => getDownloadURL(snapshot.ref))
+      .then((url) => console.log(url));
+
     set(newMessageRef, { message, timestamp }).then(() =>
-      console.log("Set successful")
+      console.log("Set message successful")
     );
   };
 
@@ -71,7 +85,7 @@ function App() {
             <input type="text" value={message} onChange={handleMessageChange} />
           </p>
           <p>
-            <input type="file" value={fileValue} onChange={handleFileChange} />
+            <input type="file" onChange={handleFileChange} />
           </p>
           <p>
             <button type="submit">Send</button>
