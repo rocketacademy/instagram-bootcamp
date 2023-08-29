@@ -14,7 +14,8 @@
 }
 
 input,
-button {
+button,
+input[type="file"]::file-selector-button {
   font-family: inherit;
   font-size: inherit;
 }

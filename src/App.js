@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { onChildAdded, push, ref as databaseRef, set } from "firebase/database";
 import {
-  getStorage,
   ref as storageRef,
   getDownloadURL,
   uploadBytes,
@@ -10,7 +9,8 @@ import { database, storage } from "./firebase";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+const DB_MESSAGES_KEY = "messages/";
+const STORAGE_IMAGES_KEY = "images/";
 
 function App() {
   // Initialise empty messages array in state to keep local state in sync with Firebase
@@ -46,23 +46,24 @@ function App() {
 
   const handleFileChange = (event) => {
     const newFile = event.target.files[0];
-    console.log(newFile);
     setFile(newFile);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
     const newMessageRef = push(messagesRef.current);
     const timestamp = new Date().toISOString();
 
-    const newFileRef = storageRef(storage, "files/${file.name}");
+    const newFileRef = storageRef(storage, STORAGE_IMAGES_KEY + file.name);
 
     uploadBytes(newFileRef, file)
-      .then((snapshot) => getDownloadURL(snapshot.ref))
-      .then((url) => console.log(url));
-
-    set(newMessageRef, { message, timestamp }).then(() =>
-      console.log("Set message successful")
-    );
+      .then((snapshot) => {
+        console.log("Upload complete");
+        getDownloadURL(snapshot.ref);
+      })
+      .then((url) => set(newMessageRef, { message, timestamp, url }))
+      .catch((error) => console.error("Upload error:", error));
   };
 
   // Convert messages in state to message JSX elements to render
