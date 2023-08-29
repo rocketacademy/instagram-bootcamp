@@ -49,6 +49,7 @@ function App() {
   };
 
   const handleFileChange = (event) => {
+    setFileLabel(event.target.value);
     const newFile = event.target.files[0];
 
     if (newFile) {
@@ -97,7 +98,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Title order={1}>Rocketgram</Title>
+        <Title order={1} mb="xl">
+          Rocketgram
+        </Title>
         <form onSubmit={handleSubmit}>
           <p>
             Enter message{" "}
@@ -115,7 +118,7 @@ function App() {
             <button type="submit">Send</button>
           </p>
         </form>
-        <Flex>{cards}</Flex>
+        <Flex mt="xl">{cards}</Flex>
       </header>
     </div>
   );
