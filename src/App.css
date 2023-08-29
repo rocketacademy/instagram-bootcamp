@@ -17,3 +17,13 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+input,
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.timestamp {
+  font-size: calc((10px + 2vmin) * 0.5);
+}

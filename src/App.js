@@ -38,7 +38,7 @@ function App() {
     setInput(event.target.value);
   };
 
-  const handleSendClick = () => {
+  const handleSubmit = () => {
     const newMessageRef = push(messagesRef.current);
     const timestamp = new Date().toISOString();
     set(newMessageRef, { message: input, timestamp }).then(() =>
@@ -61,8 +61,11 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <input type="text" value={input} onChange={handleInputChange} />
-        <button onClick={handleSendClick}>Send</button>
+        <form onSubmit={handleSubmit}>
+          <input type="text" value={input} onChange={handleInputChange} />
+          <br />
+          <button type="submit">Send</button>
+        </form>
         <ol>{messageListItems}</ol>
       </header>
     </div>
