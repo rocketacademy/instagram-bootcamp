@@ -75,6 +75,7 @@ function App() {
       .then((snapshot) => getDownloadURL(snapshot.ref))
       .then((url) => {
         set(newMessageRef, { message, timestamp, url });
+        setMessage("");
         setFileLabel("");
       })
       .catch((error) => console.error("Upload error:", error));
@@ -83,16 +84,16 @@ function App() {
   // Convert messages in state to message JSX elements to render
   let cards = messages.map((message) => {
     return (
-      <Card radius="lg" maw="400px">
+      <Card radius="lg" maw="33vmin">
         <Card.Section>
-          <Image src={message.url} height="25vh" withPlaceholder />
+          <Image src={message.url} height="33vmin" withPlaceholder />
         </Card.Section>
 
         <Card.Section>
-          <Text size="md" my="xs">
+          <Text size="md" my="xs" px="sm" lh="1.3">
             {message.message}
           </Text>
-          <Text size="xs" mb="xs">
+          <Text size="xs" mb="xs" px="sm" lh="1.3">
             {message.timestamp.toLocaleString("en-SG")}
           </Text>
         </Card.Section>
