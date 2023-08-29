@@ -87,14 +87,7 @@ function App() {
       <Card
         radius="lg"
         sx={{
-          width: "calc(450px - 3rem)",
-          "@media (max-width: 900px)": {
-            flex: "calc(50% - 3rem)",
-          },
-
-          "@media (max-width: 600px)": {
-            flex: "calc(100% - 3rem)",
-          },
+          flex: "min(300px - 3rem, 100% - 3rem)",
         }}
       >
         <Card.Section>
@@ -137,7 +130,7 @@ function App() {
           </p>
         </form>
         <Space h="sm" />
-        <Flex gap="xl" justify="center" wrap="wrap" m="xl" maw="1920px">
+        <Flex gap="xl" justify="center" wrap="wrap" m="xl" maw="1200px">
           {cards}
         </Flex>
       </header>
