@@ -5,7 +5,6 @@ import logo from './logo.png';
 import './App.css';
 import { PostForm } from './components/PostForm';
 import { PostsList } from './components/PostsList';
-import { Post } from './components/Post';
 
 const DB_MESSAGES_KEY = 'messages';
 
@@ -34,17 +33,16 @@ export const App = () => {
   }, [posts]);
 
   return (
-    <>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <PostForm setMessages={setPosts} />
-          <PostsList posts={posts} setPosts={setPosts} />
-        </header>
-      </div>
-    </>
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+
+        <PostForm setMessages={setPosts} />
+        <PostsList posts={posts} setPosts={setPosts} />
+      </header>
+    </div>
   );
 };

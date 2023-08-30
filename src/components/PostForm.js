@@ -29,7 +29,6 @@ export const PostForm = ({ setMessages }) => {
   };
 
   const handleSubmit = (e) => {
-    console.log(' I was called');
     e.preventDefault();
 
     if (fileUpload) {
@@ -58,8 +57,6 @@ export const PostForm = ({ setMessages }) => {
   };
 
   const writeData = (url) => {
-    const postListRef = ref(database, RealTIME_DATABASE_KEY);
-    const newPostRef = push(postListRef);
     const postContent = {
       title: post.title,
       caption: post.caption,
@@ -67,8 +64,12 @@ export const PostForm = ({ setMessages }) => {
       date: new Date().toLocaleTimeString(),
       url: url,
     };
+
+    setMessages((prevPosts) => [...prevPosts, { val: postContent }]);
+
+    const postListRef = ref(database, RealTIME_DATABASE_KEY);
+    const newPostRef = push(postListRef);
     set(newPostRef, postContent);
-    setMessages((prevState) => [...prevState, postContent]);
   };
 
   return (
