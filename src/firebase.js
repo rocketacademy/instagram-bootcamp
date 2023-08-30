@@ -5,19 +5,18 @@ import { getStorage } from 'firebase/storage';
 
 // TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: process.env.API_KEY,
+  apiKey: process.env.REACT_APP_API_KEY,
 
-  authDomain: process.env.AUTH_DOMAIN,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
 
-  databaseURL:
-    'https://testing-bd9e4-default-rtdb.asia-southeast1.firebasedatabase.app/',
-  projectId: process.env.PROJECT_ID,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
 
-  storageBucket: process.env.STORAGE_BUCKET,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
 
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 
-  appId: process.env.APP_ID,
+  appId: process.env.REACT_APP_APP_ID,
 
   measurementId: process.env.MEASUREMENT_ID,
 };
