@@ -45,15 +45,6 @@ form input,
   align-items: center;
 }
 
-.post_card {
-  border-radius: 5px;
-  padding: 1rem 2rem 1rem 2rem;
-  color: black;
-  margin: 2rem;
-  box-shadow: 1px 4px 10px 1px #aaa;
-  width: fit-content;
-}
-
 .post_card_top {
   font-size: 0.8rem;
 }
@@ -113,34 +104,15 @@ form input,
   transition: width 0.5s ease-out, height 0.5s ease-out, opacity 0.5s ease-out;
 }
 
-.user_info {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.username {
-  font-size: 1.25rem;
-}
-.posted_time {
-  font-size: 0.85rem;
-  display: flex;
-}
-
-.inline_circle {
-  display: inline-block;
-  width: 1.05rem;
-  height: 1.05rem;
-  background: green;
+.close_form {
+  border: solid black 1px;
+  font-size: 0.95rem;
+  padding: 0.25rem;
   border-radius: 50%;
-  position: relative;
-  top: 11%;
+  cursor: pointer;
+  display: flex;
 }
 
-.post_card_img {
-  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.3);
-  margin: 1rem;
-}
 .file-drop {
   border: dashed;
   height: 5rem;
@@ -183,15 +155,12 @@ form input,
   color: transparent;
   background-color: transparent;
   border: none;
+  width: 30%;
 }
 
 .file_upload {
   display: flex;
   font-size: 0.85rem;
-}
-
-.file_input {
-  width: 30%;
 }
 
 .file_uploaded {
@@ -201,11 +170,55 @@ form input,
   text-overflow: ellipsis;
 }
 
-.close_form {
-  border: solid black 1px;
-  font-size: 0.95rem;
-  padding: 0.25rem;
-  border-radius: 50%;
-  cursor: pointer;
+.user_info {
   display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.username {
+  font-size: 1.25rem;
+}
+.posted_time {
+  font-size: 0.85rem;
+  display: flex;
+}
+.post_card {
+  border-radius: 5px;
+  padding: 1rem 2rem 1rem 2rem;
+  color: black;
+  margin: 2rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+}
+.break-words {
+  font-size: 1rem;
+  word-wrap: break-word;
+  width: 20rem;
+}
+
+.inline_circle {
+  display: inline-block;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: green;
+  border-radius: 50%;
+  position: relative;
+  top: 11%;
+}
+
+.post_card_img {
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.3);
+  margin: 1rem;
+}
+
+.post_content {
+  padding: 0.5rem 0 0.5rem 1rem;
+  background-color: #f3f3f3;
+  text-align: left;
+}
+
+.hashtags {
+  font-size: 0.95rem;
+  text-decoration: underline;
+  color: #405de6;
 }

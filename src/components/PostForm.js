@@ -9,7 +9,7 @@ import {
 import { FileDropComp } from './FileDrop';
 import moment from 'moment';
 import CloseButton from './closeButtonsvg';
-import Resizer from 'react-image-file-resizer';
+import { resizeFile } from '../utils/resize';
 
 const RealTIME_DATABASE_KEY = 'posts';
 const STORAGE_KEY = 'images/';
@@ -33,21 +33,6 @@ export const PostForm = ({ setMessages }) => {
       [name]: value,
     }));
   };
-  const resizeFile = (file) =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        300,
-        300,
-        'JPEG',
-        100,
-        0,
-        (uri) => {
-          resolve(uri);
-        },
-        'file'
-      );
-    });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,13 +60,12 @@ export const PostForm = ({ setMessages }) => {
   const handleFileChange = async (e) => {
     try {
       const file = e.target.files[0];
+      console.log(file);
       const image = await resizeFile(file);
       console.log(image);
 
       // Create a new File object with the resized image data
       const resizedFile = new File([image], file.name, { type: file.type });
-
-      console.log(resizedFile);
 
       if (resizedFile.name.length > 18) {
         let fileExt = resizedFile.name.match(/\.[0-9a-z]+$/i)[0];

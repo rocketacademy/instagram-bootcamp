@@ -18,6 +18,7 @@ export const Post = () => {
         setPosts(postList);
       }
     });
+
     // Clean up the event listener when component unmounts
     return () => {
       onValue(postListRef, null);
@@ -36,6 +37,10 @@ export const Post = () => {
         const formattedTime = moment()
           .subtract(timeDifference, 'minutes')
           .fromNow();
+
+        const tagsArray = post.val.tags.split(' ');
+        const hashTags = tagsArray.map((tag) => '#' + tag).join(' ');
+
         return (
           <div key={post.key} className="post_card">
             <div className="post_card-top">
@@ -59,8 +64,8 @@ export const Post = () => {
             </div>
             <div className="post_content">
               <div className="action_buttons"> </div>
-              <p>{post.val.caption}</p>
-              <p>{post.val.tags}</p>
+              <p className="break-words">{post.val.caption}</p>
+              <p className="hashtags">{hashTags}</p>
             </div>
             <div>
               <input
