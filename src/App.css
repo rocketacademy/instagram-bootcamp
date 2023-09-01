@@ -1,19 +1,73 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Leckerli+One&family=Montserrat:wght@300;400;500&family=Ubuntu:wght@300&display=swap");
+
+h1 {
+  text-align: left;
+  color: rgb(179, 177, 177);
+  font-family: "Leckerli One", cursive;
+  font-size: 3.5rem;
+
+  font-weight: 100;
+  word-spacing: 10px;
+  letter-spacing: -2px;
+
+  margin-bottom: 2rem;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #cff6e0;
+  color: white;
+  font-family: Arial, sans-serif;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  width: 50%;
+}
+
+.message-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  background-color: #33bbc5;
+
+  padding: 10px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.timestamp {
+  align-self: flex-end;
+  margin-top: 5px;
+  font-size: 0.7rem;
+}
+
+.chat-form {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.chat-input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+.chat-send {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  margin-left: 10px;
+  background-color: #33bbc5;
+  color: #fff;
+}
+
+.chat-messages {
+  list-style-type: none;
+  padding: 0 20px 0 0;
+  height: 500px;
+  overflow-y: scroll;
 }
