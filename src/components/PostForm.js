@@ -7,6 +7,8 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 
+import moment from 'moment';
+
 const RealTIME_DATABASE_KEY = 'posts';
 const STORAGE_KEY = 'images/';
 
@@ -15,6 +17,7 @@ export const PostForm = ({ setMessages }) => {
     title: '',
     caption: '',
     tags: '',
+    date: moment().format('MMM Do YY'),
   });
 
   const [fileUpload, setFileUpload] = useState(null);
@@ -74,7 +77,7 @@ export const PostForm = ({ setMessages }) => {
 
   return (
     <>
-      <div className="postForm">
+      <div className="post_form">
         <form onSubmit={handleSubmit}>
           <label> Title</label>
           <input
@@ -107,7 +110,7 @@ export const PostForm = ({ setMessages }) => {
             onChange={handleFileChange}
           />
 
-          <button type="submit">send post</button>
+          <button type="submit">Post</button>
         </form>
       </div>
     </>

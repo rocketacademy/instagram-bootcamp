@@ -8,14 +8,15 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
+  display: flex;
+  align-items: center;
 }
 
 form {
@@ -23,7 +24,152 @@ form {
   flex-direction: column;
   gap: 1rem;
 }
+ol {
+  padding: none;
+}
+
+form input,
+.comments {
+  border: none;
+  width: 100%;
+  background-color: #f3f3f3;
+  height: 2rem;
+  border-bottom: lightgray 1px solid;
+}
+
+.posts_list {
+  padding: 0;
+}
 
 .post_card {
-  border: solid white 1px;
+  border-radius: 5px;
+  padding: 1rem;
+  color: black;
+  margin: 1rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+}
+
+.post_card_top {
+  font-size: 0.8rem;
+}
+
+.post_form {
+  padding: 1rem 4rem 2rem 4rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+  border-radius: 5px;
+}
+
+.post_form button {
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5851db,
+    #833ab4,
+    #c13584,
+    #e1306c,
+    #fd1d1d,
+    #f56040,
+    #ffbd12
+  );
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 25px;
+}
+
+.user_info {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.username {
+  font-size: 1.25rem;
+}
+.posted_time {
+  font-size: 0.85rem;
+  display: flex;
+}
+
+.inline_circle {
+  display: inline-block;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: green;
+  border-radius: 50%;
+  position: relative;
+  top: 11%;
+}
+
+.post_card_img {
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.3);
+  margin: 1rem;
+}
+.file-drop {
+  border: dashed;
+  height: 5rem;
+}
+
+.file-drop > .file-drop-target {
+  /* basic styles */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+
+  /* horizontally and vertically center all content */
+  display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+
+  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+
+  align-items: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+
+  justify-content: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+
+  align-content: center;
+  -webkit-align-content: center;
+  -ms-flex-line-pack: center;
+
+  text-align: center;
+}
+
+.file-drop > .file-drop-target.file-drop-dragging-over-frame {
+  /* overlay a black mask when dragging over the frame */
+  border: none;
+  background-color: rgba(0, 0, 0, 0.65);
+  box-shadow: none;
+  z-index: 50;
+  opacity: 1;
+
+  /* typography */
+  color: white;
+}
+
+.file-drop > .file-drop-target.file-drop-dragging-over-target {
+  /* turn stuff orange when we are dragging over the target */
+  color: #ff6e40;
+  box-shadow: 0 0 13px 3px #ff6e40;
+}
+
+.file_input {
+  color: transparent;
+  background-color: transparent;
+  border: none;
 }

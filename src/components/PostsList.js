@@ -13,5 +13,9 @@ export const PostsList = ({ posts, setPosts }) => {
     });
   }, [setPosts]);
 
-  return <ol>{posts.length > 0 ? <Post /> : <p>No posts here</p>}</ol>;
+  return (
+    <ol className="posts_list">
+      {posts.length > 0 ? <Post /> : <p>No posts here</p>}
+    </ol>
+  );
 };
