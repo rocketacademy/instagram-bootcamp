@@ -1,6 +1,10 @@
 import React from 'react';
+import { useContext } from 'react';
+import { toggleContext } from './toggleContext';
 
-const CloseButton = ({ onClick }) => {
+const CloseButton = () => {
+  const toggleForm = useContext(toggleContext);
+
   return (
     <svg
       className="close_form"
@@ -8,7 +12,7 @@ const CloseButton = ({ onClick }) => {
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      onClick={onClick}
+      onClick={toggleForm}
       style={{ cursor: 'pointer' }}
     >
       <path

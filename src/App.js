@@ -4,6 +4,7 @@ import { database } from './firebase';
 import './App.css';
 import { PostForm } from './components/PostForm';
 import { PostsList } from './components/PostsList';
+import { toggleContext } from './components/toggleContext';
 
 const DB_MESSAGES_KEY = 'messages';
 
@@ -35,10 +36,14 @@ export const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        {isFormVisible && <PostForm setMessages={setPosts} />}
-        {isFormVisible === false && (
-          <button onClick={toggleForm}>Add a post</button>
-        )}
+        <toggleContext.Provider value={toggleForm}>
+          {isFormVisible && <PostForm setMessages={setPosts} />}
+          {isFormVisible === false && (
+            <button className="open_form" onClick={toggleForm}>
+              Add a post
+            </button>
+          )}
+        </toggleContext.Provider>
         <PostsList posts={posts} setPosts={setPosts} />
       </header>
     </div>

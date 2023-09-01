@@ -65,7 +65,12 @@ form input,
   margin-top: 5rem;
 }
 
-.post_form button {
+.open_form {
+  margin-top: 5rem;
+}
+
+.post_form button,
+.open_form {
   background: linear-gradient(
     45deg,
     #405de6,
@@ -89,11 +94,12 @@ form input,
 .post_form button:after {
   content: '';
   position: absolute;
-  top: 59%;
+  top: 71%;
   left: 50%;
   width: 0;
   height: 0;
   background-color: rgba(255, 255, 255, 0.4);
+
   border-radius: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
