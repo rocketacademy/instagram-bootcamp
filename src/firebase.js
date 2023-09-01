@@ -4,14 +4,14 @@ import { getDatabase } from "firebase/database";
 
 // TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT_ID.firebaseapp.com",
+  apiKey: "AIzaSyDFGBNICgeDmg5q6I5dusGDOxvoOrWfu-4",
+  authDomain: "rocketgram-e0ba0.firebaseapp.com",
   // The value of `databaseURL` depends on the location of the database
   databaseURL: "https://DATABASE_NAME.REGION.firebasedatabase.app",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID",
+  projectId: "rocketgram-e0ba0",
+  storageBucket: "rocketgram-e0ba0.appspot.com",
+  messagingSenderId: "293446546026",
+  appId: "1:293446546026:web:6c8382c81b1153835a1013",
 };
 
 // Initialize Firebase
