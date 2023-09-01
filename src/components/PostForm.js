@@ -9,6 +9,7 @@ import {
 import { FileDropComp } from './FileDrop';
 import moment from 'moment';
 import CloseButton from './closeButtonsvg';
+import Resizer from 'react-image-file-resizer';
 
 const RealTIME_DATABASE_KEY = 'posts';
 const STORAGE_KEY = 'images/';
@@ -22,7 +23,6 @@ export const PostForm = ({ setMessages }) => {
   });
 
   const [fileName, setFileName] = useState('no file selected');
-
   const [fileUpload, setFileUpload] = useState(null);
   const fileUploadRef = useRef(null);
 
@@ -33,10 +33,24 @@ export const PostForm = ({ setMessages }) => {
       [name]: value,
     }));
   };
+  const resizeFile = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        300,
+        300,
+        'JPEG',
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        'file'
+      );
+    });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (fileUpload) {
       const fullStorageRef = StorageRef(storage, STORAGE_KEY + fileUpload.name);
       uploadBytes(fullStorageRef, fileUpload).then((snapshot) => {
@@ -56,20 +70,32 @@ export const PostForm = ({ setMessages }) => {
     setFileUpload(null);
     fileUploadRef.current.value = null;
     setFileName('no file selected');
-    console.log(fileName);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file.name.length > 18) {
-      let fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
-      let truncFileName = file.name.slice(0, 8);
-      const newFileName = `${truncFileName}${fileExt}`;
-      setFileName(newFileName);
-    } else {
-      setFileName(file.name);
+  const handleFileChange = async (e) => {
+    try {
+      const file = e.target.files[0];
+      const image = await resizeFile(file);
+      console.log(image);
+
+      // Create a new File object with the resized image data
+      const resizedFile = new File([image], file.name, { type: file.type });
+
+      console.log(resizedFile);
+
+      if (resizedFile.name.length > 18) {
+        let fileExt = resizedFile.name.match(/\.[0-9a-z]+$/i)[0];
+        let truncFileName = resizedFile.name.slice(0, 8);
+        const newFileName = `${truncFileName}${fileExt}`;
+        setFileName(newFileName);
+      } else {
+        setFileName(resizedFile.name);
+      }
+
+      setFileUpload(resizedFile);
+    } catch (err) {
+      console.log(err);
     }
-    setFileUpload(file);
   };
 
   const writeData = (url) => {

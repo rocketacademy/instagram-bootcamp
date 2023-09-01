@@ -18,7 +18,6 @@ export const Post = () => {
         setPosts(postList);
       }
     });
-
     // Clean up the event listener when component unmounts
     return () => {
       onValue(postListRef, null);
@@ -53,12 +52,7 @@ export const Post = () => {
 
             <div className="post_card_img">
               {post.val.url ? (
-                <img
-                  src={post.val.url}
-                  alt={post.val.title}
-                  width="300"
-                  height="300"
-                />
+                <img src={post.val.url} alt={post.val.title} />
               ) : (
                 <p>No image provided</p>
               )}
