@@ -9,6 +9,12 @@ const DB_MESSAGES_KEY = 'messages';
 
 export const App = () => {
   const [posts, setPosts] = useState([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
+  const toggleForm = () => {
+    setIsFormVisible(!isFormVisible);
+    console.log(isFormVisible);
+  };
 
   useEffect(() => {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
@@ -30,7 +36,10 @@ export const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <PostForm setMessages={setPosts} />
+        {isFormVisible && <PostForm setMessages={setPosts} />}
+        {isFormVisible === false && (
+          <button onClick={toggleForm}>Add a post</button>
+        )}
         <PostsList posts={posts} setPosts={setPosts} />
       </header>
     </div>

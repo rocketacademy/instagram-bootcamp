@@ -1,10 +1,10 @@
 import React from 'react';
 import { FileDrop } from 'react-file-drop';
 
-export const FileDropComp = ({ handleFileDrop }) => {
-  const handleDrop = (files, event) => {
-    event.preventDefault();
-    handleFileDrop(files);
+export const FileDropComp = ({ setFileName, setFileUpload }) => {
+  const handleDrop = (event) => {
+    setFileName(event[0].name);
+    setFileUpload(event[0]);
   };
 
   return (

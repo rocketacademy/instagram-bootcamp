@@ -43,9 +43,9 @@ form input,
 
 .post_card {
   border-radius: 5px;
-  padding: 1rem;
+  padding: 1rem 2rem 1rem 2rem;
   color: black;
-  margin: 1rem;
+  margin: 2rem;
   box-shadow: 1px 4px 10px 1px #aaa;
 }
 
@@ -54,9 +54,10 @@ form input,
 }
 
 .post_form {
-  padding: 1rem 4rem 2rem 4rem;
+  padding: 1rem 2.3rem 2rem 2.3rem;
   box-shadow: 1px 4px 10px 1px #aaa;
   border-radius: 5px;
+  margin-top: 5rem;
 }
 
 .post_form button {
@@ -77,6 +78,28 @@ form input,
   padding: 0.75rem;
   border: none;
   border-radius: 25px;
+  cursor: pointer;
+}
+
+.post_form button:after {
+  content: '';
+  position: absolute;
+  top: 59%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.post_form button:hover:after {
+  width: 20%;
+  height: 9%;
+  opacity: 1;
+  transition: width 0.5s ease-out, height 0.5s ease-out, opacity 0.5s ease-out;
 }
 
 .user_info {
@@ -110,66 +133,37 @@ form input,
 .file-drop {
   border: dashed;
   height: 5rem;
-}
-
-.file-drop > .file-drop-target {
-  /* basic styles */
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 2px;
-
-  /* horizontally and vertically center all content */
   display: flex;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-
-  flex-direction: column;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-
-  align-items: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-
   justify-content: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-
-  align-content: center;
-  -webkit-align-content: center;
-  -ms-flex-line-pack: center;
-
-  text-align: center;
-}
-
-.file-drop > .file-drop-target.file-drop-dragging-over-frame {
-  /* overlay a black mask when dragging over the frame */
-  border: none;
-  background-color: rgba(0, 0, 0, 0.65);
-  box-shadow: none;
-  z-index: 50;
-  opacity: 1;
-
-  /* typography */
-  color: white;
-}
-
-.file-drop > .file-drop-target.file-drop-dragging-over-target {
-  /* turn stuff orange when we are dragging over the target */
-  color: #ff6e40;
-  box-shadow: 0 0 13px 3px #ff6e40;
+  align-items: center;
 }
 
 .file_input {
   color: transparent;
   background-color: transparent;
   border: none;
+}
+
+.file_upload {
+  display: flex;
+  font-size: 0.85rem;
+}
+
+.file_input {
+  width: 30%;
+}
+
+.file_uploaded {
+  width: min-content;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.close_form {
+  border: solid black 1px;
+  font-size: 0.95rem;
+  padding: 0.25rem;
+  border-radius: 50%;
+  cursor: pointer;
 }
