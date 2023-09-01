@@ -13,7 +13,6 @@ export const App = () => {
 
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);
-    console.log(isFormVisible);
   };
 
   useEffect(() => {

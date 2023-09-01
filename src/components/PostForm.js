@@ -55,6 +55,8 @@ export const PostForm = ({ setMessages }) => {
     });
     setFileUpload(null);
     fileUploadRef.current.value = null;
+    setFileName('no file selected');
+    console.log(fileName);
   };
 
   const handleFileChange = (e) => {
