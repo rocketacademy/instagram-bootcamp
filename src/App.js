@@ -5,8 +5,9 @@ import {
   ref as storageRef,
   uploadBytes,
 } from "firebase/storage";
-import { database, storage } from "./firebase";
 import Card from "react-bootstrap/Card";
+import { database, storage } from "./firebase";
+import { getAuth } from "firebase/auth";
 import logo from "./logo.png";
 import "./App.css";
 
@@ -46,6 +47,7 @@ class App extends React.Component {
     });
   };
 
+  // store text input
   handleTextInputChange = (e) => {
     this.setState({ textInputValue: e.target.value });
   };
