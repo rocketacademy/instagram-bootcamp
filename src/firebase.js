@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 
 // TODO: Replace Rocket's reference solution config with your app's Firebase project configuration
 // const firebaseConfig = {
@@ -43,5 +44,5 @@ const firebaseApp = initializeApp(firebaseConfig);
 export const database = getDatabase(firebaseApp);
 
 export const realTimeDatabase = getDatabase(firebaseApp);
-//export const storage = getStorage(firebaseApp);
+export const storage = getStorage(firebaseApp);
 //export const auth = getAuth(firebaseApp);
