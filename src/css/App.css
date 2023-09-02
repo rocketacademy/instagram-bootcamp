@@ -15,8 +15,6 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: black;
-  display: flex;
-  align-items: center;
 }
 
 form {
@@ -221,4 +219,7 @@ form input,
   font-size: 0.95rem;
   text-decoration: underline;
   color: #405de6;
+}
+.comments {
+  font-size: 1rem;
 }
