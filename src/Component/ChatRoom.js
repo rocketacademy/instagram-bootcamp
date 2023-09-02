@@ -38,20 +38,20 @@ const ChatRoom=()=>{
 
 
   return(
-    <div>
-      <ol>
+    <div style={{backgroundColor:"Azure",color:"Black"}}>
+      <ul style={{listStyleType:"none"}}>
         {messages.length>0?(messages.map((message) => (
           <>
             <li key={message.key}>
               <div>
-                <h2>
-                  [{message.val.date}]{message.val.username}:{message.val.messageBody}
-                </h2>
+                <h4>
+                  [{message.val.date}]{message.val.username}:{message.val.messageBody}  
+                </h4>
               </div>
             </li>
           </>
         ))):<p>There are no messages now!</p>}
-      </ol>
+      </ul>
     </div>
   )
 }
