@@ -1,18 +1,11 @@
 import React from 'react';
 import { FileDrop } from 'react-file-drop';
-import { resizeFile } from '../utils/resize';
+import { alterImageDimensions } from '../utils/resize';
 
 export const FileDropComp = ({ setFileName, setFileUpload }) => {
   const handleDrop = async (event) => {
-    try {
-      const file = event[0];
-      const image = await resizeFile(file);
-      const resizedFile = new File([image], file.name, { type: file.type });
-      setFileName(resizedFile.name);
-      setFileUpload(resizedFile);
-    } catch (error) {
-      console.log(error);
-    }
+    const file = event[0];
+    alterImageDimensions(file, setFileName, setFileUpload);
   };
 
   return (

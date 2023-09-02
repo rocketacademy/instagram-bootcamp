@@ -9,7 +9,7 @@ import {
 import { FileDropComp } from './FileDrop';
 import moment from 'moment';
 import CloseButton from './closeButtonsvg';
-import { resizeFile } from '../utils/resize';
+import { alterImageDimensions } from '../utils/resize';
 
 const RealTIME_DATABASE_KEY = 'posts';
 const STORAGE_KEY = 'images/';
@@ -58,28 +58,8 @@ export const PostForm = ({ setMessages }) => {
   };
 
   const handleFileChange = async (e) => {
-    try {
-      const file = e.target.files[0];
-      console.log(file);
-      const image = await resizeFile(file);
-      console.log(image);
-
-      // Create a new File object with the resized image data
-      const resizedFile = new File([image], file.name, { type: file.type });
-
-      if (resizedFile.name.length > 18) {
-        let fileExt = resizedFile.name.match(/\.[0-9a-z]+$/i)[0];
-        let truncFileName = resizedFile.name.slice(0, 8);
-        const newFileName = `${truncFileName}${fileExt}`;
-        setFileName(newFileName);
-      } else {
-        setFileName(resizedFile.name);
-      }
-
-      setFileUpload(resizedFile);
-    } catch (err) {
-      console.log(err);
-    }
+    const file = e.target.files[0];
+    alterImageDimensions(file, setFileName, setFileUpload);
   };
 
   const writeData = (url) => {

@@ -4,13 +4,16 @@
   "private": false,
   "homepage": "https://zach7815.github.io/instagram-bootcamp/",
   "dependencies": {
+    "bootstrap": "^5.3.1",
     "firebase": "^9.8.0",
     "gh-pages": "^6.0.0",
     "moment": "^2.29.4",
     "react": "^18.1.0",
+    "react-bootstrap": "^2.8.0",
     "react-dom": "^18.1.0",
     "react-file-drop": "^3.1.6",
     "react-image-file-resizer": "^0.4.8",
+    "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
