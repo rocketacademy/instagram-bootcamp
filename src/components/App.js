@@ -6,9 +6,9 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import Card from "react-bootstrap/Card";
-import { database, storage } from "./firebase";
-import { getAuth } from "firebase/auth";
-import logo from "./logo.png";
+import { database, storage } from "../firebase";
+
+import logo from "../logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
