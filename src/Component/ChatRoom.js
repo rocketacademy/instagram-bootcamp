@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, ref } from "firebase/database";
 import { database, storage } from "../firebase";
 
 const DB_MESSAGES_KEY = "messages";
@@ -32,21 +32,17 @@ const ChatRoom=()=>{
     console.log("use effect was run")
   },[]);
 
-  useEffect(()=>{
-      console.log(messages)
-  },[messages])
-
 
   return(
-    <div style={{backgroundColor:"Azure",color:"Black"}}>
-      <ul style={{listStyleType:"none"}}>
+    <div style={{display:"flex",backgroundColor:"Azure",justifyContent:"space-between",width:"70vw"}}>
+      <ul style={{listStyleType:"none",width:"95%"}}>
         {messages.length>0?(messages.map((message) => (
           <>
-            <li key={message.key}>
-              <div>
-                <h4>
-                  [{message.val.date}]{message.val.username}:{message.val.messageBody}  
-                </h4>
+            <li key={message.key} style={{display:"flex",marginRight:"35px",backgroundColor:"MidnightBlue",borderRadius:"20px",marginBottom:"10px"}}>
+              <div style={{margin:"0px 10px"}}>
+                <p style={{fontSize:"15px",alignContent:"flex-start"}}>
+                  [{message.val.date}] </p> 
+                  <p style={{fontSize:"24px"}}>{message.val.username}: {message.val.messageBody}  </p>
               </div>
             </li>
           </>
