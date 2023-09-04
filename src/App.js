@@ -56,25 +56,7 @@ function App () {
           Rocketgram Chat App
         </h1>
 
-        {/* <form>
-          <input
-            name="name"
-            value={state.name}
-            onChange={(e)=>handleChange(e)}
-          />
-          <br/>
-          <input
-            name="messageToSend"
-            value={state.messageToSend}
-            onChange={(e)=>handleChange(e)}
-          />
-
-
-
-          <button onClick={handleSubmit}>Send</button>
-        </form> */}
         <InputForm/>
-        {/* {state.name?<p>Chat</p>:<p>Enter name to enter chat</p>} */}
         <ChatRoom/>
       </header>
     </div>
