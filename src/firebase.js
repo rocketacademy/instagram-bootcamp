@@ -4,7 +4,6 @@ import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
-// TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
 
