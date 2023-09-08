@@ -1,17 +1,24 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/login.css';
-import { useEffect } from 'react';
 import { userDetailsContext } from '../utils/userDetailContext';
 
-export const Login = ({ handleChange, signInUser }) => {
-  const [userDetails] = useContext(userDetailsContext);
+export const Login = ({ signInUser }) => {
+  const [userDetails, setUserDetails] = useContext(userDetailsContext);
   const { email, password } = userDetails;
   useEffect(() => {
     console.log(userDetails);
   }, [userDetails]);
+
+  const handleChange = (e) => {
+    console.log(e);
+    let name = e.target.name;
+    let value = e.target.value;
+
+    setUserDetails({ ...userDetails, [name]: value });
+  };
 
   return (
     <div className="container">
@@ -22,7 +29,7 @@ export const Login = ({ handleChange, signInUser }) => {
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control
-              // value={email}
+              value={email}
               type="email"
               name="email"
               onChange={(e) => handleChange(e)}
@@ -36,7 +43,7 @@ export const Login = ({ handleChange, signInUser }) => {
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              // value={password}
+              value={password}
               type="password"
               name="password"
               onChange={(e) => handleChange(e)}
@@ -44,11 +51,7 @@ export const Login = ({ handleChange, signInUser }) => {
             />
           </Form.Group>
           <div className="button-container">
-            <Button
-              className="custom-button"
-              type="submit"
-              onClick={signInUser}
-            >
+            <Button className="custom-button" onClick={signInUser}>
               Submit
             </Button>
           </div>

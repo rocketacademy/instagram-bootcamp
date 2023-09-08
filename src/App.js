@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import './css/App.css';
 import { Feed } from './pages/Feed';
 import { Login } from './pages/Login';
@@ -28,10 +28,18 @@ export const App = () => {
     password: '',
   });
 
+  const userDetailsMemo = useMemo(() => userDetails, [userDetails]);
+  const setUserDetailsMemo = useCallback(
+    (details) => setUserDetails(details),
+    []
+  );
+
   return (
     <div className="App">
       <Router>
-        <userDetailsContext.Provider value={[userDetails, setUserDetails]}>
+        <userDetailsContext.Provider
+          value={[userDetailsMemo, setUserDetailsMemo]}
+        >
           <Routes>
             {routes.map((route) => (
               <Route

@@ -1,9 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { register } from '../api/authentication';
 import { Button, Form, InputGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Register = () => {
+  const [state, setState] = useState({
+    email: '',
+    userName: '',
+    password: '',
+  });
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(navigate);
+  }, [navigate]);
+
+  const registerUser = async () => {
+    const { email, password } = state;
+    try {
+      const user = await register(email, password);
+      console.log({ user });
+      setState({
+        email: '',
+        userName: '',
+        password: '',
+      });
+      navigate('/Feed');
+    } catch (error) {
+      console.log(`failed to register user: ${error}`);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="container">
       <div className="login-container">
@@ -16,7 +54,10 @@ export const Register = () => {
               <InputGroup.Text id="inputGroupPrepend">Email</InputGroup.Text>
               <Form.Control
                 type="email"
+                name="email"
+                value={state.email}
                 placeholder="Email"
+                onChange={(e) => handleChange(e)}
                 aria-describedby="inputGroupPrepend"
                 required
               />
@@ -25,13 +66,18 @@ export const Register = () => {
               </Form.Control.Feedback>
             </InputGroup>
           </Form.Group>
-          <Form.Group className="mb-3" controlId="validationCustomUsername">
+          {/* <Form.Group className="mb-3" controlId="validationCustomUsername">
             <Form.Label>Username</Form.Label>
             <InputGroup hasValidation>
-              <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+              <InputGroup.Text id="inputGroupPrependUserName">
+                @
+              </InputGroup.Text>
               <Form.Control
                 type="text"
+                name="userName"
+                value={state.userName}
                 placeholder="Username"
+                onChange={(e) => handleChange(e)}
                 aria-describedby="inputGroupPrepend"
                 required
               />
@@ -39,24 +85,29 @@ export const Register = () => {
                 Please choose a username.
               </Form.Control.Feedback>
             </InputGroup>
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group className="mb-3" controlId="password">
             <Form.Label>Password</Form.Label>
             <InputGroup hasValidation>
-              <InputGroup.Text id="inputGroupPrepend">Password</InputGroup.Text>
+              <InputGroup.Text id="inputGroupPrependPassword">
+                Password
+              </InputGroup.Text>
               <Form.Control
-                type="text"
+                type="password"
+                name="password"
+                value={state.password}
                 placeholder="Password"
+                onChange={(e) => handleChange(e)}
                 aria-describedby="inputGroupPrepend"
                 required
               />
               <Form.Control.Feedback type="invalid">
-                Please choose a username.
+                Please choose a password
               </Form.Control.Feedback>
             </InputGroup>
           </Form.Group>
           <div className="button-container">
-            <Button className="custom-button" type="submit">
+            <Button onClick={registerUser} className="custom-button">
               Register
             </Button>
           </div>

@@ -1,14 +1,14 @@
-import React, { useuserDetails, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { signIn, reAuth, logOut } from '../api/authentication';
 import { Feed } from './Feed';
 import { Login } from './Login';
 import { userDetailsContext } from '../utils/userDetailContext';
 
 export const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useuserDetails(false);
-  const [currentUser, setCurrentUser] = useuserDetails(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const [loading, setLoading] = useuserDetails(false);
+  const [loading, setLoading] = useState(false);
   const [userDetails, setUserDetails] = useContext(userDetailsContext);
 
   useEffect(() => {
@@ -38,13 +38,6 @@ export const Home = () => {
     }
   };
 
-  const handleChange = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-
-    setUserDetails({ ...userDetails, [name]: value });
-  };
-
   const handleSignOut = async () => {
     await logOut;
     setIsLoggedIn(false);
@@ -72,11 +65,5 @@ export const Home = () => {
       </div>
     );
 
-  return (
-    <Login
-      handleChange={handleChange}
-      userDetails={userDetails}
-      signInUser={signInUser}
-    />
-  );
+  return <Login setUserDetails={setUserDetails} signInUser={signInUser} />;
 };
