@@ -33,14 +33,10 @@ export const Post = () => {
         const userTime = moment()
           .tz(userTimezoneString)
           .format('MMMM Do YYYY, h:mm:ss a');
-        console.log('userTime', userTime);
-
         const postTime = moment(post.val.date, 'MMMM Do YYYY, h:mm:ss a');
         const timeAgo = postTime.from(
           moment(userTime, 'MMMM Do YYYY, h:mm:ss a')
         );
-        console.log(timeAgo);
-
         const tagsArray = post.val.tags.split(' ');
         const hashTags = tagsArray.map((tag) => '#' + tag).join(' ');
 

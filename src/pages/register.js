@@ -1,10 +1,11 @@
 import { useState, useContext } from 'react';
-import { register } from '../api/authentication';
+import { register, reAuth } from '../api/authentication';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { userDetailsContext } from '../utils/userDetailContext';
+import { useAuthCheck } from '../customHooks/reAuth';
 
 export const Register = () => {
   const [state, setState] = useState({
@@ -13,9 +14,12 @@ export const Register = () => {
     password: '',
   });
 
-  const [, , , setIsLoggedIn] = useContext(userDetailsContext);
+  const [, , , setIsLoggedIn, , setCurrentUser] =
+    useContext(userDetailsContext);
 
   const navigate = useNavigate();
+
+  useAuthCheck(reAuth, setIsLoggedIn, setCurrentUser, navigate);
 
   const registerUser = async () => {
     const { email, password } = state;

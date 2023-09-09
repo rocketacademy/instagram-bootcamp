@@ -1,17 +1,20 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/login.css';
-import { signIn } from '../api/authentication';
+import { signIn, reAuth } from '../api/authentication';
 import { userDetailsContext } from '../utils/userDetailContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuthCheck } from '../customHooks/reAuth';
 
 export const Login = () => {
-  const [userDetails, setUserDetails, , setIsLoggedIn] =
+  const [userDetails, setUserDetails, , setIsLoggedIn, , setCurrentUser] =
     useContext(userDetailsContext);
   const { email, password } = userDetails;
   const navigate = useNavigate();
+
+  useAuthCheck(reAuth, setIsLoggedIn, setCurrentUser, navigate);
 
   const signInUser = async () => {
     const user = await signIn(userDetails.email, userDetails.password);

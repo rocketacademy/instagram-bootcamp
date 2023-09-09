@@ -1,34 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { reAuth } from '../api/authentication';
+import React, { useState, useContext } from 'react';
 import { Login } from './Login';
 import { userDetailsContext } from '../utils/userDetailContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [, , isLoggedIn, setIsLoggedIn, , setCurrentUser] =
-    useContext(userDetailsContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkIfLoggedIn = (authedUser) => {
-      console.log(setCurrentUser);
-      if (authedUser) {
-        const { email } = authedUser;
-        // * user !== null / undefined, it means the user is signed in
-        setCurrentUser(email);
-        setIsLoggedIn(true);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        // User is signed out
-        navigate('/login');
-        return null;
-      }
-    };
-
-    reAuth(checkIfLoggedIn);
-  }, [isLoggedIn, setIsLoggedIn, setCurrentUser, navigate]);
+  const [, , isLoggedIn] = useContext(userDetailsContext);
 
   if (loading)
     return (
