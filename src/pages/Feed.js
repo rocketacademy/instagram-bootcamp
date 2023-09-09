@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { onChildAdded, ref } from 'firebase/database';
 import { database } from '../firebase';
 import { PostForm } from '../components/PostForm';
 import { PostsList } from '../components/PostsList';
+import { userDetailsContext } from '../utils/userDetailContext';
 import { toggleContext } from '../components/toggleContext';
 
 const DB_MESSAGES_KEY = 'messages';
@@ -11,9 +12,11 @@ export const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
-  const toggleForm = () => {
+  const [, , , , , handleSignOut, currentUser] = useContext(userDetailsContext);
+
+  const toggleForm = useCallback(() => {
     setIsFormVisible(!isFormVisible);
-  };
+  }, [isFormVisible]);
 
   useEffect(() => {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
@@ -35,6 +38,7 @@ export const Feed = () => {
   return (
     <>
       <header className="App-header">
+        <h1>{`Welcome back! ${currentUser}`}</h1>
         <toggleContext.Provider value={toggleForm}>
           {isFormVisible && <PostForm setMessages={setPosts} />}
           {isFormVisible === false && (

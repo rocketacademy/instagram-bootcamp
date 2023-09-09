@@ -5,15 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/login.css';
 import { userDetailsContext } from '../utils/userDetailContext';
 
-export const Login = ({ signInUser }) => {
-  const [userDetails, setUserDetails] = useContext(userDetailsContext);
+export const Login = () => {
+  const [userDetails, setUserDetails, signInUser] =
+    useContext(userDetailsContext);
   const { email, password } = userDetails;
-  useEffect(() => {
-    console.log(userDetails);
-  }, [userDetails]);
 
   const handleChange = (e) => {
-    console.log(e);
     let name = e.target.name;
     let value = e.target.value;
 

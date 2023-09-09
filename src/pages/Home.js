@@ -1,48 +1,32 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { signIn, reAuth, logOut } from '../api/authentication';
-import { Feed } from './Feed';
+import { reAuth } from '../api/authentication';
 import { Login } from './Login';
 import { userDetailsContext } from '../utils/userDetailContext';
+import { Navigate } from 'react-router-dom';
 
 export const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-
   const [loading, setLoading] = useState(false);
-  const [userDetails, setUserDetails] = useContext(userDetailsContext);
+  const [, , isLoggedIn, setIsLoggedIn, signInUser, , , setCurrentUser] =
+    useContext(userDetailsContext);
 
+  console.log(reAuth);
   useEffect(() => {
-    const checkIfUserLoggedIn = (authedUser) => {
+    const checkIfLoggedIn = (authedUser) => {
+      const { email } = authedUser;
       if (authedUser) {
+        // * user !== null / undefined, it means the user is signed in
+        setCurrentUser(email);
         setIsLoggedIn(true);
         setLoading(false);
-        setCurrentUser(authedUser);
       } else {
         setLoading(false);
+        // User is signed out
         return null;
       }
     };
     setLoading(true);
-    reAuth(checkIfUserLoggedIn);
-  }, []);
-
-  const signInUser = async () => {
-    const user = await signIn(userDetails.email, userDetails.password);
-
-    if (user) {
-      setIsLoggedIn(true);
-      setUserDetails({
-        email: '',
-        password: '',
-      });
-    }
-  };
-
-  const handleSignOut = async () => {
-    await logOut;
-    setIsLoggedIn(false);
-    setCurrentUser({});
-  };
+    reAuth(checkIfLoggedIn);
+  }, [isLoggedIn, setIsLoggedIn]);
 
   if (loading)
     return (
@@ -54,16 +38,9 @@ export const Home = () => {
       </div>
     );
 
-  if (isLoggedIn)
-    return (
-      <div>
-        <h1>Welcome back ! {currentUser.email}</h1>
-        <Feed />
-        <div>
-          <button onClick={handleSignOut}>Sign Out</button>
-        </div>
-      </div>
-    );
+  if (isLoggedIn) {
+    return <Navigate to="/Feed" />;
+  }
 
-  return <Login setUserDetails={setUserDetails} signInUser={signInUser} />;
+  return <Login signInUser={signInUser} />;
 };

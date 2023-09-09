@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { register } from '../api/authentication';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +13,6 @@ export const Register = () => {
   });
 
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log(navigate);
-  }, [navigate]);
 
   const registerUser = async () => {
     const { email, password } = state;
@@ -66,26 +63,6 @@ export const Register = () => {
               </Form.Control.Feedback>
             </InputGroup>
           </Form.Group>
-          {/* <Form.Group className="mb-3" controlId="validationCustomUsername">
-            <Form.Label>Username</Form.Label>
-            <InputGroup hasValidation>
-              <InputGroup.Text id="inputGroupPrependUserName">
-                @
-              </InputGroup.Text>
-              <Form.Control
-                type="text"
-                name="userName"
-                value={state.userName}
-                placeholder="Username"
-                onChange={(e) => handleChange(e)}
-                aria-describedby="inputGroupPrepend"
-                required
-              />
-              <Form.Control.Feedback type="invalid">
-                Please choose a username.
-              </Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group> */}
           <Form.Group className="mb-3" controlId="password">
             <Form.Label>Password</Form.Label>
             <InputGroup hasValidation>

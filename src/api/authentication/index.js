@@ -24,7 +24,11 @@ export const register = async (email, password) => {
 
 export const signIn = async (email, password) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
     return user;
   } catch (error) {
@@ -43,5 +47,5 @@ export const logOut = async () => {
 };
 
 export const reAuth = (callback) => {
-  onAuthStateChanged(callback);
+  onAuthStateChanged(auth, callback);
 };
