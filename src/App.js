@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import './css/App.css';
 import { Feed } from './pages/Feed';
 import { Login } from './pages/Login';
@@ -41,6 +41,10 @@ export const App = () => {
     (details) => setUserDetails(details),
     [setUserDetails]
   );
+
+  useEffect(() => {
+    console.log(isLoggedIn);
+  }, [isLoggedIn]);
 
   const isLoggedInMemo = useMemo(() => isLoggedIn, [isLoggedIn]);
 

@@ -14,13 +14,15 @@ import { alterImageDimensions } from '../utils/resize';
 const RealTIME_DATABASE_KEY = 'posts';
 const STORAGE_KEY = 'images/';
 
-export const PostForm = ({ setMessages }) => {
-  const [post, setPost] = useState({
-    title: '',
-    caption: '',
-    tags: '',
-    date: '',
-  });
+export const PostForm = () => {
+  const [post, setPost] = useState([
+    {
+      title: '',
+      caption: '',
+      tags: '',
+      date: '',
+    },
+  ]);
 
   useEffect(() => {
     console.log(post);
@@ -51,12 +53,6 @@ export const PostForm = ({ setMessages }) => {
       writeData('');
     }
 
-    setPost({
-      title: '',
-      caption: '',
-      tags: '',
-      date: '',
-    });
     setFileUpload(null);
     fileUploadRef.current.value = null;
     setFileName('no file selected');
@@ -70,18 +66,22 @@ export const PostForm = ({ setMessages }) => {
   const writeData = (url) => {
     const postContent = {
       title: post.title,
-      caption: post.caption,
-      tags: post.tags,
+      caption: post.caption || 'no caption',
+      tags: post.tags || 'no tags',
       date: moment().format('MMMM Do YYYY, h:mm:ss a'),
       url: url,
     };
 
-    console.log();
-    setMessages((prevPosts) => [...prevPosts, { val: postContent }]);
-
+    setPost(postContent);
     const postListRef = ref(database, RealTIME_DATABASE_KEY);
     const newPostRef = push(postListRef);
     set(newPostRef, postContent);
+    setPost({
+      title: '',
+      caption: '',
+      tags: '',
+      date: '',
+    });
   };
 
   return (
@@ -120,6 +120,7 @@ export const PostForm = ({ setMessages }) => {
               // ref used to set file input to blank after submit.
               ref={fileUploadRef}
               onChange={handleFileChange}
+              required
             />
             <span className="file_uploaded"> {fileName}</span>
           </div>

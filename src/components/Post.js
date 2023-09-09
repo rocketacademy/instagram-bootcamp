@@ -33,7 +33,13 @@ export const Post = () => {
         const userTime = moment()
           .tz(userTimezoneString)
           .format('MMMM Do YYYY, h:mm:ss a');
-        console.log(post.val.date);
+        console.log('userTime', userTime);
+
+        const postTime = moment(post.val.date, 'MMMM Do YYYY, h:mm:ss a');
+        const timeAgo = postTime.from(
+          moment(userTime, 'MMMM Do YYYY, h:mm:ss a')
+        );
+        console.log(timeAgo);
 
         const tagsArray = post.val.tags.split(' ');
         const hashTags = tagsArray.map((tag) => '#' + tag).join(' ');
@@ -47,7 +53,7 @@ export const Post = () => {
               </div>
 
               <span className="posted_time">
-                <i>{}</i>
+                <i>{timeAgo}</i>
               </span>
               <h4>{post.val.title}</h4>
             </div>
