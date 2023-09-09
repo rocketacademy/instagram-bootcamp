@@ -66,7 +66,7 @@ export const Login = () => {
           </Form.Group>
           <div className="button-container">
             <Button className="custom-button" onClick={signInUser}>
-              Submit
+              Login
             </Button>
           </div>
         </Form>

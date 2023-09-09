@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { push, ref, set } from 'firebase/database';
 import { database, storage } from '../firebase';
 import {
@@ -19,8 +19,12 @@ export const PostForm = ({ setMessages }) => {
     title: '',
     caption: '',
     tags: '',
-    date: moment().format('MMM Do YY'),
+    date: '',
   });
+
+  useEffect(() => {
+    console.log(post);
+  }, [post]);
 
   const [fileName, setFileName] = useState('no file selected');
   const [fileUpload, setFileUpload] = useState(null);
@@ -51,6 +55,7 @@ export const PostForm = ({ setMessages }) => {
       title: '',
       caption: '',
       tags: '',
+      date: '',
     });
     setFileUpload(null);
     fileUploadRef.current.value = null;
@@ -67,10 +72,11 @@ export const PostForm = ({ setMessages }) => {
       title: post.title,
       caption: post.caption,
       tags: post.tags,
-      date: new Date().toLocaleTimeString(),
+      date: moment().format('MMMM Do YYYY, h:mm:ss a'),
       url: url,
     };
 
+    console.log();
     setMessages((prevPosts) => [...prevPosts, { val: postContent }]);
 
     const postListRef = ref(database, RealTIME_DATABASE_KEY);

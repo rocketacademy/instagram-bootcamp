@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { onValue, ref, getDatabase } from 'firebase/database';
 import moment from 'moment';
+import 'moment-timezone';
 
 export const Post = () => {
   const [posts, setPosts] = useState([]);
@@ -18,11 +19,6 @@ export const Post = () => {
         setPosts(postList);
       }
     });
-
-    // Clean up the event listener when component unmounts
-    return () => {
-      onValue(postListRef, null);
-    };
   }, [database]);
 
   if (posts.length === 0) {
@@ -32,11 +28,12 @@ export const Post = () => {
   return (
     <>
       {posts.map((post) => {
-        const specificTime = moment(post.val.date, 'h:mm:ss A');
-        const timeDifference = moment().diff(specificTime, 'minutes');
-        const formattedTime = moment()
-          .subtract(timeDifference, 'minutes')
-          .fromNow();
+        const userTimezoneString =
+          Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userTime = moment()
+          .tz(userTimezoneString)
+          .format('MMMM Do YYYY, h:mm:ss a');
+        console.log(post.val.date);
 
         const tagsArray = post.val.tags.split(' ');
         const hashTags = tagsArray.map((tag) => '#' + tag).join(' ');
@@ -50,7 +47,7 @@ export const Post = () => {
               </div>
 
               <span className="posted_time">
-                <i>{formattedTime}</i>
+                <i>{}</i>
               </span>
               <h4>{post.val.title}</h4>
             </div>

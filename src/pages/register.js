@@ -94,8 +94,8 @@ export const Register = () => {
           </div>
         </Form>
         <div className="existing-user">
-          <p> Already address member?</p>
-          <a href="/login">Register here </a>
+          <p> Already a member?</p>
+          <a href="/login">Login here </a>
         </div>
       </div>
     </div>

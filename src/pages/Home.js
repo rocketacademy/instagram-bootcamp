@@ -6,12 +6,13 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 export const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [, , isLoggedIn, setIsLoggedIn, signInUser, , , setCurrentUser] =
+  const [, , isLoggedIn, setIsLoggedIn, , setCurrentUser] =
     useContext(userDetailsContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkIfLoggedIn = (authedUser) => {
+      console.log(setCurrentUser);
       if (authedUser) {
         const { email } = authedUser;
         // * user !== null / undefined, it means the user is signed in
@@ -43,5 +44,5 @@ export const Home = () => {
     return <Navigate to="/Feed" />;
   }
 
-  return <Login signInUser={signInUser} />;
+  return <Login />;
 };
