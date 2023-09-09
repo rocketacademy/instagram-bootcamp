@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { register } from '../api/authentication';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { userDetailsContext } from '../utils/userDetailContext';
 
 export const Register = () => {
   const [state, setState] = useState({
@@ -11,6 +12,8 @@ export const Register = () => {
     userName: '',
     password: '',
   });
+
+  const [, , , setIsLoggedIn] = useContext(userDetailsContext);
 
   const navigate = useNavigate();
 
@@ -24,6 +27,7 @@ export const Register = () => {
         userName: '',
         password: '',
       });
+      setIsLoggedIn(true);
       navigate('/Feed');
     } catch (error) {
       console.log(`failed to register user: ${error}`);

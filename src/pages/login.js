@@ -1,14 +1,31 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/login.css';
+import { signIn } from '../api/authentication';
 import { userDetailsContext } from '../utils/userDetailContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
-  const [userDetails, setUserDetails, signInUser] =
+  const [userDetails, setUserDetails, , setIsLoggedIn] =
     useContext(userDetailsContext);
   const { email, password } = userDetails;
+  const navigate = useNavigate();
+
+  const signInUser = async () => {
+    const user = await signIn(userDetails.email, userDetails.password);
+    try {
+      if (user) {
+        setIsLoggedIn(true);
+        setUserDetails({
+          email: '',
+          password: '',
+        });
+        navigate('/feed');
+      }
+    } catch (error) {}
+  };
 
   const handleChange = (e) => {
     let name = e.target.name;

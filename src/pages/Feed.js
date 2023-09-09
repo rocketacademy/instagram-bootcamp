@@ -5,14 +5,32 @@ import { PostForm } from '../components/PostForm';
 import { PostsList } from '../components/PostsList';
 import { userDetailsContext } from '../utils/userDetailContext';
 import { toggleContext } from '../components/toggleContext';
+import { NavBar } from '../components/Navbar';
+import { logOut } from '../api/authentication';
+import { useNavigate } from 'react-router-dom';
 
 const DB_MESSAGES_KEY = 'messages';
 
 export const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const navigate = useNavigate();
 
-  const [, , , , , handleSignOut, currentUser] = useContext(userDetailsContext);
+  const [, , isLoggedIn, setIsLoggedIn, , , setCurrentUser] =
+    useContext(userDetailsContext);
+
+  const handleSignOut = useCallback(async () => {
+    await logOut();
+    setIsLoggedIn(false);
+    setCurrentUser({});
+    navigate('/login');
+  }, [setCurrentUser, setIsLoggedIn, navigate]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  }, [navigate, isLoggedIn]);
 
   const toggleForm = useCallback(() => {
     setIsFormVisible(!isFormVisible);
@@ -38,7 +56,7 @@ export const Feed = () => {
   return (
     <>
       <header className="App-header">
-        <h1>{`Welcome back! ${currentUser}`}</h1>
+        <NavBar handleSignOut={handleSignOut} />
         <toggleContext.Provider value={toggleForm}>
           {isFormVisible && <PostForm setMessages={setPosts} />}
           {isFormVisible === false && (

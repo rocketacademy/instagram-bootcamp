@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useMemo, useCallback } from 'react';
 import './css/App.css';
-import { signIn, logOut } from './api/authentication';
 import { Feed } from './pages/Feed';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -42,24 +41,7 @@ export const App = () => {
     (details) => setUserDetails(details),
     [setUserDetails]
   );
-  const handleSignOut = useCallback(async () => {
-    await logOut();
-    setIsLoggedIn(false);
-    setCurrentUser({});
-  }, []);
 
-  const signInUser = useCallback(async () => {
-    const user = await signIn(userDetails.email, userDetails.password);
-    try {
-      if (user) {
-        setIsLoggedIn(true);
-        setUserDetails({
-          email: '',
-          password: '',
-        });
-      }
-    } catch (error) {}
-  }, [userDetails.email, userDetails.password]);
   const isLoggedInMemo = useMemo(() => isLoggedIn, [isLoggedIn]);
 
   const contextValues = useMemo(
@@ -68,8 +50,6 @@ export const App = () => {
       setUserDetailsMemo,
       isLoggedInMemo,
       setIsLoggedIn,
-      signInUser,
-      handleSignOut,
       currentUser,
       setCurrentUser,
     ],
@@ -77,8 +57,6 @@ export const App = () => {
       userDetailsMemo,
       setUserDetailsMemo,
       isLoggedInMemo,
-      signInUser,
-      handleSignOut,
       currentUser,
       setCurrentUser,
     ]
