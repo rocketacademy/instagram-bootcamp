@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
-import { Login } from './Login';
+import React, { useState, useContext, lazy } from 'react';
 import { userDetailsContext } from '../utils/userDetailContext';
 import { Navigate } from 'react-router-dom';
+// import { Login } from '../pages/Login';
 
-export const Home = () => {
+const Login = lazy(() => import('./Login'));
+const Home = () => {
   const [loading, setLoading] = useState(false);
   const [, , isLoggedIn] = useContext(userDetailsContext);
 
@@ -23,3 +24,5 @@ export const Home = () => {
 
   return <Login />;
 };
+
+export default Home;

@@ -1,11 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  lazy,
+  Suspense,
+} from 'react';
 import './css/App.css';
-import { Feed } from './pages/Feed';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { Home } from './pages/Home';
+
 import { userDetailsContext } from './utils/userDetailContext';
+const Home = lazy(() => import('./pages/Home.js'));
+const Feed = lazy(() => import('./pages/Feed'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
 
 const routes = [
   {
@@ -70,15 +78,17 @@ export const App = () => {
     <div className="App">
       <Router>
         <userDetailsContext.Provider value={contextValues}>
-          <Routes>
-            {routes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              {routes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              ))}
+            </Routes>
+          </Suspense>
         </userDetailsContext.Provider>
       </Router>
     </div>

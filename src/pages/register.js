@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { userDetailsContext } from '../utils/userDetailContext';
 import { useAuthCheck } from '../customHooks/reAuth';
 
-export const Register = () => {
+const Register = () => {
   const [state, setState] = useState({
     email: '',
     userName: '',
@@ -105,3 +105,5 @@ export const Register = () => {
     </div>
   );
 };
+
+export default Register;

@@ -8,7 +8,7 @@ import { userDetailsContext } from '../utils/userDetailContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuthCheck } from '../customHooks/reAuth';
 
-export const Login = () => {
+const Login = () => {
   const [userDetails, setUserDetails, , setIsLoggedIn, , setCurrentUser] =
     useContext(userDetailsContext);
   const { email, password } = userDetails;
@@ -81,3 +81,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export default Login;

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DB_MESSAGES_KEY = 'messages';
 
-export const Feed = () => {
+const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const navigate = useNavigate();
@@ -70,3 +70,5 @@ export const Feed = () => {
     </>
   );
 };
+
+export default Feed;
