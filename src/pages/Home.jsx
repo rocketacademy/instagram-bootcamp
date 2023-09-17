@@ -63,17 +63,16 @@ const Home = () => {
     reAuth(checkIfLoggedIn);
   }, []);
 
-  console.log("signed-in profileData", profileData);
-
   const signInUser = async () => {
     const user = await signIn(state.email, state.password);
+
     if (user) {
+      // console.log("sign-in user:", user);
       setIsLoggedIn(true);
       setState({
         email: "",
         password: "",
       });
-      console.log("sign-in user:", user);
     }
   };
 

@@ -32,10 +32,7 @@ const Register = () => {
   const registerUser = async () => {
     try {
       const user = await register(state.email, state.password);
-      // Update the user's profile with the provided username
-      // await updateProfile(user, {
-      //   displayName: state.username,
-      // });
+
       if (state.profilePicture) {
         const fullStorageRef = storageRef(
           storage,
