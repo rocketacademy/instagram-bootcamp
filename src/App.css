@@ -2,11 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -16,4 +11,20 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+p {
+  font-size: 15px;
+}
+
+ol {
+  background-color: lightcoral;
+  list-style-type: none;
+  justify-content: center;
+  text-align: left;
+}
+
+input {
+  width: 300px;
+  height: 40px;
 }
