@@ -12,7 +12,9 @@ export default class ChatPage extends React.Component {
       <>
         <Header />
         <div className="flex h-screen items-center justify-center">
-          <p className="text-xl">Login Page</p>
+          <button className="font-fontspring animate-bounce rounded-full rounded-bl-none border-2 border-slate-600  p-4 pl-8 pr-8 text-[40px] hover:bg-red-100">
+            Login Page
+          </button>
         </div>
         <NavBar />
       </>

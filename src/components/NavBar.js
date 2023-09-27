@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 export default class NavBar extends React.Component {
   render() {
     return (
-      <div className="btm-nav ">
-        <NavLink to="/Feed" className="hover:bg-slate-700">
+      <div className="btm-nav">
+        <NavLink to="/Feed" className="hover:bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -22,7 +22,7 @@ export default class NavBar extends React.Component {
           </svg>
           <span className="btm-nav-label">Feed</span>
         </NavLink>
-        <NavLink to="/Chat" className="hover:bg-slate-700">
+        <NavLink to="/Chat" className="hover:bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -38,7 +38,7 @@ export default class NavBar extends React.Component {
           </svg>
           <span className="btm-nav-label">Chat</span>
         </NavLink>
-        <NavLink to="/Settings" className="hover:bg-slate-700">
+        <NavLink to="/Settings" className="hover:bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

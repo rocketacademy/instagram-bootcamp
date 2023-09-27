@@ -3,6 +3,7 @@ import React from "react";
 //-----------Components-----------//
 import NavBar from "../components/NavBar";
 import Header from "../components/Header";
+import Feed from "../components/feed/Feed";
 //-----------Firebase-----------//
 //-----------Styling-----------//
 
@@ -17,7 +18,7 @@ export default class ChatPage extends React.Component {
       <>
         <Header />
         <div className="flex h-screen items-center justify-center">
-          <p className=" text-xl">Main Feed</p>
+          <Feed />
         </div>
         <NavBar />
       </>
