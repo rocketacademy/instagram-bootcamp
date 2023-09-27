@@ -1,6 +1,5 @@
 import React from "react";
 //-----------Components-----------//
-import Message from "./Message";
 
 //-----------Firebase-----------//
 import {
@@ -8,7 +7,6 @@ import {
   onChildRemoved,
   push,
   ref,
-  set,
   remove,
 } from "firebase/database";
 import { database } from "../../firebase/firebase";
@@ -107,9 +105,9 @@ export default class MessageList extends React.Component {
     ));
 
     return (
-      <div className="flex h-screen flex-col  ">
+      <div className="flex h-screen w-screen flex-col  ">
         <header className="flex flex-grow flex-col items-center justify-center bg-red-100">
-          <div className=" flex max-h-[70vh] w-1/2 flex-grow flex-col-reverse overflow-y-auto">
+          <div className=" flex max-h-[75vh] w-1/2 flex-grow flex-col-reverse overflow-y-auto">
             <ol className="chat-end m-1">{messageListItems}</ol>
           </div>
           <section className="m-4 flex w-full flex-row justify-center">

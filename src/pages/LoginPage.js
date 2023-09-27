@@ -1,30 +1,21 @@
 //-----------React-----------//
 import React from "react";
 //-----------Components-----------//
-import NavBar from "./components/NavBar";
-import Header from "./components/Header";
-
+import NavBar from "../components/NavBar";
+import Header from "../components/Header";
 //-----------Firebase-----------//
 //-----------Styling-----------//
-import "./App.css";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
+export default class ChatPage extends React.Component {
   render() {
     return (
       <>
         <Header />
         <div className="flex h-screen items-center justify-center">
-          <p className="text-xl">Home</p>
+          <p className="text-xl">Login Page</p>
         </div>
         <NavBar />
       </>
     );
   }
 }
-
-export default App;
