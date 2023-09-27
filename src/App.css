@@ -1,3 +1,4 @@
+/* Use your existing base styles */
 .App {
   text-align: center;
 }
@@ -15,5 +16,96 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: red;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* New styles for the message structure */
+.message {
+  border-radius: 10px;
+  margin-bottom: 20px; /* Adjust the margin for spacing */
+  max-width: 70%; /* Limit the width of the message */
+  position: relative;
+  padding: 10px; /* Add padding for space around content */
+}
+
+.incoming {
+  background-color: rgb(79, 91, 213);
+  color: rgb(236, 229, 221);
+  align-self: flex-start;
+  margin-left: 200px;
+}
+
+.outgoing {
+  background-color: rgb(250, 126, 30);
+  color: rgb(236, 229, 221);
+  align-self: flex-end;
+  margin-right: 200px;
+}
+.incoming button {
+  top: 5px;
+  right: 1px; /* Move the "X" button to the top left for incoming messages */
+  margin-left: 0; /* Remove margin-left for the "X" button */
+}
+
+.outgoing button {
+  top: 5px;
+  left: 1px; /* Move the "X" button to the top right for outgoing messages */
+  margin-right: 0; /* Remove margin-right for the "X" button */
+}
+
+.message button {
+  position: absolute;
+  font-size: 10px; /* Adjust the font size for buttons */
+  background: none;
+  border: none;
+}
+
+/* Adjust the date and time size and position */
+.message .message-metadata {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 8px; /* Adjust the font size for metadata */
+  margin-top: 5px; /* Add spacing between the message content and metadata */
+}
+
+.message .message-metadata .datetime {
+  margin-left: 5px;
+  color: black;
+}
+
+.message .message-metadata .user {
+  font-size: 8px; /* Adjust the font size for username */
+  margin-left: 5px;
+  color: black;
+}
+
+/* Reduce the input box size */
+form input {
+  width: 100px; /* Adjust the width as needed */
+  padding: 5px; /* Adjust the padding for the input */
+}
+
+/* Reduce the button size */
+form button {
+  font-size: 10px; /* Adjust the font size for buttons */
+  padding: 5px 10px; /* Adjust the padding for buttons */
+}
+form input {
+  width: 150px; /* Adjust the width as needed */
+}
+
+/* Adjust padding for the input boxes */
+form input[type="text"] {
+  padding: 1px; /* Adjust the padding as needed */
+}
+
+/* Reduce the width of the buttons */
+form button {
+  font-size: 10px; /* Adjust the font size for buttons */
+  padding: 5px 8px; /* Adjust the padding for buttons */
 }
