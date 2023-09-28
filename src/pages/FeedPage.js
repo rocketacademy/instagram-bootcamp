@@ -17,7 +17,7 @@ export default class ChatPage extends React.Component {
     return (
       <>
         <Header />
-        <div className="flex h-screen items-center justify-center">
+        <div className="b flex h-max items-center justify-center">
           <Feed />
         </div>
         <NavBar />
