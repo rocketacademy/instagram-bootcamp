@@ -6,13 +6,29 @@ import {
   set,
   onChildRemoved,
   remove,
+  get,
+  onValue,
+  update,
+  onChildChanged,
 } from "firebase/database";
-import { realTimeDatabase } from "./firebase/firebase";
-import logo from "./logo.png";
+
+import { realTimeDatabase, storage } from "./firebase/firebase";
+
+import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "storedMessages"; //This corresponds to the Firebase branch
+const DB_MESSAGES_KEY = "storedMessages"; //This corresponds to the Firebase branch/document
+const STORAGE_KEY = "images/"; // This corresponds to the Firebase branch/document
 
 class App extends React.Component {
   constructor(props) {
@@ -25,6 +41,12 @@ class App extends React.Component {
     this.state = {
       messageText: "",
       messages: [],
+      fileURL: "",
+      likes: 0,
+      comments: [],
+
+      fileInputFile: null,
+      fileInputValue: "",
     };
   }
 
@@ -50,10 +72,24 @@ class App extends React.Component {
         messages: newRemainingMessages,
       });
     });
+
+    // Background Event Listener that is always Running
+    // Firebase Method, onValue
+    // onValue(messagesRef, (snapshot) => {
+    //   console.log("its me , ", snapshot);
+    // });
+
+    onChildChanged(messagesRef, (snapshot) => {
+      console.log("hello", snapshot.val().likes);
+    });
   }
 
   handleTextChange = (ev) => {
     let { name, value } = ev.target;
+    // const name = ev.target.name;
+    // const value = ev.target.value;
+
+    // console.log("this is name: ", name);
     this.setState({
       [name]: value,
     });
@@ -68,24 +104,63 @@ class App extends React.Component {
     remove(messageToDelete);
   };
 
+  handleIncrementLike = (ev) => {
+    // The id is message.key, that is from that instance of message.
+
+    const childToIncrementLike = ref(
+      realTimeDatabase,
+      `${DB_MESSAGES_KEY}/${ev.target.id}`
+    );
+
+    get(childToIncrementLike).then((snapshot) => {
+      const data = snapshot.val();
+      set(childToIncrementLike, {
+        text: data.text,
+        timestamp: data.timestamp,
+        fileURL: data.fileURL,
+        likes: data.likes + 1,
+      });
+    });
+
+    // onValue(childToIncrementLike, (snapshot) => {
+    //   const data = snapshot.val();
+    //   return data;
+    // }).then((data) => {
+    //   console.log(data);
+    //   set(childToIncrementLike, {
+    //     text: data.text,
+    //     timestamp: data.timestamp,
+    //     fileURL: data.fileURL,
+    //     likes: data.likes + 1,
+    //   });
+    // });
+
+    // get(childToIncrementLike).then((snapshot) => {
+    //   console.log(snapshot.val().likes);
+    // });
+
+    // console.log(childToIncrementLike);
+    // const existingLikes = childToIncrementLike
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = (ev) => {
-    ev.preventDefault();
+  writeData = (fileUrl) => {
+    // ev.preventDefault();
 
     if (this.state.messageText !== "") {
       const messageListRef = ref(realTimeDatabase, DB_MESSAGES_KEY);
-      const newMessageRef = push(messageListRef);
+      const newMessageRef = push(messageListRef); // Sets a key - assigned by Firebase - for a NEW branch in Firebase
       // Need to seperate per user, give it an ID and create a new item in the list
       set(newMessageRef, {
         text: this.state.messageText,
         timestamp: new Date().toTimeString(),
+        fileURL: this.state.fileURL,
+        likes: this.state.likes,
+        comments: this.state.comments,
       });
 
       // console.log(this.state.messages);
-      console.log("triggering scroll");
       this.scrollToBottom();
-    } else {
-      console.log("failed");
     }
 
     // Reset Input Field Value
@@ -93,6 +168,44 @@ class App extends React.Component {
       messageText: "",
     });
   };
+
+  submitData = () => {
+    const fullStorageRef = sRef(
+      storage,
+      STORAGE_KEY + this.state.fileInputFile.name
+    );
+
+    console.log("ok");
+    uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
+      getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
+        (fileUrl) => this.writeData(fileUrl)
+      );
+    });
+  };
+
+  displayedLikes = (childinstance) => {
+    // console.log("displayed");
+    onValue(
+      ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${childinstance}`),
+      (snapshot) => {
+        let newLikes = snapshot.val().likes;
+        // console.log(snapshot.val);
+        return newLikes;
+      }
+    );
+  };
+
+  // displayedLikes = (childinstance) => {
+  //   get(ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${childinstance}`)).then(
+  //     (snapshot) => {
+  //       // console.log("hey");
+  //       // console.log(snapshot);
+  //       // console.log(snapshot.val().likes);
+  //       console.log("triggered");
+  //       return snapshot.val().likes;
+  //     }
+  //   );
+  // };
 
   scrollToBottom = () => {
     if (this.chatWindow.current) {
@@ -127,6 +240,18 @@ class App extends React.Component {
             <p className="text-md chatbubbletext text-slate-400 pr-3 pl-3 leading-tight">
               {message.val.timestamp}
             </p>
+            <p>{message.val.likes}</p>
+
+            {/* <p>{this.displayedLikes(message.key)}</p> */}
+            {/* 
+            <p>
+              {onValue(
+                ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${message.key}`),
+                (snapshot) => (
+                  <p>snapshot.val().likes</p>
+                )
+              )}
+            </p> */}
 
             <input
               type="button"
@@ -135,6 +260,20 @@ class App extends React.Component {
               className="text-sm chatbubbletext bg-slate-300 rounded-md shadow-sm pr-2 pl-2 mb-2 mt-2 ml-3"
               onClick={this.handleDelete}
             />
+            <input
+              type="button"
+              id={message.key}
+              value="Like"
+              className="text-sm chatbubbletext bg-red-500 rounded-md shadow-sm pr-2 pl-2 mb-2 mt-2 ml-3"
+              onClick={this.handleIncrementLike}
+            />
+            <div>
+              {message.val.fileURL ? (
+                <img src={message.val.fileURL} alt="" />
+              ) : (
+                <p>"no image provided"</p>
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -171,8 +310,23 @@ class App extends React.Component {
             <input
               type="button"
               onClick={this.writeData}
-              className="btn btn-outline btn-secondary max-w-xs"
+              // onClick={this.writeData}
+              className="btn btn-secondary max-w-xs"
               value="Send"
+            />
+          </form>
+          <form>
+            <input
+              type="file"
+              name="fileUpload"
+              value={this.state.fileInputValue}
+              onChange={(ev) => {
+                this.setState({
+                  fileInputFile: ev.target.files[0],
+                  fileInputValue: ev.target.fileUpload,
+                });
+              }}
+              className="file-input file-input-bordered file w-full max-w-xs"
             />
           </form>
         </div>
