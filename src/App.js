@@ -36,6 +36,9 @@ const App = () => {
   const [nickname, setNickname] = useState("");
   const [isNicknameSet, setIsNicknameSet] = useState(false);
 
+  // Assuming you have the UID of the current user
+  const currentUserUID = "uid_of_current_user"; // Replace this with the actual UID
+
   // Effect hook to handle component mounting and unmounting
   useEffect(() => {
     // Firebase database reference for messages
@@ -170,10 +173,11 @@ const App = () => {
   // Handler for message submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (email && password) {
+    if (newMessage.trim() !== "") {
       writeData();
     }
   };
+
   const writeData = () => {
     if (newMessage.trim() !== "") {
       const messageListRef = ref(database, DB_MESSAGES_KEY);
@@ -184,7 +188,7 @@ const App = () => {
         set(newMessageRef, {
           message: newMessage,
           datetime,
-          user: email,
+          user: currentUserUID, // Modified to use currentUserUID
         });
         setNewMessage("");
       } catch (error) {
@@ -268,7 +272,14 @@ const App = () => {
                   {/* Moved here */}
                   <div className="chat-container">
                     {messages.map((message, index) => (
-                      <div key={message.key} className={`message outgoing`}>
+                      <div
+                        key={message.key}
+                        className={`message ${
+                          message.user === currentUserUID
+                            ? "outgoing"
+                            : "incoming"
+                        }`}
+                      >
                         <div className="message-buttons">
                           <button
                             className="edit-button"
@@ -297,7 +308,9 @@ const App = () => {
                           <span className="message-metadata">
                             {message.datetime}
                             &nbsp;
-                            {index % 2 === 0 ? nickname || email : password}
+                            {message.user === currentUserUID
+                              ? nickname || email
+                              : "Other User"}
                           </span>
                         </div>
                       </div>
