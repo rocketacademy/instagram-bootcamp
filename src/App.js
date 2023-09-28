@@ -33,7 +33,6 @@ const App = () => {
   const [isInputEnabled, setIsInputEnabled] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showChat, setShowChat] = useState(false);
   const [nickname, setNickname] = useState("");
   const [isNicknameSet, setIsNicknameSet] = useState(false);
 
@@ -88,12 +87,12 @@ const App = () => {
         setUser(user);
         setIsLoggedIn(true);
         setIsInputEnabled(true);
-        setShowChat(true);
+        // Removed setShowChat as it was not being used
       } else {
         setUser(null);
         setIsLoggedIn(false);
         setIsInputEnabled(false);
-        setShowChat(false);
+        // Removed setShowChat as it was not being used
       }
     });
 
@@ -175,19 +174,22 @@ const App = () => {
       writeData();
     }
   };
-
-  // Write new message data to the database
   const writeData = () => {
     if (newMessage.trim() !== "") {
       const messageListRef = ref(database, DB_MESSAGES_KEY);
       const newMessageRef = push(messageListRef);
       const datetime = new Date().toLocaleString();
-      set(newMessageRef, {
-        message: newMessage,
-        datetime,
-        user: email,
-      });
-      setNewMessage("");
+
+      try {
+        set(newMessageRef, {
+          message: newMessage,
+          datetime,
+          user: email,
+        });
+        setNewMessage("");
+      } catch (error) {
+        console.error("Error writing message:", error);
+      }
     }
   };
 
