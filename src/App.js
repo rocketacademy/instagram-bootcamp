@@ -17,6 +17,7 @@ import { realTimeDatabase, storage } from "./firebase/firebase";
 import { ref as sRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import {
+  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -44,6 +45,12 @@ class App extends React.Component {
       fileURL: "",
       likes: 0,
       comments: [],
+
+      userEmail: "",
+      userPassword: "",
+
+      currentUID: "",
+      isSignedIn: false,
 
       fileInputFile: null,
       fileInputValue: "",
@@ -79,9 +86,9 @@ class App extends React.Component {
     //   console.log("its me , ", snapshot);
     // });
 
-    onChildChanged(messagesRef, (snapshot) => {
-      console.log("hello", snapshot.val().likes);
-    });
+    // onChildChanged(messagesRef, (snapshot) => {
+    //   console.log("hello", snapshot.val().likes);
+    // });
   }
 
   handleTextChange = (ev) => {
@@ -144,7 +151,7 @@ class App extends React.Component {
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = (fileUrl) => {
+  writeData = () => {
     // ev.preventDefault();
 
     if (this.state.messageText !== "") {
@@ -154,9 +161,13 @@ class App extends React.Component {
       set(newMessageRef, {
         text: this.state.messageText,
         timestamp: new Date().toTimeString(),
-        fileURL: this.state.fileURL,
+        fileURL: "photoURL",
+
         likes: this.state.likes,
         comments: this.state.comments,
+
+        userUID: this.state.currentUID,
+        userEmail: this.state.userEmail,
       });
 
       // console.log(this.state.messages);
@@ -170,17 +181,66 @@ class App extends React.Component {
   };
 
   submitData = () => {
-    const fullStorageRef = sRef(
+    // console.log("start storage key: ", STORAGE_KEY);
+    // console.log(this.state.fileInputFile);
+    // console.log(this.state.fileInputFile.name);
+
+    // Create a reference to the full path of the file. This path will be used to upload to Firebase Storage
+    const storageRef = sRef(
       storage,
       STORAGE_KEY + this.state.fileInputFile.name
     );
 
     console.log("ok");
-    uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
-      getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
+
+    uploadBytes(storageRef, this.state.fileInputFile).then((snapshot) => {
+      console.log("uploaded a file!");
+      getDownloadURL(storageRef, this.state.fileInputFile.name).then(
         (fileUrl) => this.writeData(fileUrl)
       );
     });
+  };
+
+  loginSubmit = () => {
+    const auth = getAuth();
+    if (this.state.isSignedIn === false) {
+      createUserWithEmailAndPassword(
+        auth,
+        this.state.userEmail,
+        this.state.userPassword
+      ).then((userInfo) => {
+        // Will be signed in, and return the userInfo branch from Firebase Auth.
+        // Q: What does this "signed-in" mean? Is there a second channel connecting to Firebase Auth that becomes active when Signed In?
+        const user = userInfo.user;
+
+        this.setState({
+          currentUID: user.uid,
+          isSignedIn: true,
+          userPassword: "",
+        });
+      });
+    }
+  };
+
+  loginSubmitExisting = () => {
+    const auth = getAuth();
+    if (this.state.isSignedIn === false) {
+      signInWithEmailAndPassword(
+        auth,
+        this.state.userEmail,
+        this.state.userPassword
+      ).then((userInfo) => {
+        // Will be signed in, and return the userInfo branch from Firebase Auth.
+        // Q: What does this "signed-in" mean? Is there a second channel connecting to Firebase Auth that becomes active when Signed In?
+        const user = userInfo.user;
+
+        this.setState({
+          currentUID: user.uid,
+          isSignedIn: true,
+          userPassword: "",
+        });
+      });
+    }
   };
 
   displayedLikes = (childinstance) => {
@@ -188,8 +248,8 @@ class App extends React.Component {
     onValue(
       ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${childinstance}`),
       (snapshot) => {
+        // console.log(snapshot.val())
         let newLikes = snapshot.val().likes;
-        // console.log(snapshot.val);
         return newLikes;
       }
     );
@@ -237,11 +297,18 @@ class App extends React.Component {
             <h3 className="text-2xl chatbubbletext text-slate-700 p-3 text-left leading-tight lg:max-w-xl">
               {message.val.text}
             </h3>
-            <p className="text-md chatbubbletext text-slate-400 pr-3 pl-3 leading-tight">
+
+            <p className="text-md chatbubbletext text-slate-800 pr-3 pl-3 leading-tight">
+              {message.val.userEmail === ""
+                ? message.val.userEmail
+                : "Anonymous"}
+            </p>
+
+            <p className="text-sm chatbubbletext text-slate-400 pr-3 pl-3 leading-tight">
               {message.val.timestamp}
             </p>
-            <p>{message.val.likes}</p>
 
+            <p>{message.val.likes}</p>
             {/* <p>{this.displayedLikes(message.key)}</p> */}
             {/* 
             <p>
@@ -256,24 +323,34 @@ class App extends React.Component {
             <input
               type="button"
               id={message.key}
-              value="Delete"
-              className="text-sm chatbubbletext bg-slate-300 rounded-md shadow-sm pr-2 pl-2 mb-2 mt-2 ml-3"
-              onClick={this.handleDelete}
-            />
-            <input
-              type="button"
-              id={message.key}
               value="Like"
               className="text-sm chatbubbletext bg-red-500 rounded-md shadow-sm pr-2 pl-2 mb-2 mt-2 ml-3"
               onClick={this.handleIncrementLike}
             />
-            <div>
-              {message.val.fileURL ? (
-                <img src={message.val.fileURL} alt="" />
-              ) : (
-                <p>"no image provided"</p>
-              )}
-            </div>
+
+            {this.state.currentUID === message.val.userUID ? (
+              <input
+                type="button"
+                id={message.key}
+                value="Delete"
+                className="text-sm chatbubbletext bg-slate-300 rounded-md shadow-sm pr-2 pl-2 mb-2 mt-2 ml-3"
+                onClick={this.handleDelete}
+              />
+            ) : null}
+
+            {message.val.fileURL !== "photoURL" ? (
+              <img
+                src={message.val.fileURL}
+                alt=""
+                className="w-[2rem] h-[2rem] object-cover rounded-[50%] border-slate-400 border-[1px] border-solid overflow-hidden"
+              />
+            ) : (
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/rocketgram-ftbc13.appspot.com/o/images%2Fdefaultpic.png?alt=media&token=5ca175aa-98c8-4a4a-8966-8f85160575a7&_gl=1*154w6kf*_ga*OTA4NjcyODY0LjE2OTU1NDU0NjI.*_ga_CW55HF8NVT*MTY5NTg3OTY5MC4yMS4xLjE2OTU4ODQwMTEuMy4wLjA."
+                alt="default"
+                className="w-[2rem] h-[2rem] object-cover rounded-[50%] border-slate-400 border-[1px] border-solid overflow-hidden"
+              />
+            )}
           </div>
         </div>
       </>
@@ -283,6 +360,54 @@ class App extends React.Component {
       <>
         <div className="sticky bg-violet-200 overflow-hidden text-center p-0">
           <div className="text-[2rem] chatbubbletext">~ COZY CHAT CORNER ~</div>
+
+          {this.state.isSignedIn === true ? null : (
+            <>
+              <div class="collapse bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">
+                  Sign In For Additional Access{" "}
+                </div>
+
+                {/* SIGN IN FORMS */}
+                <div class="collapse-content">
+                  <input
+                    type="text"
+                    name="userEmail"
+                    value={this.state.userEmail}
+                    onChange={this.handleTextChange}
+                    autoComplete="off"
+                    placeholder="Email"
+                    className="input input-bordered input-warning min-w-[20vw] text-slate-800 mr-5"
+                  />
+                  <br />
+                  <input
+                    type="text"
+                    name="userPassword"
+                    value={this.state.userPassword}
+                    onChange={this.handleTextChange}
+                    autoComplete="off"
+                    placeholder="Password"
+                    className="input input-bordered input-warning min-w-[20vw] text-slate-800 mr-5"
+                  />
+                  <br />
+                  <input
+                    type="button"
+                    onClick={this.loginSubmit}
+                    className="btn btn-neutral btn-sm"
+                    value="Create Account"
+                  />
+
+                  <input
+                    type="button"
+                    onClick={this.loginSubmitExisting}
+                    className="btn btn-neutral btn-sm"
+                    value="Sign In"
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* MESSAGES DISPLAY HERE */}
@@ -295,23 +420,21 @@ class App extends React.Component {
 
         {/* TEXT INTERFACE */}
         <div className="flex flex-row justify-center gap-5 pt-5 pb-5 absolute bottom-0 bg-indigo-200 min-w-full">
-          <form onSubmit={this.writeData}>
+          <form onSubmit={this.writeData} className="join">
             <input
               type="text"
               name="messageText"
               value={this.state.messageText}
               onChange={this.handleTextChange}
-              // onSubmit={this.handleSubmitEnter}
               autoComplete="off"
               placeholder="Input your message here"
-              className="input input-bordered input-warning min-w-[50vw] text-slate-800 mr-5"
+              className="input input-secondary min-w-[50vw]| text-slate-800 join-item"
             />
 
             <input
               type="button"
               onClick={this.writeData}
-              // onClick={this.writeData}
-              className="btn btn-secondary max-w-xs"
+              className="btn btn-secondary max-w-xs join-item rounded-r-xl"
               value="Send"
             />
           </form>
