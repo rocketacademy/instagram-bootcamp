@@ -1,3 +1,4 @@
+// Import necessary modules and functions
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import {
@@ -19,9 +20,12 @@ import {
   sendPasswordResetEmail as sendPasswordResetEmailFirebase,
 } from "firebase/auth";
 
+// Key for messages in the database
 const DB_MESSAGES_KEY = "messages";
 
+// Define the main component
 const App = () => {
+  // State variables to manage different aspects of the app
   const [messages, setMessages] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,8 +37,12 @@ const App = () => {
   const [nickname, setNickname] = useState("");
   const [isNicknameSet, setIsNicknameSet] = useState(false);
 
+  // Effect hook to handle component mounting and unmounting
   useEffect(() => {
+    // Firebase database reference for messages
     const messagesRef = ref(database, DB_MESSAGES_KEY);
+
+    // Event listeners for database changes
     const messagesAddedListener = onChildAdded(messagesRef, (data) => {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -89,14 +97,16 @@ const App = () => {
       }
     });
 
+    // Clean up event listeners on component unmount
     return () => {
       messagesAddedListener();
       messagesChangedListener();
       messagesRemovedListener();
       authStateChangedListener();
     };
-  }, []);
+  }, []); // Empty dependency array means this effect runs only once on mount
 
+  // Handler for user signup
   const handleSignup = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -117,6 +127,7 @@ const App = () => {
     }
   };
 
+  // Handler for user login
   const handleLogin = async () => {
     try {
       if (!email || !password) {
@@ -143,10 +154,12 @@ const App = () => {
     }
   };
 
+  // Handler to enable nickname editing
   const handleNicknameEdit = () => {
     setIsNicknameSet(false);
   };
 
+  // Handler to save edited nickname
   const handleNicknameSave = () => {
     setIsNicknameSet(true);
 
@@ -155,6 +168,7 @@ const App = () => {
     set(userNicknameRef, nickname);
   };
 
+  // Handler for message submission
   const handleSubmit = (event) => {
     event.preventDefault();
     if (email && password) {
@@ -162,6 +176,7 @@ const App = () => {
     }
   };
 
+  // Write new message data to the database
   const writeData = () => {
     if (newMessage.trim() !== "") {
       const messageListRef = ref(database, DB_MESSAGES_KEY);
@@ -176,23 +191,28 @@ const App = () => {
     }
   };
 
+  // Handler for input change in the new message input field
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
   };
 
+  // Handler for input change in the email input field
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
 
+  // Handler for input change in the password input field
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
+  // Handler to delete a message
   const handleDeleteMessage = (messageKey) => {
     const messageRef = ref(database, `${DB_MESSAGES_KEY}/${messageKey}`);
     remove(messageRef);
   };
 
+  // Handler to clear the message log
   const handleClearLog = () => {
     setMessages([]);
 
@@ -200,6 +220,7 @@ const App = () => {
     remove(messageListRef);
   };
 
+  // Handler to log out the user
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -209,6 +230,7 @@ const App = () => {
     }
   };
 
+  // Handler to send a password reset email
   const handleResetPassword = async () => {
     try {
       await sendPasswordResetEmailFirebase(auth, email);
@@ -218,6 +240,7 @@ const App = () => {
     }
   };
 
+  // Handler to edit a message
   const handleEditMessage = (messageKey, editedMessage) => {
     const messageRef = ref(
       database,
@@ -226,6 +249,7 @@ const App = () => {
     set(messageRef, editedMessage);
   };
 
+  // Render the main component
   return (
     <div className="App">
       <header className="App-header">
@@ -236,6 +260,10 @@ const App = () => {
               {isNicknameSet ? (
                 <>
                   <button onClick={handleLogout}>Logout</button>
+                  <button onClick={handleNicknameEdit}>
+                    Edit Nickname
+                  </button>{" "}
+                  {/* Moved here */}
                   <div className="chat-container">
                     {messages.map((message, index) => (
                       <div key={message.key} className={`message outgoing`}>
@@ -258,7 +286,7 @@ const App = () => {
                             className="delete-button"
                             onClick={() => handleDeleteMessage(message.key)}
                           >
-                            X
+                            ❌
                           </button>
                         </div>
                         <div className="message-content">
