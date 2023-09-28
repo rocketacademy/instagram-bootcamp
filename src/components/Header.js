@@ -8,7 +8,7 @@ export default class Header extends React.Component {
       <div className="fixed top-0 w-screen">
         <NavLink
           to="/"
-          className="font-fontspring flex h-auto items-center justify-center bg-slate-100 text-[40px]"
+          className="font-fontspring flex h-auto items-center justify-center bg-slate-100 text-[40px] opacity-90"
         >
           Rocketgram 🚀
         </NavLink>

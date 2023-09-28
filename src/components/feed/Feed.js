@@ -1,8 +1,11 @@
 //-----------Imports-----------//
 import React from "react";
 //-----------Components-----------//
+import Post from "./Post";
 
 //-----------Firebase-----------//
+import { database, storage, auth } from "../../firebase/firebase";
+
 import {
   onChildAdded,
   onChildRemoved,
@@ -13,39 +16,45 @@ import {
 
 import { uploadBytes, ref as sRef, getDownloadURL } from "firebase/storage";
 
-import { database, storage } from "../../firebase/firebase";
+// import {
+//   createUserWithEmailAndPassword,
+//   signInWithEmailAndPassword,
+//   onAuthStateChanged,
+//   signOut,
+// } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messageList";
+const DB_POST_KEY = "postList";
 
-export default class FeedList extends React.Component {
+export default class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: "",
+      comment: "",
       likes: 0,
-      messageList: [],
+      postList: [],
       file: null,
+      // email: "",
+      // password: "",
     };
   }
   // Update feed/chat on changes
   componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const postRef = ref(database, DB_POST_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
+    onChildAdded(postRef, (data) => {
       this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messageList: [...state.messageList, { key: data.key, ...data.val() }],
+        postList: [...state.postList, { key: data.key, ...data.val() }],
       }));
     });
-    onChildRemoved(messagesRef, (data) => {
+    onChildRemoved(postRef, (data) => {
       console.log("child removed:", data.val());
-      const newMessageList = this.state.messageList.filter(
-        (message) => message.key !== data.key,
+      const newPostList = this.state.postList.filter(
+        (post) => post.key !== data.key,
       );
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       this.setState({
-        messageList: newMessageList,
+        postList: newPostList,
       });
     });
   }
@@ -53,95 +62,105 @@ export default class FeedList extends React.Component {
   writeData = () => {
     //Push image into database
     const fileRef = sRef(storage, `image/${this.state.file.name}`);
+    console.log("Is this working");
     uploadBytes(fileRef, this.state.file)
       .then(() => {
         return getDownloadURL(fileRef);
       })
       .then((url) => {
         console.log(url);
-        //Add messages and final url AFTER images url generated
-        const messageListRef = ref(database, DB_MESSAGES_KEY);
-        push(messageListRef, {
-          message: this.state.message,
+        //Add posts and final url AFTER images url generated
+        const postListRef = ref(database, DB_POST_KEY);
+        push(postListRef, {
+          comment: this.state.comment,
           date: `${new Date()}`,
           image: url,
         });
       })
       // Clear input fields
       .then(() => {
-        this.setState({ message: "", file: null });
+        this.setState({ comment: "", file: null });
       });
   };
 
+  handleChange = (e) => {
+    const name = e.target.id;
+    const value = e.target.value;
+    this.setState({ [name]: value });
+  };
+
   fileChange = (e) => {
-    console.log(e.target.files); //---------------------TEST OBJECT HERE why need [0]
+    console.log(e.target.files[0]);
     this.setState({ file: e.target.files[0] });
   };
 
-  handleDelete = (e) => {
-    const messagesRef = ref(database, `${DB_MESSAGES_KEY}/${e.target.id}`);
-    remove(messagesRef);
-  };
-
-  formatTime = (timestamp) => {
-    const formatted = new Date(timestamp).toLocaleTimeString("en-GB", {
-      hour12: true,
-      hour: "numeric", // '2-digit' or 'numeric'
-      minute: "2-digit", // 'numeric'
-      year: "2-digit", // '2-digit' or 'numeric'
-      month: "short", // 'short', 'narrow' or 'long'
-      day: "2-digit", // '2-digit' or 'numeric'
-    });
-    return formatted;
+  handleDelete = (id) => {
+    const postRef = ref(database, `${DB_POST_KEY}/${id}`);
+    remove(postRef);
   };
 
   render() {
-    const { message, file } = this.state;
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messageList.map((message) => (
-      <li
-        className="chat-bubble m-2 flex w-full flex-col justify-between"
-        key={message.key}
-      >
-        <section className="flex flex-row justify-between">
-          <p>{message.message}</p>
-          <div>
-            <img src={message.image} alt="nice" />
-          </div>
-          <button
-            className="m-0 text-xs text-slate-500 hover:text-slate-200"
-            id={message.key}
-            onClick={(e) => this.handleDelete(e)}
-          >
-            delete
-          </button>
-        </section>
-
-        <p className="ml-auto text-[10px]">{this.formatTime(message.date)}</p>
-      </li>
-    ));
-
     return (
-      <div className="flex h-screen w-screen flex-col  ">
-        <header className="flex flex-grow flex-col items-center justify-center bg-red-100">
-          <div className=" flex max-h-[75vh] w-1/2 flex-grow flex-col-reverse overflow-y-auto">
-            <ol className="chat-end m-1">{messageListItems}</ol>
+      <div className="flex h-max min-h-[93vh] w-screen flex-col bg-red-100 ">
+        <article className="mb-4 flex flex-grow flex-col items-center justify-center ">
+          {/* <button
+            onClick={() => {
+              return createUserWithEmailAndPassword(auth, email, password).then(
+                (userInfo) => console.log(userInfo),
+              );
+            }}
+          >
+            Signup
+          </button> */}
+          <div className=" w-12/12 grid max-h-[100vh] grid-cols-2 overflow-y-auto md:grid-cols-3 lg:grid-cols-4">
+            {this.state.postList.map((post) => (
+              <Post
+                key={post.key}
+                id={post.key}
+                comment={post.comment}
+                image={post.image}
+                date={post.date}
+                delete={this.handleDelete}
+              />
+            ))}
           </div>
-          <section className="m-4 flex w-full flex-row justify-center">
-            <form onSubmit={this.writeData} className="mr-2 w-3/4">
-              <input
-                type="file"
-                className="input input-bordered w-full "
-                id="file"
-                placeholder="What are you doing now?"
-                onChange={this.fileChange}
-              ></input>
+          {/* Input */}
+
+          <button
+            className="btn fixed bottom-16 m-2 bg-slate-100 opacity-90 shadow-xl hover:animate-bounce"
+            onClick={() => document.getElementById("my_modal_2").showModal()}
+          >
+            Share your daily Rocket 🚀
+          </button>
+          <dialog id="my_modal_2" className="modal">
+            <div className="modal-box">
+              <section className=" flex w-full flex-row justify-center">
+                <form onSubmit={this.writeData} className="mr-2 w-3/4">
+                  <input
+                    type="text"
+                    className="input input-bordered w-full "
+                    value={this.state.comment}
+                    id="comment"
+                    placeholder="What are you doing now?"
+                    onChange={this.handleChange}
+                  ></input>
+                  <input
+                    type="file"
+                    className="file-input file-input-bordered mt-1 w-full"
+                    placeholder="x"
+                    onChange={this.fileChange}
+                  ></input>
+                </form>
+                <button className="btn h-24" onClick={this.writeData}>
+                  Send
+                </button>
+              </section>
+            </div>
+            <form method="dialog" className="modal-backdrop">
+              <button>close</button>
             </form>
-            <button className="btn" onClick={this.writeData}>
-              Send
-            </button>
-          </section>
-        </header>
+          </dialog>
+        </article>
       </div>
     );
   }
