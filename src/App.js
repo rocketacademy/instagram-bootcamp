@@ -1,60 +1,143 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import React, { useState, useEffect } from "react";
+import { database, auth } from "./firebase";
+import {
+  ref,
+  onChildAdded,
+  onChildRemoved,
+  push,
+  set,
+} from "firebase/database";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import logo from "./logo.png";
 import "./App.css";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      messages: [],
-    };
-  }
+const App = () => {
+  const [messages, setMessages] = useState([]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [postMessage, setPostMessage] = useState("");
+  const [postTimestamp, setPostTimestamp] = useState("");
 
-  componentDidMount() {
+  useEffect(() => {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
-  }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    const childAddedUnsub = onChildAdded(messagesRef, (data) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { key: data.key, val: data.val() },
+      ]);
+    });
+
+    const childRemovedUnsub = onChildRemoved(messagesRef, (data) => {
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.key !== data.key)
+      );
+    });
+
+    const authUnsub = onAuthStateChanged(auth, (userInfo) => {
+      setIsLoggedIn(!!userInfo);
+    });
+
+    return () => {
+      childAddedUnsub();
+      childRemovedUnsub();
+      authUnsub();
+    };
+  }, []);
+
+  const handleLogin = async () => {
+    await signInWithEmailAndPassword(auth, email, password);
+    setEmail("");
+    setPassword("");
   };
 
-  render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
-      </div>
-    );
-  }
-}
+  const handleSignup = async () => {
+    await createUserWithEmailAndPassword(auth, email, password);
+    setEmail("");
+    setPassword("");
+  };
+
+  const handlePasswordReset = async () => {
+    await sendPasswordResetEmail(auth, email);
+    setEmail("");
+  };
+
+  const writeData = async (e) => {
+    e.preventDefault();
+    const messagesRef = ref(database, DB_MESSAGES_KEY);
+    const newMessageRef = push(messagesRef);
+    const currentTime = new Date().toUTCString(); // Current time in UTC format
+    await set(newMessageRef, {
+      message: postMessage,
+      timestamp: currentTime,
+    });
+    setPostMessage(""); // Clear the message input after submitting
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>Rocketgram</p>
+        {isLoggedIn ? (
+          <>
+            <form onSubmit={writeData}>
+              <input
+                type="text"
+                id="post"
+                placeholder="Post a message"
+                onChange={(e) => setPostMessage(e.target.value)}
+                value={postMessage}
+              />
+              <br />
+              <input type="submit" />
+            </form>
+            <button onClick={signOut}>Sign out</button>
+            <ol>
+              {messages.map((message) => (
+                <li key={message.key}>
+                  {message.val.message} - {message.val.timestamp}
+                </li>
+              ))}
+            </ol>
+          </>
+        ) : (
+          <>
+            <div>
+              <input
+                type="text"
+                id="email"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
+              <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+            </div>
+            <div>
+              <button onClick={handleSignup}>Sign up</button>
+              <button onClick={handleLogin}>Log in</button>
+              <button onClick={handlePasswordReset}>Forgot password</button>
+            </div>
+          </>
+        )}
+      </header>
+    </div>
+  );
+};
 
 export default App;
