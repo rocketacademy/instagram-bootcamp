@@ -1,10 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 
-// TODO: Replace with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -15,14 +13,9 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
 };
 
-// Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-// Initialize Auth
-const authInstance = getAuth(firebaseApp);
-
-// Get a reference to the database service and export the reference for other modules
 export const database = getDatabase(firebaseApp);
 export const storage = getStorage(firebaseApp);
-
 export const auth = getAuth(firebaseApp);
+export { updateProfile };

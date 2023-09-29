@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { database, auth, storage } from "./firebase";
+import { database, auth, storage, updateProfile } from "./firebase";
 import {
   ref,
   onChildAdded,
   onChildRemoved,
+  onChildChanged,
   push,
   set,
   get,
@@ -23,8 +24,6 @@ import {
   Box,
   Button,
   Input,
-  List,
-  ListItem,
   FormControl,
   FormLabel,
   Image,
@@ -65,13 +64,27 @@ const App = () => {
       );
     });
 
+    const childChangedUnsub = onChildChanged(messagesRef, (data) => {
+      setMessages((prevMessages) => {
+        return prevMessages.map((message) =>
+          message.key === data.key
+            ? { key: data.key, val: data.val() }
+            : message
+        );
+      });
+    });
+
     const authUnsub = onAuthStateChanged(auth, (userInfo) => {
       setIsLoggedIn(!!userInfo);
+      if (userInfo) {
+        setDisplayName(userInfo.displayName || "");
+      }
     });
 
     return () => {
       childAddedUnsub();
       childRemovedUnsub();
+      childChangedUnsub();
       authUnsub();
     };
   }, []);
@@ -83,9 +96,30 @@ const App = () => {
   };
 
   const handleSignup = async () => {
-    await createUserWithEmailAndPassword(auth, email, password);
-    setEmail("");
-    setPassword("");
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        // Auto-generate display name using UID for uniqueness
+        const defaultDisplayName =
+          "User" + userCredential.user.uid.substr(0, 6);
+
+        await updateProfile(userCredential.user, {
+          displayName: defaultDisplayName,
+        });
+
+        // Update state with the auto-generated display name
+        setDisplayName(defaultDisplayName);
+      }
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error("Error during signup: ", error);
+      alert("Error during signup. Try again?");
+    }
   };
 
   const handlePasswordReset = async () => {
@@ -107,46 +141,79 @@ const App = () => {
     const messageRef = ref(database, `${DB_MESSAGES_KEY}/${messageKey}`);
     const message = (await get(messageRef)).val();
 
-    let messageLikes = message.likes || [];
+    let messageLikes = message.likes || {};
 
-    if (messageLikes.includes(userID)) {
-      // Unlike
-      messageLikes = messageLikes.filter((id) => id !== userID);
+    if (messageLikes[userID]) {
+      delete messageLikes[userID]; // Unlike
     } else {
-      // Like
-      messageLikes.push(userID);
+      messageLikes[userID] = true; // Like
     }
 
     await update(messageRef, { likes: messageLikes });
   };
 
   const handleComment = async (messageKey) => {
-    const comment = comments[messageKey];
-    if (comment) {
-      const messageRef = ref(database, `${DB_MESSAGES_KEY}/${messageKey}`);
-      const message = (await get(messageRef)).val();
+    const commentText = comments[messageKey];
+    const currentCommentTime = new Date().toUTCString(); // Current time in UTC format
 
-      let messageComments = message.comments || [];
-      messageComments.push(comment);
+    if (commentText && auth.currentUser) {
+      // Fetching display name directly from auth.currentUser
+      const currentDisplayName = auth.currentUser.displayName;
 
-      await update(messageRef, { comments: messageComments });
-      // Update local state
-      setMessages((prevMessages) => {
-        return prevMessages.map((msg) => {
-          if (msg.key === messageKey) {
-            return {
-              ...msg,
-              val: {
-                ...msg.val,
-                comments: messageComments,
-              },
-            };
-          }
-          return msg;
+      try {
+        const messageRef = ref(database, `${DB_MESSAGES_KEY}/${messageKey}`);
+        const message = (await get(messageRef)).val();
+
+        const newComment = {
+          text: commentText,
+          timestamp: currentCommentTime,
+          displayName: currentDisplayName,
+        };
+
+        let messageComments = message.comments
+          ? [...message.comments, newComment]
+          : [newComment];
+
+        await update(messageRef, { comments: messageComments });
+
+        // Update local state to reflect the changes
+        setMessages((prevMessages) => {
+          return prevMessages.map((msg) => {
+            if (msg.key === messageKey) {
+              return {
+                ...msg,
+                val: {
+                  ...msg.val,
+                  comments: messageComments,
+                },
+              };
+            }
+            return msg;
+          });
         });
-      });
 
-      setComments({ ...comments, [messageKey]: "" }); // Clear the comment input
+        // Clear the comment input for the current message
+        setComments({ ...comments, [messageKey]: "" });
+      } catch (error) {
+        console.error("Error adding comment: ", error);
+        alert("Error adding comment. Please try again.");
+      }
+    }
+  };
+
+  const handleUpdateDisplayName = async () => {
+    try {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: displayName,
+        });
+        alert("Display name updated!");
+      } else {
+        throw new Error("User is not authenticated.");
+      }
+    } catch (error) {
+      console.error("Error updating display name: ", error);
+      alert("Error updating display name. Try again?");
     }
   };
 
@@ -168,7 +235,7 @@ const App = () => {
     await set(newMessageRef, {
       message: postMessage,
       timestamp: currentTime,
-      displayName, // from useState
+      displayName,
       imageUrl,
       likes: [],
       userId: auth.currentUser.uid, // Assuming 'auth' is your firebase auth instance
@@ -204,13 +271,27 @@ const App = () => {
               </FormControl>
               <Button type="submit">Submit</Button>
             </form>
+            <FormControl mt={4}>
+              <FormLabel>Update Display Name</FormLabel>
+              <HStack>
+                <Input
+                  type="text"
+                  placeholder="New Display Name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                />
+                <Button onClick={handleUpdateDisplayName}>Update</Button>
+              </HStack>
+            </FormControl>
             <Button onClick={handleSignOut}>Sign out</Button>
             <ol>
               {/* START of the mapping over messages */}
               {messages.map((message) => (
                 <Box key={message.key} p={4} borderWidth={1} borderRadius="lg">
-                  <Text fontSize="xl">{message.val.displayName}</Text>
-                  <Text>{message.val.message}</Text>
+                  <Text fontSize="l">
+                    {message.val.displayName}: {message.val.message} at{" "}
+                    {message.val.timestamp}
+                  </Text>
 
                   <Text>
                     {message.val.imageUrl && (
@@ -226,18 +307,24 @@ const App = () => {
                   <Button
                     onClick={() => handleLike(message.key)}
                     colorScheme={
-                      likedMessages.includes(message.key) ? "teal" : "gray"
+                      message.val.likes &&
+                      message.val.likes[auth.currentUser.uid]
+                        ? "teal"
+                        : "gray"
                     }
                   >
-                    Like
+                    Like {Object.keys(message.val.likes || {}).length}
                   </Button>
 
                   <FormControl>
                     {/* Displaying the Comments */}
                     <FormLabel>Comments</FormLabel>
                     {message.val.comments &&
-                      message.val.comments.map((comment) => (
-                        <Text key={comment}>{comment}</Text>
+                      message.val.comments.map((commentObj) => (
+                        <Text key={commentObj.text}>
+                          {commentObj.displayName}: {commentObj.text} at{" "}
+                          {commentObj.timestamp}
+                        </Text>
                       ))}
 
                     {/* Add a Comment Form */}
