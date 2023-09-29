@@ -86,9 +86,25 @@ class App extends React.Component {
     //   console.log("its me , ", snapshot);
     // });
 
-    // onChildChanged(messagesRef, (snapshot) => {
-    //   console.log("hello", snapshot.val().likes);
-    // });
+    onChildChanged(messagesRef, (snapshot) => {
+      // snapshot is specifically just the child in firebase that you edited. The typeof is snapshot.
+      // will need to use .key or .val() to get meaningful information.
+      // console.log(snapshot);
+
+      // console.log("default messages: ", this.state.messages);
+
+      const replaceIndex = this.state.messages.findIndex(
+        (message) => message.key === snapshot.key
+      );
+
+      const existingMessages = this.state.messages;
+      const updatedMessage = { key: snapshot.key, val: snapshot.val() };
+
+      existingMessages.splice(replaceIndex, 1, updatedMessage);
+      this.setState({
+        messages: existingMessages,
+      });
+    });
   }
 
   handleTextChange = (ev) => {
@@ -128,26 +144,6 @@ class App extends React.Component {
         likes: data.likes + 1,
       });
     });
-
-    // onValue(childToIncrementLike, (snapshot) => {
-    //   const data = snapshot.val();
-    //   return data;
-    // }).then((data) => {
-    //   console.log(data);
-    //   set(childToIncrementLike, {
-    //     text: data.text,
-    //     timestamp: data.timestamp,
-    //     fileURL: data.fileURL,
-    //     likes: data.likes + 1,
-    //   });
-    // });
-
-    // get(childToIncrementLike).then((snapshot) => {
-    //   console.log(snapshot.val().likes);
-    // });
-
-    // console.log(childToIncrementLike);
-    // const existingLikes = childToIncrementLike
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
