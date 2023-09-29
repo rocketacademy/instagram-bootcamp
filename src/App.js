@@ -31,6 +31,11 @@ import {
   VStack,
   HStack,
   IconButton,
+  Tab,
+  Tabs,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from "@chakra-ui/react";
 import { AddIcon, MinusIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
@@ -245,110 +250,138 @@ const App = () => {
     setFile(null);
   };
 
+  // New code
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>Welcome to Spygram - where your data doesn't belong to you.</p>
+
         {isLoggedIn ? (
-          <>
-            <form onSubmit={writeData}>
-              <FormControl>
-                <FormLabel>Message</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Post a message"
-                  onChange={(e) => setPostMessage(e.target.value)}
-                  value={postMessage}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Upload Image</FormLabel>
-                <Input
-                  type="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                />
-              </FormControl>
-              <Button type="submit">Submit</Button>
-            </form>
-            <FormControl mt={4}>
-              <FormLabel>Update Display Name</FormLabel>
-              <HStack>
-                <Input
-                  type="text"
-                  placeholder="New Display Name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                />
-                <Button onClick={handleUpdateDisplayName}>Update</Button>
-              </HStack>
-            </FormControl>
-            <Button onClick={handleSignOut}>Sign out</Button>
-            <ol>
-              {/* START of the mapping over messages */}
-              {messages.map((message) => (
-                <Box key={message.key} p={4} borderWidth={1} borderRadius="lg">
-                  <Text fontSize="l">
-                    {message.val.displayName}: {message.val.message} at{" "}
-                    {message.val.timestamp}
-                  </Text>
+          <Tabs variant="enclosed">
+            <TabList>
+              <Tab>User Profile</Tab>
+              <Tab>Newsfeed</Tab>
+              <Tab>Compose</Tab>
+            </TabList>
 
-                  <Text>
-                    {message.val.imageUrl && (
-                      <Image
-                        src={message.val.imageUrl}
-                        alt="Uploaded content"
-                        boxSize="400px"
-                        objectFit="cover"
-                      />
-                    )}
-                  </Text>
-
-                  <Button
-                    onClick={() => handleLike(message.key)}
-                    colorScheme={
-                      message.val.likes &&
-                      message.val.likes[auth.currentUser.uid]
-                        ? "teal"
-                        : "gray"
-                    }
-                  >
-                    Like {Object.keys(message.val.likes || {}).length}
-                  </Button>
-
-                  <FormControl>
-                    {/* Displaying the Comments */}
-                    <FormLabel>Comments</FormLabel>
-                    {message.val.comments &&
-                      message.val.comments.map((commentObj) => (
-                        <Text key={commentObj.text}>
-                          {commentObj.displayName}: {commentObj.text} at{" "}
-                          {commentObj.timestamp}
-                        </Text>
-                      ))}
-
-                    {/* Add a Comment Form */}
-                    <FormLabel>Add a Comment</FormLabel>
+            <TabPanels>
+              <TabPanel>
+                {/* User Profile code goes here */}
+                <FormControl mt={4}>
+                  <FormLabel>Update Display Name</FormLabel>
+                  <HStack>
                     <Input
                       type="text"
-                      placeholder="Your comment..."
-                      onChange={(e) =>
-                        setComments({
-                          ...comments,
-                          [message.key]: e.target.value,
-                        })
-                      }
-                      value={comments[message.key] || ""}
+                      placeholder="New Display Name"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
                     />
-                    <Button mt={2} onClick={() => handleComment(message.key)}>
-                      Post Comment
-                    </Button>
+                    <Button onClick={handleUpdateDisplayName}>Update</Button>
+                  </HStack>
+                </FormControl>
+                <Button onClick={handleSignOut}>Sign out</Button>
+              </TabPanel>
+
+              <TabPanel>
+                {/* Newsfeed code goes here */}
+                <ol>
+                  {/* START of the mapping over messages */}
+                  {messages.map((message) => (
+                    <Box
+                      key={message.key}
+                      p={4}
+                      borderWidth={1}
+                      borderRadius="lg"
+                    >
+                      <Text fontSize="l">
+                        {message.val.displayName}: {message.val.message} at{" "}
+                        {message.val.timestamp}
+                      </Text>
+
+                      <Text>
+                        {message.val.imageUrl && (
+                          <Image
+                            src={message.val.imageUrl}
+                            alt="Uploaded content"
+                            boxSize="400px"
+                            objectFit="cover"
+                          />
+                        )}
+                      </Text>
+
+                      <Button
+                        onClick={() => handleLike(message.key)}
+                        colorScheme={
+                          message.val.likes &&
+                          message.val.likes[auth.currentUser.uid]
+                            ? "teal"
+                            : "gray"
+                        }
+                      >
+                        Like {Object.keys(message.val.likes || {}).length}
+                      </Button>
+
+                      <FormControl>
+                        {/* Displaying the Comments */}
+                        <FormLabel>Comments</FormLabel>
+                        {message.val.comments &&
+                          message.val.comments.map((commentObj) => (
+                            <Text key={commentObj.text}>
+                              {commentObj.displayName}: {commentObj.text} at{" "}
+                              {commentObj.timestamp}
+                            </Text>
+                          ))}
+
+                        {/* Add a Comment Form */}
+                        <FormLabel>Add a Comment</FormLabel>
+                        <Input
+                          type="text"
+                          placeholder="Your comment..."
+                          onChange={(e) =>
+                            setComments({
+                              ...comments,
+                              [message.key]: e.target.value,
+                            })
+                          }
+                          value={comments[message.key] || ""}
+                        />
+                        <Button
+                          mt={2}
+                          onClick={() => handleComment(message.key)}
+                        >
+                          Post Comment
+                        </Button>
+                      </FormControl>
+                    </Box>
+                  ))}{" "}
+                </ol>
+              </TabPanel>
+
+              <TabPanel>
+                {/* Compose code goes here */}
+                <form onSubmit={writeData}>
+                  <FormControl>
+                    <FormLabel>Message</FormLabel>
+                    <Input
+                      type="text"
+                      placeholder="Post a message"
+                      onChange={(e) => setPostMessage(e.target.value)}
+                      value={postMessage}
+                    />
                   </FormControl>
-                </Box>
-              ))}
-              {/* END of the mapping over messages */}
-            </ol>
-          </>
+                  <FormControl>
+                    <FormLabel>Upload Image</FormLabel>
+                    <Input
+                      type="file"
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                  </FormControl>
+                  <Button type="submit">Submit</Button>
+                </form>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         ) : (
           <>
             <FormControl>
