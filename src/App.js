@@ -18,7 +18,7 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import logo from "./logo.png";
+import logo from "./Spygram.png";
 import "./App.css";
 import {
   Box,
@@ -249,7 +249,7 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Rocketgram</p>
+        <p>Welcome to Spygram - where your data doesn't belong to you.</p>
         {isLoggedIn ? (
           <>
             <form onSubmit={writeData}>
