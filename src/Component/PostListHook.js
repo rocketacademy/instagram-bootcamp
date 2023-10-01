@@ -4,30 +4,33 @@ import { onChildAdded, ref } from "firebase/database";
 import { realTimeDatabase } from "../firebase";
 import { useState, useEffect } from "react";
 import CommentForm from "./CommentForm";
-import CommentList from "./CommentList";
 
 const REALTIME_DATABASE_KEY = "posts";
-// const REALTIME_DATABASE_KEY_COMMENTS = "posts-comments";
+const REALTIME_DATABASE_KEY_COMMENTS = "comments/";
 
 export default function MessageList() {
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState({});
-  // const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([]);
 
+  //useEffect for posts
   useEffect(() => {
     const postListRef = ref(realTimeDatabase, REALTIME_DATABASE_KEY);
-    // const commentListRef = ref(
-    //   realTimeDatabase,
-    //   REALTIME_DATABASE_KEY_COMMENTS + postListRef.key
-    // );
-
     onChildAdded(postListRef, (data) => {
       setPosts((state) => [...state, { key: data.key, val: data.val() }]);
     });
+  }, []);
 
-    // onChildAdded(commentListRef, (data) => {
-    //   setComments((state) => [...state, { key: data.key, val: data.val() }]);
-    // });
+  //useEffect for comments in post
+  useEffect(() => {
+    const commentListRef = ref(
+      realTimeDatabase,
+      REALTIME_DATABASE_KEY_COMMENTS
+    );
+
+    onChildAdded(commentListRef, (data) => {
+      setComments((state) => [...state, { key: data.key, val: data.val() }]);
+    });
   }, []);
 
   return (
@@ -46,8 +49,21 @@ export default function MessageList() {
                 <h3>{postItem.val.description}</h3>
                 <p>{postItem.val.date}</p>
               </div>
-              <CommentList />
-              <CommentForm setUser={setUser} />
+              <div>
+                <ol>
+                  {comments && comments.length > 0
+                    ? comments.map((commentsItem) => (
+                        <li key={commentsItem.key}>
+                          <div>
+                            <h2>{commentsItem.val.comment}</h2>
+                            <p>{commentsItem.val.date}</p>
+                          </div>
+                        </li>
+                      ))
+                    : null}
+                </ol>
+              </div>
+              <CommentForm setUser={setUser} setPosts={setPosts} />
             </li>
           ))
         ) : (

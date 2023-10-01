@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { push, ref, set } from "firebase/database";
-import { realTimeDatabase } from "../firebase";
+import { auth, realTimeDatabase } from "../firebase";
 
-const REALTIME_DATABASE_KEY = "comments";
+const REALTIME_DATABASE_KEY = "comments/";
 
 export default function CommentForm() {
   const [comment, setComment] = useState("");
@@ -13,6 +13,7 @@ export default function CommentForm() {
     const newCommentRef = push(commentListRef);
 
     set(newCommentRef, {
+      user: auth.currentUser.displayName,
       comment: comment,
       date: new Date().toLocaleTimeString(),
     });

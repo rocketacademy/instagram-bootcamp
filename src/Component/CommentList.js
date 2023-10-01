@@ -4,7 +4,7 @@ import { onChildAdded, ref } from "firebase/database";
 import { realTimeDatabase } from "../firebase";
 import { useState, useEffect } from "react";
 
-const REALTIME_DATABASE_KEY = "comments";
+const REALTIME_DATABASE_KEY = "comments/";
 
 export default function CommentList() {
   const [comments, setComments] = useState([]);
