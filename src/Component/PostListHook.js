@@ -11,6 +11,7 @@ const REALTIME_DATABASE_KEY = "posts";
 
 export default function MessageList() {
   const [posts, setPosts] = useState([]);
+  const [user, setUser] = useState({});
   // const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -36,17 +37,17 @@ export default function MessageList() {
           posts.map((postItem) => (
             <li key={postItem.key}>
               <div>
-                <h3>{postItem.val.description}</h3>
-                <p>{postItem.val.date}</p>
-
+                {postItem.val.user}
                 {postItem.val.url ? (
                   <img src={postItem.val.url} alt={postItem.val.name} />
                 ) : (
                   <p>No images</p>
                 )}
+                <h3>{postItem.val.description}</h3>
+                <p>{postItem.val.date}</p>
               </div>
               <CommentList />
-              <CommentForm />
+              <CommentForm setUser={setUser} />
             </li>
           ))
         ) : (

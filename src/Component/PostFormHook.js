@@ -1,6 +1,6 @@
 import React from "react";
 import { push, ref, set } from "firebase/database";
-import { realTimeDatabase, storage } from "../firebase";
+import { auth, realTimeDatabase, storage } from "../firebase";
 import {
   ref as storageRef,
   uploadBytes,
@@ -21,6 +21,7 @@ export default function PostForm() {
     const newPostRef = push(postListRef);
 
     set(newPostRef, {
+      user: auth.currentUser.displayName,
       description: description,
       date: new Date().toLocaleTimeString(),
       url: url,

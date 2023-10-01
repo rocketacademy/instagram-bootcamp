@@ -40,8 +40,8 @@ function App() {
         ) : null}
         {isLoggedIn ? (
           <div>
-            <PostListHook />
-            <PostFormHook />
+            <PostListHook setUser={setUser} />
+            <PostFormHook setUser={setUser} />
           </div>
         ) : (
           <AuthForm setUser={setUser} />

@@ -18,10 +18,7 @@ export default function CommentList() {
     // });
 
     onChildAdded(commentListRef, (data) => {
-      setComments((state) => [
-        ...state,
-        { key: data.key, val: data.val().author },
-      ]);
+      setComments((state) => [...state, { key: data.key, val: data.val() }]);
     });
   }, []);
 
