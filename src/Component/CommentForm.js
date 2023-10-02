@@ -5,14 +5,18 @@ import { auth, realTimeDatabase } from "../firebase";
 
 const REALTIME_DATABASE_KEY = "comments/";
 
-export default function CommentForm() {
+export default function CommentForm({ postId }) {
   const [comment, setComment] = useState("");
 
   const writeData = () => {
-    const commentListRef = ref(realTimeDatabase, REALTIME_DATABASE_KEY);
+    const commentListRef = ref(
+      realTimeDatabase,
+      REALTIME_DATABASE_KEY + postId
+    );
     const newCommentRef = push(commentListRef);
 
     set(newCommentRef, {
+      postId: postId,
       user: auth.currentUser.displayName,
       comment: comment,
       date: new Date().toLocaleTimeString(),

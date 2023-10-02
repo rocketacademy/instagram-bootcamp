@@ -28,7 +28,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {isLoggedIn ? <h2>Welcome back {user.displayName}</h2> : null}
+        {isLoggedIn ? (
+          <h2>Welcome back {auth.currentUser.displayName}</h2>
+        ) : null}
         {isLoggedIn ? (
           <button
             onClick={() => {
