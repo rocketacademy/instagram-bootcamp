@@ -28,18 +28,23 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {isLoggedIn ? (
-          <h2>Welcome back {auth.currentUser.displayName}</h2>
-        ) : null}
-        {isLoggedIn ? (
-          <button
-            onClick={() => {
-              signOut(auth);
-            }}
-          >
-            LogOut
-          </button>
-        ) : null}
+        <div className="welcome-logout">
+          {isLoggedIn ? (
+            <h2 className="welcome-back">
+              Welcome back {auth.currentUser.displayName}!
+            </h2>
+          ) : null}
+          {isLoggedIn ? (
+            <button
+              className="logout-button"
+              onClick={() => {
+                signOut(auth);
+              }}
+            >
+              LogOut
+            </button>
+          ) : null}
+        </div>
         {isLoggedIn ? (
           <div>
             <PostListHook setUser={setUser} />

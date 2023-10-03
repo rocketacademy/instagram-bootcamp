@@ -37,54 +37,53 @@ export default function AuthForm({ setUser }) {
     <div className="main-container">
       <div className="SU-SI-Container">
         <label>User Name</label>
-        <br />
         <input
+          className="auth-input"
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder="User Name Here"
         />
-        <br />
         <label>Email</label>
-        <br />
         <input
+          className="auth-input"
           type="text"
           value={newEmail}
           onChange={(e) => setNewEmail(e.target.value)}
           placeholder="Email Here"
         />
-        <br />
         <label>Password</label>
-        <br />
         <input
-          type="text"
+          className="auth-input"
+          type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="Password Here"
         />
-        <br />
-        <button onClick={signUp}>Sign Up</button>
+        <button className="auth-button" onClick={signUp}>
+          Sign Up
+        </button>
       </div>
       <div className="SU-SI-Container">
         <label>Email</label>
-        <br />
         <input
+          className="auth-input"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email Here"
         />
-        <br />
         <label>Password</label>
-        <br />
         <input
-          type="text"
+          className="auth-input"
+          type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password Here"
         />
-        <br />
-        <button onClick={signIn}>Sign In</button>
+        <button className="auth-button" onClick={signIn}>
+          Sign In
+        </button>
       </div>
     </div>
   );

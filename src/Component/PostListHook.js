@@ -4,6 +4,7 @@ import { onChildAdded, ref } from "firebase/database";
 import { realTimeDatabase } from "../firebase";
 import { useState, useEffect } from "react";
 import CommentList from "./CommentList";
+import "./PostListHook.css";
 
 const REALTIME_DATABASE_KEY = "posts";
 
@@ -20,29 +21,31 @@ export default function MessageList() {
   }, []);
 
   return (
-    <div>
-      <ol>
-        {posts && posts.length > 0 ? (
-          posts.map((postItem) => (
-            <li key={postItem.key}>
-              <div>
-                {postItem.val.user}
-                {postItem.val.url ? (
-                  <img src={postItem.val.url} alt={postItem.val.name} />
-                ) : (
-                  <p>No images</p>
-                )}
-                <h3>{postItem.val.description}</h3>
-                <p>{postItem.val.date}</p>
-                <p>{postItem.val.year}</p>
+    <div className="all-posts">
+      {posts && posts.length > 0 ? (
+        posts.map((postItem) => (
+          <div key={postItem.key} className="post-it-main-container">
+            <div className="post-it-container">
+              {postItem.val.url ? (
+                <img src={postItem.val.url} alt={postItem.val.name} />
+              ) : (
+                <p>No images</p>
+              )}
+              <div className="post-content">
+                <p>
+                  Created by {postItem.val.user}
+                  <br />
+                  {postItem.val.date}
+                </p>
+                <p>{postItem.val.description}</p>
               </div>
-              <CommentList postId={postItem.key} setUser={setUser} />
-            </li>
-          ))
-        ) : (
-          <p>No Posts Yet</p>
-        )}
-      </ol>
+            </div>
+            <CommentList postId={postItem.key} setUser={setUser} />
+          </div>
+        ))
+      ) : (
+        <p>No Posts Yet</p>
+      )}
     </div>
   );
 }

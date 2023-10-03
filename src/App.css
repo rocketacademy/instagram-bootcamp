@@ -10,14 +10,28 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  font-family: monospace;
 }
 
-p {
-  font-size: 15px;
+.welcome-logout {
+  background-color: rgb(244, 175, 189);
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(64, 152, 253);
 }
 
-input {
-  width: 300px;
-  height: 40px;
+h2.welcome-back {
+  padding: 10px;
+  padding-right: 50px;
+}
+
+.logout-button {
+  padding: 10px;
+  background-color: rgb(147 197 253);
+  border-left: 1px solid rgb(64, 152, 253);
+  border-right: 1px solid rgb(64, 152, 253);
+  color: #fff;
+  cursor: pointer;
 }

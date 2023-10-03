@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { push, ref, set } from "firebase/database";
 import { auth, realTimeDatabase } from "../firebase";
+import "./CommentForm.css";
 
 const REALTIME_DATABASE_KEY = "comments/";
 
@@ -26,18 +27,18 @@ export default function CommentForm({ postId }) {
   };
 
   return (
-    <div>
-      <label>Comment</label>
-      <br />
+    <div className="comment-form">
       <input
+        className="comment-box"
         type="text"
         name="comment"
         value={comment}
         placeholder="Insert Comments Here"
         onChange={(e) => setComment(e.target.value)}
       />
-      <br />
-      <button onClick={writeData}>Submit</button>
+      <button className="comment-button" onClick={writeData}>
+        Submit
+      </button>
     </div>
   );
 }

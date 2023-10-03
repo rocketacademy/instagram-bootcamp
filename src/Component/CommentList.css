@@ -1,0 +1,26 @@
+div.all-comments {
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: left;
+  margin: 50px;
+  padding: 40px;
+  background-color: white;
+}
+
+div.comment-main-container {
+  margin: auto;
+  color: rgb(64, 152, 253);
+  text-align: left;
+}
+
+.comments-container {
+  justify-content: left;
+}
+
+.comments {
+  font-size: larger;
+}
+
+.creator-time {
+  font-size: medium;
+}

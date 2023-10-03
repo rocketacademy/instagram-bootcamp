@@ -7,6 +7,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { useState } from "react";
+import "./PostFormHook.css";
 
 const REALTIME_DATABASE_KEY = "posts";
 const STORAGE_KEY = "posts/";
@@ -46,29 +47,31 @@ export default function PostForm() {
   };
 
   return (
-    <div className="posts">
-      <h1>Posts</h1>
-      <input
-        type="file"
-        name="file"
-        value={fileInputValue}
-        onChange={(e) => {
-          setFileInputFile(e.target.files[0]);
-          setFileInputValue(e.target.file);
-        }}
-      />
-      <br />
-      <label>Description</label>
-      <br />
-      <input
-        type="text"
-        name="description"
-        value={description}
-        placeholder="Insert Description Here"
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <br />
-      <button onClick={submit}>Submit</button>
+    <div className="post-container">
+      <h1 className="post-header">UPLOAD POST</h1>
+      <div className="file-post-container">
+        <input
+          type="file"
+          name="file"
+          value={fileInputValue}
+          onChange={(e) => {
+            setFileInputFile(e.target.files[0]);
+            setFileInputValue(e.target.file);
+          }}
+        />
+        <br />
+        <input
+          type="text"
+          name="description"
+          value={description}
+          placeholder="Insert Description Here"
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <br />
+        <button className="post-form-button" onClick={submit}>
+          Submit
+        </button>
+      </div>
     </div>
   );
 }
