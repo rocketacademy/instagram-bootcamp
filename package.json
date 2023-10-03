@@ -33,8 +33,6 @@
     ]
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.3",
-    "css.lint.unknownAtRules": "ignore",
-    "scss.lint.unknownAtRules": "ignore"
+    "tailwindcss": "^3.3.3"
   }
 }
