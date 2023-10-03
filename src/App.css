@@ -20,7 +20,7 @@
   flex-direction: column;
 }
 
-/* Your existing styles */
+/* New styles for the chat application */
 
 body {
   background-color: #f9f9f9;
@@ -41,7 +41,9 @@ body {
 }
 
 .incoming {
-  background-color: #efefef;
+  color: #0084ff;
+  background-color: white;
+
   align-self: flex-start;
 }
 

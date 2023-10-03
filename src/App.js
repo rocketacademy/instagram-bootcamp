@@ -36,9 +36,6 @@ const App = () => {
   const [nickname, setNickname] = useState("");
   const [isNicknameSet, setIsNicknameSet] = useState(false);
 
-  // Assuming you have the UID of the current user
-  const currentUserUID = "uid_of_current_user"; // Replace this with the actual UID
-
   // Effect hook to handle component mounting and unmounting
   useEffect(() => {
     // Firebase database reference for messages
@@ -188,7 +185,7 @@ const App = () => {
         set(newMessageRef, {
           message: newMessage,
           datetime,
-          user: currentUserUID, // Modified to use currentUserUID
+          user: user.uid, // Modified to use user.uid
         });
         setNewMessage("");
       } catch (error) {
@@ -275,9 +272,7 @@ const App = () => {
                       <div
                         key={message.key}
                         className={`message ${
-                          message.user === currentUserUID
-                            ? "outgoing"
-                            : "incoming"
+                          message.user === user.uid ? "outgoing" : "incoming"
                         }`}
                       >
                         <div className="message-buttons">
@@ -308,7 +303,7 @@ const App = () => {
                           <span className="message-metadata">
                             {message.datetime}
                             &nbsp;
-                            {message.user === currentUserUID
+                            {message.user === user.uid
                               ? nickname || email
                               : "Other User"}
                           </span>
