@@ -1,0 +1,22 @@
+div.comment-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 10px;
+}
+button.comment-button {
+  padding: 10px 20px;
+  background-color: rgb(147 197 253);
+  border-radius: 10px;
+  box-shadow: 1px 1px 3px rgb(69, 132, 205);
+  color: #fff;
+  cursor: pointer;
+}
+
+input.comment-box {
+  flex: 1;
+  margin-right: 20px;
+  padding: 10px;
+  border: 1px solid rgb(147 197 253);
+}
