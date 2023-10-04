@@ -266,7 +266,6 @@ const App = () => {
                   <button onClick={handleNicknameEdit}>
                     Edit Nickname
                   </button>{" "}
-                  {/* Moved here */}
                   <div className="chat-container">
                     {messages.map((message, index) => (
                       <div
