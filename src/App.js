@@ -239,30 +239,6 @@ class App extends React.Component {
     }
   };
 
-  displayedLikes = (childinstance) => {
-    // console.log("displayed");
-    onValue(
-      ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${childinstance}`),
-      (snapshot) => {
-        // console.log(snapshot.val())
-        let newLikes = snapshot.val().likes;
-        return newLikes;
-      }
-    );
-  };
-
-  // displayedLikes = (childinstance) => {
-  //   get(ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${childinstance}`)).then(
-  //     (snapshot) => {
-  //       // console.log("hey");
-  //       // console.log(snapshot);
-  //       // console.log(snapshot.val().likes);
-  //       console.log("triggered");
-  //       return snapshot.val().likes;
-  //     }
-  //   );
-  // };
-
   scrollToBottom = () => {
     if (this.chatWindow.current) {
       const lastMsg = this.chatWindow.current.lastChild;
@@ -271,13 +247,6 @@ class App extends React.Component {
       }
     }
   };
-
-  // //  THIS WORKS, But doesnt have the smooth behaviour
-  // scrollToBottom = () => {
-  //   if (this.chatWindow.current) {
-  //     this.chatWindow.current.scrollTop = this.chatWindow.current.scrollHeight;
-  //   }
-  // };
 
   render() {
     // Convert messages in state to message JSX elements to render
@@ -305,16 +274,6 @@ class App extends React.Component {
             </p>
 
             <p>{message.val.likes}</p>
-            {/* <p>{this.displayedLikes(message.key)}</p> */}
-            {/* 
-            <p>
-              {onValue(
-                ref(realTimeDatabase, `${DB_MESSAGES_KEY}/${message.key}`),
-                (snapshot) => (
-                  <p>snapshot.val().likes</p>
-                )
-              )}
-            </p> */}
 
             <input
               type="button"
