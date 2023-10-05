@@ -1,0 +1,28 @@
+/* ChatInput.css */
+form {
+  display: flex;
+  margin-top: 20px;
+}
+
+form input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid white;
+  font-size: 14px;
+}
+
+form button {
+  background-color: #0084ff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  margin-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+form button:disabled {
+  background-color: white;
+}

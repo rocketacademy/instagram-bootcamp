@@ -1,0 +1,64 @@
+/* Styles for the message container */
+.message {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+/* Styles for the message content */
+.message-content {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+}
+
+/* Styles for the delete and edit buttons */
+.message .message-content .message-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+}
+
+.message .message-content .delete-button {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+.message .message-content .delete-button:hover {
+  color: #ff0000;
+}
+
+.message .message-content .edit-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #808080;
+  cursor: pointer;
+}
+
+.message .message-content .edit-button:hover {
+  color: #0084ff;
+}
+
+/* Styles for the message text */
+.message .message-content .message-text {
+  margin-bottom: 5px;
+}
+
+/* Styles for the message metadata */
+.message .message-content .message-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #808080;
+}

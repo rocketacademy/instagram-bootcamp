@@ -1,126 +1,14 @@
-/* Your existing styles */
-
+/* App.css */
 .App {
   text-align: center;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: skyblue;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: red;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-}
-
-/* New styles for the chat application */
-
-body {
-  background-color: #f9f9f9;
-}
-
-.chat-container {
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-.message {
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 10px;
-  max-width: 70%;
-  word-wrap: break-word;
-  position: relative;
-}
-
-.incoming {
-  color: #0084ff;
-  background-color: white;
-
-  align-self: flex-start;
-}
-
-.outgoing {
-  background-color: #0084ff;
-  color: white;
-  align-self: flex-end;
-}
-
-.message .delete-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: none;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.message .edit-button {
-  position: absolute;
-  top: 5px;
-  right: 25px;
-  background: none;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.message button {
-  background: none;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.message .metadata {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 5px;
-}
-
-.message .metadata .datetime {
-  font-size: 10px;
-  color: #999;
-}
-
-.message .metadata .user {
-  font-size: 10px;
-  color: #999;
-}
-
-form {
-  display: flex;
-  margin-top: 20px;
-}
-
-form input[type="text"] {
-  flex: 1;
-  padding: 10px;
-  border-radius: 25px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-form button {
-  background-color: #0084ff;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  margin-left: 10px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-form button:disabled {
-  background-color: #ccc;
 }

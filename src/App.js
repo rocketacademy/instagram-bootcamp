@@ -1,16 +1,10 @@
-// Import necessary modules and functions
+// App.js
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import {
-  onChildAdded,
-  onChildChanged,
-  onChildRemoved,
-  push,
-  ref,
-  set,
-  remove,
-  get,
-} from "firebase/database";
+import "./ChatContainer.css";
+import "./ChatInput.css";
+import "./Message.css";
+import { get, push, ref, remove, set } from "firebase/database";
 import { database, auth } from "./firebase";
 import {
   createUserWithEmailAndPassword,
@@ -19,13 +13,18 @@ import {
   signOut,
   sendPasswordResetEmail as sendPasswordResetEmailFirebase,
 } from "firebase/auth";
+import Message from "./Component/Message";
+import ChatContainer from "./Component/ChatContainer";
+import ChatInput from "./Component/ChatInput";
+import {
+  onChildAdded,
+  onChildChanged,
+  onChildRemoved,
+} from "firebase/database";
 
-// Key for messages in the database
 const DB_MESSAGES_KEY = "messages";
 
-// Define the main component
 const App = () => {
-  // State variables to manage different aspects of the app
   const [messages, setMessages] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,12 +35,9 @@ const App = () => {
   const [nickname, setNickname] = useState("");
   const [isNicknameSet, setIsNicknameSet] = useState(false);
 
-  // Effect hook to handle component mounting and unmounting
   useEffect(() => {
-    // Firebase database reference for messages
     const messagesRef = ref(database, DB_MESSAGES_KEY);
 
-    // Event listeners for database changes
     const messagesAddedListener = onChildAdded(messagesRef, (data) => {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -87,25 +83,21 @@ const App = () => {
         setUser(user);
         setIsLoggedIn(true);
         setIsInputEnabled(true);
-        // Removed setShowChat as it was not being used
       } else {
         setUser(null);
         setIsLoggedIn(false);
         setIsInputEnabled(false);
-        // Removed setShowChat as it was not being used
       }
     });
 
-    // Clean up event listeners on component unmount
     return () => {
       messagesAddedListener();
       messagesChangedListener();
       messagesRemovedListener();
       authStateChangedListener();
     };
-  }, []); // Empty dependency array means this effect runs only once on mount
+  }, []);
 
-  // Handler for user signup
   const handleSignup = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -126,7 +118,6 @@ const App = () => {
     }
   };
 
-  // Handler for user login
   const handleLogin = async () => {
     try {
       if (!email || !password) {
@@ -153,21 +144,17 @@ const App = () => {
     }
   };
 
-  // Handler to enable nickname editing
   const handleNicknameEdit = () => {
     setIsNicknameSet(false);
   };
 
-  // Handler to save edited nickname
   const handleNicknameSave = () => {
     setIsNicknameSet(true);
 
-    // Save the nickname to the database
     const userNicknameRef = ref(database, `users/${user.uid}/nickname`);
     set(userNicknameRef, nickname);
   };
 
-  // Handler for message submission
   const handleSubmit = (event) => {
     event.preventDefault();
     if (newMessage.trim() !== "") {
@@ -185,7 +172,7 @@ const App = () => {
         set(newMessageRef, {
           message: newMessage,
           datetime,
-          user: user.uid, // Modified to use user.uid
+          user: user.uid,
         });
         setNewMessage("");
       } catch (error) {
@@ -194,28 +181,23 @@ const App = () => {
     }
   };
 
-  // Handler for input change in the new message input field
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
   };
 
-  // Handler for input change in the email input field
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
 
-  // Handler for input change in the password input field
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  // Handler to delete a message
   const handleDeleteMessage = (messageKey) => {
     const messageRef = ref(database, `${DB_MESSAGES_KEY}/${messageKey}`);
     remove(messageRef);
   };
 
-  // Handler to clear the message log
   const handleClearLog = () => {
     setMessages([]);
 
@@ -223,7 +205,6 @@ const App = () => {
     remove(messageListRef);
   };
 
-  // Handler to log out the user
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -233,7 +214,6 @@ const App = () => {
     }
   };
 
-  // Handler to send a password reset email
   const handleResetPassword = async () => {
     try {
       await sendPasswordResetEmailFirebase(auth, email);
@@ -243,7 +223,6 @@ const App = () => {
     }
   };
 
-  // Handler to edit a message
   const handleEditMessage = (messageKey, editedMessage) => {
     const messageRef = ref(
       database,
@@ -252,7 +231,6 @@ const App = () => {
     set(messageRef, editedMessage);
   };
 
-  // Render the main component
   return (
     <div className="App">
       <header className="App-header">
@@ -263,66 +241,21 @@ const App = () => {
               {isNicknameSet ? (
                 <>
                   <button onClick={handleLogout}>Logout</button>
-                  <button onClick={handleNicknameEdit}>
-                    Edit Nickname
-                  </button>{" "}
-                  <div className="chat-container">
-                    {messages.map((message, index) => (
-                      <div
-                        key={message.key}
-                        className={`message ${
-                          message.user === user.uid ? "outgoing" : "incoming"
-                        }`}
-                      >
-                        <div className="message-buttons">
-                          <button
-                            className="edit-button"
-                            onClick={() => {
-                              const editedMessage = prompt(
-                                "Edit message:",
-                                message.message
-                              );
-                              if (editedMessage !== null) {
-                                handleEditMessage(message.key, editedMessage);
-                              }
-                            }}
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            className="delete-button"
-                            onClick={() => handleDeleteMessage(message.key)}
-                          >
-                            ❌
-                          </button>
-                        </div>
-                        <div className="message-content">
-                          {message.message}
-                          <br />
-                          <span className="message-metadata">
-                            {message.datetime}
-                            &nbsp;
-                            {message.user === user.uid
-                              ? nickname || email
-                              : "Other User"}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <form onSubmit={handleSubmit}>
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={handleInputChange}
-                      placeholder="Enter a message"
-                      disabled={!isInputEnabled}
-                    />
-                    <button type="submit" disabled={!isInputEnabled}>
-                      Send
-                    </button>
-                    <br />
-                  </form>
+                  <button onClick={handleNicknameEdit}>Edit Nickname</button>
+                  <ChatContainer
+                    messages={messages}
+                    user={user}
+                    onDeleteMessage={handleDeleteMessage}
+                    onEditMessage={handleEditMessage}
+                    MessageComponent={Message} // Pass Message component without self-closing tag
+                  />
+
+                  <ChatInput
+                    newMessage={newMessage}
+                    onInputChange={handleInputChange}
+                    onSubmit={handleSubmit}
+                    isInputEnabled={isInputEnabled}
+                  />
                   <button onClick={handleClearLog}>Clear Log</button>
                 </>
               ) : (
