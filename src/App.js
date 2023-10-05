@@ -1,9 +1,5 @@
-// App.js
 import React, { useState, useEffect } from "react";
-import "./App.css";
-import "./ChatContainer.css";
-import "./ChatInput.css";
-import "./Message.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { get, push, ref, remove, set } from "firebase/database";
 import { database, auth } from "./firebase";
 import {
@@ -21,6 +17,10 @@ import {
   onChildChanged,
   onChildRemoved,
 } from "firebase/database";
+import "./App.css";
+import "./ChatContainer.css";
+import "./ChatInput.css";
+import "./Message.css";
 
 const DB_MESSAGES_KEY = "messages";
 
@@ -32,8 +32,6 @@ const App = () => {
   const [isInputEnabled, setIsInputEnabled] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [nickname, setNickname] = useState("");
-  const [isNicknameSet, setIsNicknameSet] = useState(false);
 
   useEffect(() => {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
@@ -73,13 +71,6 @@ const App = () => {
 
     const authStateChangedListener = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userNicknameRef = ref(database, `users/${user.uid}/nickname`);
-        const userNicknameSnapshot = await get(userNicknameRef);
-        if (userNicknameSnapshot.exists()) {
-          setNickname(userNicknameSnapshot.val());
-          setIsNicknameSet(true);
-        }
-
         setUser(user);
         setIsLoggedIn(true);
         setIsInputEnabled(true);
@@ -100,19 +91,8 @@ const App = () => {
 
   const handleSignup = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      const userNicknameRef = ref(database, `users/${user.uid}/nickname`);
-      await set(userNicknameRef, nickname);
-
-      setIsNicknameSet(true);
-
-      alert("User signed up:", user);
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("User signed up successfully!");
     } catch (error) {
       alert("Error signing up:", error.message);
     }
@@ -124,35 +104,11 @@ const App = () => {
         throw new Error("Error: Please type in your username and password.");
       }
 
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      const userNicknameRef = ref(database, `users/${user.uid}/nickname`);
-      const userNicknameSnapshot = await get(userNicknameRef);
-      if (userNicknameSnapshot.exists()) {
-        setNickname(userNicknameSnapshot.val());
-        setIsNicknameSet(true);
-      }
-
+      await signInWithEmailAndPassword(auth, email, password);
       alert("You have signed in.");
     } catch (error) {
-      alert("Error Wrong Username or Password was typed in.");
+      alert("Error: Wrong Username or Password was typed in.");
     }
-  };
-
-  const handleNicknameEdit = () => {
-    setIsNicknameSet(false);
-  };
-
-  const handleNicknameSave = () => {
-    setIsNicknameSet(true);
-
-    const userNicknameRef = ref(database, `users/${user.uid}/nickname`);
-    set(userNicknameRef, nickname);
   };
 
   const handleSubmit = (event) => {
@@ -200,7 +156,6 @@ const App = () => {
 
   const handleClearLog = () => {
     setMessages([]);
-
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     remove(messageListRef);
   };
@@ -233,70 +188,61 @@ const App = () => {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Instagram Chat Rocket Academy Bootcamp</p>
-        <div>
-          {isLoggedIn ? (
-            <>
-              {isNicknameSet ? (
-                <>
-                  <button onClick={handleLogout}>Logout</button>
-                  <button onClick={handleNicknameEdit}>Edit Nickname</button>
-                  <ChatContainer
-                    messages={messages}
-                    user={user}
-                    onDeleteMessage={handleDeleteMessage}
-                    onEditMessage={handleEditMessage}
-                    MessageComponent={Message} // Pass Message component without self-closing tag
-                  />
-
-                  <ChatInput
-                    newMessage={newMessage}
-                    onInputChange={handleInputChange}
-                    onSubmit={handleSubmit}
-                    isInputEnabled={isInputEnabled}
-                  />
-                  <button onClick={handleClearLog}>Clear Log</button>
-                </>
-              ) : (
-                <>
-                  <input
-                    type="text"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    placeholder="Enter Nickname"
-                  />
-                  <button onClick={handleNicknameSave}>Set Nickname</button>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <label htmlFor="email">Email : </label>
-              <input
-                type="text"
-                value={email}
-                onChange={handleEmailChange}
-                placeholder="Enter Email"
-              />
-              <br />
-              <label htmlFor="password">Password : </label>
-              <input
-                type="password"
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Enter Password"
-              />
-              <br />
-              <button onClick={handleLogin}>Login</button>
-              <button onClick={handleSignup}>Sign Up</button>
-              <button onClick={handleResetPassword} disabled={!email}>
-                Forget Password
-              </button>
-            </>
-          )}
-        </div>
-      </header>
+      <Router>
+        <header className="App-header">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <>
+                    <button onClick={handleLogout}>Logout</button>
+                    <ChatContainer
+                      messages={messages}
+                      user={user}
+                      onDeleteMessage={handleDeleteMessage}
+                      onEditMessage={handleEditMessage}
+                      MessageComponent={Message}
+                    />
+                    <ChatInput
+                      newMessage={newMessage}
+                      onInputChange={handleInputChange}
+                      onSubmit={handleSubmit}
+                      isInputEnabled={isInputEnabled}
+                    />
+                    <br></br>
+                    <button onClick={handleClearLog}>Clear Log</button>
+                  </>
+                ) : (
+                  <>
+                    <label htmlFor="email">Email : </label>
+                    <input
+                      type="text"
+                      value={email}
+                      onChange={handleEmailChange}
+                      placeholder="Enter Email"
+                    />
+                    <br />
+                    <label htmlFor="password">Password : </label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={handlePasswordChange}
+                      placeholder="Enter Password"
+                    />
+                    <br />
+                    <button onClick={handleLogin}>Login</button>
+                    <button onClick={handleSignup}>Sign Up</button>
+                    <button onClick={handleResetPassword} disabled={!email}>
+                      Forget Password
+                    </button>
+                  </>
+                )
+              }
+            />
+          </Routes>
+        </header>
+      </Router>
     </div>
   );
 };
