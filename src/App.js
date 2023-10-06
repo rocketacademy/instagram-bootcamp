@@ -1,60 +1,144 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { useState, useEffect } from "react";
+import { onChildAdded, onChildChanged, push, ref, onValue } from "firebase/database";
+import { database, storage, auth } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
+import {PostHolder} from './Components/PostHolder'
+import {Composer} from './Components/Composer'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      messages: [],
-    };
-  }
+export function App(props) {
+  const [messages, setMessages] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState({})// user is the user object; adjust code accordingly
+  const [loginFormInfo, setLoginFormInfo] = useState({
+    email: '',
+    password: ''
+  })
+ 
 
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
+  //this is NOT an infinite loop
+  useEffect(() => { // whenever app renders
+    const messagesRef = ref(database, DB_MESSAGES_KEY); //setup reference
+    onChildAdded(messagesRef, (data) => { //setup listener
+      setMessages((prevMessages) => [...prevMessages, { key: data.key, val: data.val() }]);
     });
+      //[...(data.val())]
+      // console.log(data.val()) // object containing all messagekey:messageval
+      // console.log(Object.values(data.val()))
+        //(prevMessages) => [...prevMessages, { key: data.key, val: data.val() }]);
+    
+    // onChildChanged(messagesRef, (data)=>{
+    //   setMessages((prevMessages) => {
+    //     console.log(data.val())
+    //     console.log(messages)
+    //     // [...(prevMessages.slice(0,-1)), { key: data.key, val: data.val() }]
+    //   });
+    // })
+    onAuthStateChanged(auth, (authInfo)=>{ // this authInfo is returned by firebase auth
+      if(authInfo){
+        setIsLoggedIn(true)
+        setUser(authInfo)
+
+      } else {
+        setIsLoggedIn(false)
+        setUser({})// 
+
+      }
+    })
+  }, []);
+
+
+  const logout = () => {
+    signOut(auth).then(()=>{
+      console.log('Signed out');
+
+    })
+  }
+  const onChange = (e) => {
+    const name = e.target.id
+    const value = e.target.value
+    setLoginFormInfo((prevState) => {
+      return ({ ...prevState, [name]: value }) // can't add another item with the same key so it overwrites
+    }) // edit later
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
-
-  render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
-      </div>
-    );
-  }
+  // let messageListItems = messages.map((message, index) => (
+  //   <div className='w-1/5 bg-green-300 p-5 m-2 border-black border' key={message.key}>
+  //     {message.val.file ? <img src={message.val.file} alt='Post message' /> : null}
+  //     {message.val.userName}: {message.val.message}
+  //     <br />
+  //     {message.val.date}
+  //     <br />
+  //     <LikeButton messageKey={message.key} likes={message.val.likes} messageIndex={index} setMessages={setMessages} />
+  //     {message.val.likes} liked this
+  //   </div>
+  //));//message.setCount((prevCount)=>prevCount+1) //regular
+  return (
+    <div className="App">
+      <header className="App-header">
+      <nav>
+      {user ? `Logged in as ${user.email}`: null}  
+      </nav>
+        {isLoggedIn ? <button onClick = {logout}>signout</button> :
+          <>
+            <div>
+              <label>Email</label>
+              <br />
+              <input
+                type='text'
+                id='email'
+                placeholder='enter email here:'
+                onChange={(e) => { onChange(e) }}
+                value={loginFormInfo.email}
+                className='text-black'
+              />
+              <br />
+              <label>Password</label>
+              <br />
+              <input
+                type='password' //change to password later
+                id='password' 
+                placeholder='enter password:'
+                onChange={(e) => { onChange(e) }}
+                value={loginFormInfo.password}
+                className='text-black'
+              />
+              <br />
+            </div>
+            <div>
+              <button onClick={async () => { // what is async
+                return createUserWithEmailAndPassword(
+                  auth,
+                  loginFormInfo.email,
+                  loginFormInfo.password
+                ).then((userInfo) => {
+                  setUser(userInfo)
+                  setIsLoggedIn(true)
+                })
+              }}> Signup</button>
+              <button onClick={async () => { // what is async
+                return signInWithEmailAndPassword(
+                  auth,
+                  loginFormInfo.email,
+                  loginFormInfo.password
+                ).then((userInfo) => {
+                  setUser(userInfo)
+                  setIsLoggedIn(true)
+                })
+              }}> Login</button>
+            </div>
+        </>
+      }
+        <img src={logo} className="App-logo" alt="logo" />
+        {isLoggedIn ? <Composer user= {user}/> : null}
+        <PostHolder messages={messages} setMessages={setMessages} user={user}/>
+      </header>
+    </div>
+  );
 }
 
 export default App;
