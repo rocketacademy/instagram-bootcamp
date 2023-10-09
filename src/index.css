@@ -1,3 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~@flaticon/flaticon-uicons/css/regular/rounded";
+@import "~@flaticon/flaticon-uicons/css/solid/rounded";
+@import "~@flaticon/flaticon-uicons/css/brands/all";
+
+/* [class^=fi-br-]:before, [class*=" fi-br-"]:before, [class^=fi-br-]:before, [class*=fi-br-]:before {
+  font-size: 1em;
+} */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
