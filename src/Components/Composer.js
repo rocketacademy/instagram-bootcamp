@@ -21,7 +21,6 @@ export function Composer(props) {
         setFormInfo((prevState) => {
             return ({ ...prevState, [name]: value })
         })
-
     };
     // setUserName(value)
 
@@ -37,14 +36,14 @@ export function Composer(props) {
           .then(() => getDownloadURL(fileRef))
           .then((url) => {
             const messageListRef = ref(database, DB_MESSAGES_KEY);
+            console.log(formInfo.userName)
               push(messageListRef, {
-                  user: props.user,
                   userName: formInfo.userName,
                   message: formInfo.userMessage,
                   date: `${new Date().toLocaleString()}`,
                   email: props.user.email,
                   file: url,
-                  likes: 0,
+                  likes: '',
                   comments: [],
               })
           })
