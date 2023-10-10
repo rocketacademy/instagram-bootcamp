@@ -6,7 +6,11 @@ import "./App.css";
 import {PostHolder} from './Components/PostHolder'
 import {Composer} from './Components/Composer'
 import {AuthForm} from './Components/AuthForm'
-import { Routes, Route, Link} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
+import {Profile} from './Components/Profile'
+import {EditProfile} from './Components/EditProfile'
+import {Error} from './Components/Error'
+import Navbar from './Components/Navbar'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -59,26 +63,29 @@ export function App(props) {
  
   return (
     <div className="App">
-      {/* <Link to='/'>Home</Link>
-      <Link to='/auth'>Signup/Login</Link>
-      <Link to='/feed'>Feed</Link>
-      <Link to='/composer'>Composer</Link>
+    <header className="App-header">
+    <Navbar logout = {logout} auth = {auth} isLoggedIn = {isLoggedIn}/>
+      {/* <Link to='/'>Home</Link> 
+      {isLoggedIn ? <button onClick = {logout}>signout</button> : <Link to='auth'>Signup/Login</Link>}
+      <Link to='feed'>Feed</Link>
+      {isLoggedIn ? <Link to='composer'>Composer</Link> : null} */}
       <Routes>
-        <Route path='/' element={<App />} />
-        <Route path='/auth' element={<AuthForm />} />
-        <Route path='/feed' element={<PostHolder messages={messages} setMessages={setMessages} user={user} />} />
-        <Route path='/composer' element={<Composer user={user} />} />
-      </Routes> */}
-      <header className="App-header">
+        {/* <Route path='/' element={<App />} /> */}
+        <Route path='auth' element={<AuthForm />} />
+        <Route path='feed' element={<PostHolder messages={messages} setMessages={setMessages} user={user} />} />
+        <Route path='composer' element={<Composer user={user} />} />
+        <Route path="*" element= {<Error/>}/>
+      </Routes>
+      
         <nav>
           {user.email ? `Logged in as ${user.email}`: null}  
       </nav>
-        {isLoggedIn ? <button onClick = {logout}>signout</button> :
+        {/* {isLoggedIn ? <button onClick = {logout}>signout</button> :
           <AuthForm />
       }
         <img src={logo} className="App-logo" alt="logo" />
-        {isLoggedIn ? <Composer user= {user}/> : null}
-        <PostHolder messages={messages} setMessages={setMessages} user={user}/>
+        {isLoggedIn ? <Composer user= {user}/> : null} */}
+        {/* <PostHolder messages={messages} setMessages={setMessages} user={user}/> */}
       </header>
     </div>
   );

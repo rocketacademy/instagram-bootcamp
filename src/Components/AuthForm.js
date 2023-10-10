@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {useNavigate} from 'react-router-dom'
 
 export function AuthForm(props) {
     const [loginFormInfo, setLoginFormInfo] = useState({
         email: '',
         password: ''
       })
+
+    const navigate = useNavigate()
      
     const onChange = (e) => {
         const name = e.target.id
@@ -53,7 +56,9 @@ export function AuthForm(props) {
                   console.log(userInfo)
                   //setUser(userInfo)
                   //setIsLoggedIn(true)
+                  navigate('feed')
                 })
+                
               }}> Signup</button>
               <button onClick={async () => { // what is async
                 return signInWithEmailAndPassword(
@@ -65,7 +70,9 @@ export function AuthForm(props) {
                   console.log(userInfo)
                   //setUser(userInfo)
                   //setIsLoggedIn(true)
+                  navigate('feed')
                 })
+                
               }}> Login</button>
             </div>
         </>

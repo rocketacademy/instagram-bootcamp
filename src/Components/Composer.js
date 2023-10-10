@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { database, storage } from "../firebase";
 import { ref as sRef, uploadBytes, getDownloadURL,} from 'firebase/storage';
 import { push, ref } from "firebase/database";
+import {useNavigate} from 'react-router-dom'
 
 
 const DB_MESSAGES_KEY = "messages";
 
+
 //<Composer user=user/>
 export function Composer(props) {
+    const navigate = useNavigate()
     const [formInfo, setFormInfo] = useState({
         userName: '',
         userMessage: '',
@@ -55,7 +58,8 @@ export function Composer(props) {
               date:null,
               file:null,
             });
-          }); 
+          });
+          navigate('feed') 
         };
 
     return (
