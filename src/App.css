@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
 .App {
   text-align: center;
 }
@@ -16,4 +22,26 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.chatbubbletext {
+  font-family: "VT323", monospace;
+}
+
+.chatbackground {
+  /* background-image: url(https://media.tenor.com/WzuZ_IwEDWwAAAAC/anime-pixel.gif); */
+  background-image: url(https://media.tenor.com/WDSjkCTt7eEAAAAC/doggoflowersgirl-pixel.gif);
+  background-color: #282c34;
+
+  background-position: bottom right;
+  background-size: cover;
+
+  background-repeat: no-repeat;
+}
+
+.chat-container {
+  flex: 1;
+  max-height: calc(100vh - 130px);
+  /* not sure how to do this better */
+  overflow-y: auto;
 }
