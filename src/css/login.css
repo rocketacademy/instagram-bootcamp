@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;1,400&family=Satisfy&display=swap');
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+h1 {
+  font-family: 'Satisfy', cursive;
+}
+h1,
+h5 {
+  margin: 0.75rem;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  padding: 2rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+}
+
+.login {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.input-group > * {
+  height: 100%;
+}
+
+.custom-button {
+  width: 30%;
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5851db,
+    #833ab4,
+    #c13584,
+    #e1306c,
+    #fd1d1d,
+    #f56040,
+    #ffbd12
+  );
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}

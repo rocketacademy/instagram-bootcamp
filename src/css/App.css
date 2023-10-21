@@ -1,0 +1,225 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+ol {
+  padding: none;
+}
+
+form input,
+.comments {
+  border: none;
+  width: 100%;
+  background-color: #f3f3f3;
+  height: 2rem;
+  border-bottom: lightgray 1px solid;
+}
+
+.posts_list {
+  padding: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.post_card_top {
+  font-size: 0.8rem;
+}
+
+.post_form {
+  padding: 1rem 2.3rem 2rem 2.3rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+  border-radius: 5px;
+  margin-top: 5rem;
+}
+
+.open_form {
+  margin-top: 5rem;
+}
+
+.post_form button,
+.open_form {
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5851db,
+    #833ab4,
+    #c13584,
+    #e1306c,
+    #fd1d1d,
+    #f56040,
+    #ffbd12
+  );
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.post_form button:after {
+  content: '';
+  position: absolute;
+  top: 71%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background-color: rgba(255, 255, 255, 0.4);
+
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.post_form button:hover:after {
+  width: 20%;
+  height: 9%;
+  opacity: 1;
+  transition: width 0.5s ease-out, height 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.close_form {
+  border: solid black 1px;
+  font-size: 0.95rem;
+  padding: 0.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+}
+
+.file-drop {
+  border: dashed;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Add this line */
+}
+
+.file-drop > .file-drop-target {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: absolute; /* Add this line */
+  top: 0; /* Add this line */
+  left: 0; /* Add this line */
+  width: 100%; /* Add this line */
+  height: 100%; /* Add this line */
+}
+
+.file-drop > .file-drop-target.file-drop-dragging-over-frame {
+  /* overlay a black mask when dragging over the frame */
+  border: none;
+  background-color: rgba(0, 0, 0, 0.65);
+  box-shadow: none;
+  z-index: 50;
+  opacity: 1;
+  color: white;
+}
+
+.file-drop > .file-drop-target.file-drop-dragging-over-target {
+  /* turn stuff orange when we are dragging over the target */
+  color: #ff6e40;
+  box-shadow: 0 0 13px 1px #ff6e40;
+}
+
+.file_input {
+  color: transparent;
+  background-color: transparent;
+  border: none;
+  width: 30%;
+}
+
+.file_upload {
+  display: flex;
+  font-size: 0.85rem;
+}
+
+.file_uploaded {
+  width: min-content;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user_info {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.username {
+  font-size: 1.25rem;
+}
+.posted_time {
+  font-size: 0.85rem;
+  display: flex;
+}
+.post_card {
+  border-radius: 5px;
+  padding: 1rem 2rem 1rem 2rem;
+  color: black;
+  margin: 2rem;
+  box-shadow: 1px 4px 10px 1px #aaa;
+}
+.break-words {
+  font-size: 1rem;
+  word-wrap: break-word;
+  width: 20rem;
+}
+
+.inline_circle {
+  display: inline-block;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: green;
+  border-radius: 50%;
+  position: relative;
+  top: 11%;
+}
+
+.post_card_img {
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.3);
+  margin: 1rem;
+}
+
+.post_content {
+  padding: 0.5rem 0 0.5rem 1rem;
+  background-color: #f3f3f3;
+  text-align: left;
+}
+
+.hashtags {
+  font-size: 0.95rem;
+  text-decoration: underline;
+  color: #405de6;
+}
+.comments {
+  font-size: 1rem;
+}
