@@ -7,8 +7,7 @@ const DB_MESSAGES_KEY = "messages";
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
+
     this.state = {
       inputValue: "",
     };
@@ -24,11 +23,14 @@ export default class App extends React.Component {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, this.state.inputValue);
+    this.setState({
+      inputValue: "",
+    });
   };
 
   render() {
     return (
-      <form>
+      <form onSubmit={this.writeData}>
         <input
           className="input input-bordered text-slate-900"
           type="text"
