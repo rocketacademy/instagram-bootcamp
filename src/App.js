@@ -1,7 +1,8 @@
 import React from "react";
-import { onChildAdded, push, ref, set, child } from "firebase/database";
+import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
+import Message from "./Message";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -14,10 +15,16 @@ class App extends React.Component {
     this.state = {
       messages: [],
       input: "",
+      dateTime: new Date(),
     };
   }
 
+  tick() {
+    this.setState({ dateTime: new Date() });
+  }
+
   componentDidMount() {
+    this.timerID = setInterval(() => this.tick(), 1000);
     const messagesRef = ref(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
@@ -32,7 +39,7 @@ class App extends React.Component {
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = child(messageListRef, this.state.input);
+    const newMessageRef = push(messageListRef);
     set(newMessageRef, {
       message: this.state.input,
       date: new Date().toLocaleString(),
@@ -44,22 +51,17 @@ class App extends React.Component {
   };
 
   render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        {message.val.message}-{message.val.date}
-      </li>
-    ));
     return (
       <div className="App">
         <header className="App-header">
+          <Message messages={this.state.messages} />
+          {this.state.dateTime.toLocaleString()}
           <input
             value={this.state.value}
             onChange={this.handleChange}
             placeholder="Please type in message"
           />
           <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
         </header>
       </div>
     );
