@@ -1,8 +1,9 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, ref } from "firebase/database";
 import { database } from "./firebase";
 import logo from "./logo.png";
 import "./App.css";
+import MessageForm from "./Components/MessageForm";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -29,13 +30,6 @@ class App extends React.Component {
     });
   }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
-
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
@@ -45,11 +39,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
+          <MessageForm />
           <ol>{messageListItems}</ol>
         </header>
       </div>
