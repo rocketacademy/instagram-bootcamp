@@ -49,8 +49,15 @@ class MessageUpdate extends React.Component {
             type="text"
             value={this.state.message}
             onChange={this.handleChange}
+            className="input"
           />
-          <input type="submit" value="Done" disabled={!this.state.message} />
+          <br />
+          <input
+            type="submit"
+            value="Done"
+            disabled={!this.state.message}
+            className="input"
+          />
         </form>
       </div>
     );

@@ -1,7 +1,9 @@
 import React from "react";
 import { onChildAdded, push, ref, set, remove } from "firebase/database";
 import { database } from "./firebase";
-import logo from "./logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+
 import "./App.css";
 import MessageUpdate from "./Components/MessageUpdate";
 
@@ -98,7 +100,7 @@ class App extends React.Component {
     //   <li key={message.key}>{message.val}</li>
     // ));
     let messageListItems = this.state.messages.map((obj) => (
-      <div key={obj.key}>
+      <div key={obj.key} className="list">
         <li>
           {obj.val.message} at {obj.val.date}
         </li>
@@ -114,30 +116,51 @@ class App extends React.Component {
         ) : (
           <div></div>
         )}
-        <button onClick={this.handleUpdateClick}>Edit</button>
-        <button onClick={() => this.deleteMessage(obj.key)}> Delete </button>
+        <button onClick={this.handleUpdateClick} className="button">
+          Edit
+        </button>
+        <button onClick={() => this.deleteMessage(obj.key)} className="button">
+          {" "}
+          Delete{" "}
+        </button>
       </div>
     ));
 
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
+          {/* <img src={logo} className="App-logo" alt="logo" /> */}
+          <h1>Welcome to Rocketgram's Messaging App</h1>
           {/* TODO: Add input field and add text input as messages in Firebase */}
           <form onSubmit={this.writeData}>
-            <input
-              type="text"
-              value={this.state.textInputValue}
-              onChange={this.handleChange}
-            />
-            <input
-              type="submit"
-              value="Send"
-              disabled={!this.state.textInputValue}
-            />
+            <div className="input-group">
+              <input
+                type="text"
+                value={this.state.textInputValue}
+                onChange={this.handleChange}
+                placeholder="Add your message here"
+                className="input"
+              />
+
+              {/* <input
+                type="submit"
+                value="Send"
+                disabled={!this.state.textInputValue}
+                // className="input-send"
+              /> */}
+
+              <button
+                type="submit"
+                disabled={!this.state.textInputValue}
+                className="submit"
+              >
+                {this.state.textInputValue ? (
+                  <FontAwesomeIcon icon={faPaperPlane} bounce className="i" />
+                ) : (
+                  <div>Start Typing</div>
+                )}
+              </button>
+            </div>
           </form>
           {/* <button onClick={this.writeData}>Send</button> */}
           <ol>{messageListItems}</ol>
