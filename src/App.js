@@ -32,17 +32,21 @@ class App extends React.Component {
 
   render() {
     // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        {message.val.date}
-        <br />
-        {message.val.messageString}
+    let messageListItems = this.state.messages.map((message, index) => (
+      <li
+        key={message.key}
+        className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"}`} //alternate between chat start and chat end
+      >
+        <div className="chat-footer text-xs opacity-50">{message.val.date}</div>
+        <div className="chat-bubble text-sm text-left">
+          {message.val.messageString}
+        </div>
       </li>
     ));
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src={logo} className="App-logo m-3" alt="logo" />
           <MessageForm />
           <ol>{messageListItems}</ol>
         </header>
