@@ -33,7 +33,11 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <li key={message.key}>
+        {message.val.date}
+        <br />
+        {message.val.messageString}
+      </li>
     ));
     return (
       <div className="App">

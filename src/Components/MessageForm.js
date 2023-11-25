@@ -22,7 +22,11 @@ export default class App extends React.Component {
   writeData = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, this.state.inputValue);
+    set(newMessageRef, {
+      messageString: this.state.inputValue,
+      date: new Date().toLocaleString(),
+    });
+
     this.setState({
       inputValue: "",
     });
