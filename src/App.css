@@ -1,19 +1,47 @@
 .App {
+  background-color: #282c34;
+  height: 100vh;
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.name-field {
+  margin-bottom: 10px;
+}
+
+.msg-container {
+  height: 70vh;
+  background-color: white;
+  margin-bottom: 0;
+  overflow-y: scroll;
+}
+
+.msg-bubble {
+  display: inline-block;
+  color: black;
+  background-color: blue;
+  text-align: inherit;
+  padding: 0 20px;
+  border-radius: 5%;
+}
+
+.msg-name {
+  font-size: smaller;
+  text-align: inherit;
+  color: black;
+  margin: 20px auto 0;
+  padding: 0 20px;
+}
+
+.msg-date-time {
+  font-size: smaller;
 }
