@@ -38,18 +38,21 @@ class App extends React.Component {
         className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"}`} //alternate between chat start and chat end
       >
         <div className="chat-footer text-xs opacity-50">{message.val.date}</div>
-        <div className="chat-bubble text-sm text-left">
+        <div className="chat-bubble text-left break-all">
           {message.val.messageString}
         </div>
       </li>
     ));
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo m-3" alt="logo" />
-          <MessageForm />
-          <ol>{messageListItems}</ol>
-        </header>
+      <div className="min-h-screen flex flex-col items-center justify-end pb-10">
+        <div className="">
+          <div className="mb-10">
+            <ol className="">{messageListItems}</ol>
+          </div>
+          <div className="flex justify-end m-2">
+            <MessageForm />
+          </div>
+        </div>
       </div>
     );
   }
