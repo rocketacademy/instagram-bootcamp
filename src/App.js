@@ -3,6 +3,7 @@ import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
 import Message from "./Message";
+import Clock from "./Clock";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -15,16 +16,10 @@ class App extends React.Component {
     this.state = {
       messages: [],
       input: "",
-      dateTime: new Date(),
     };
   }
 
-  tick() {
-    this.setState({ dateTime: new Date() });
-  }
-
   componentDidMount() {
-    this.timerID = setInterval(() => this.tick(), 1000);
     const messagesRef = ref(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(messagesRef, (data) => {
@@ -55,12 +50,13 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <Message messages={this.state.messages} />
-          {this.state.dateTime.toLocaleString()}
+          <Clock />
           <input
             value={this.state.value}
             onChange={this.handleChange}
             placeholder="Please type in message"
           />
+          <input type="file" />
           <button onClick={this.writeData}>Send</button>
         </header>
       </div>
