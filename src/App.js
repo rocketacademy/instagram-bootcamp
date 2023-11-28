@@ -1,5 +1,10 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 import { database, storage } from "./firebase";
 import "./App.css";
 import Posts from "./Posts";
@@ -7,6 +12,7 @@ import Clock from "./Clock";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
+const DS_IMAGE_KEY = "images";
 
 class App extends React.Component {
   constructor(props) {
@@ -16,6 +22,8 @@ class App extends React.Component {
     this.state = {
       posts: [],
       input: "",
+      inputFile: null,
+      inputFileValue: "",
     };
   }
 
@@ -31,14 +39,26 @@ class App extends React.Component {
     });
   }
 
+  handleSumbit = () => {
+    const imgRef = storageRef(
+      storage,
+      DS_IMAGE_KEY + this.state.inputFile.name
+    );
+    uploadBytes(imgRef, this.state.inputFile).then(() => {
+      getDownloadURL(imgRef).then((url) => this.writeData(url));
+    });
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  writeData = (url) => {
     const postsListRef = ref(database, DB_POSTS_KEY);
     const newPostRef = push(postsListRef);
     set(newPostRef, {
       message: this.state.input,
       date: new Date().toLocaleString(),
+      url: url,
     });
+    this.setState({ input: "", inputFile: null, inputFileValue: "" });
   };
 
   handleChange = (e) => {
@@ -52,11 +72,16 @@ class App extends React.Component {
           <Posts posts={this.state.posts} />
           <Clock />
           <input
-            value={this.state.value}
+            value={this.state.input}
             onChange={this.handleChange}
             placeholder="Please type in message"
           />
-          <button onClick={this.writeData}>Send</button>
+          <input
+            type="file"
+            value={this.state.inputFileValue}
+            onChange={(e) => this.setState({ inputFile: e.target.files[0] })}
+          />
+          <button onClick={this.handleSumbit}>Send</button>
         </header>
       </div>
     );

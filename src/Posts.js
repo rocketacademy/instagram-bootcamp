@@ -6,6 +6,9 @@ export default function Posts(props) {
       <TableRow key={post.key}>
         <TableCell>{post.val.date}</TableCell>
         <TableCell>{post.val.message}</TableCell>
+        <TableCell>
+          <img src={post.val.url} />
+        </TableCell>
       </TableRow>
     );
   });
