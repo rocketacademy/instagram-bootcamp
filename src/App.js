@@ -1,8 +1,8 @@
 import React from "react";
 import { onChildAdded, ref } from "firebase/database";
 import { database } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
+import FileUploadForm from "./Components/FileUploadForm";
 import MessageForm from "./Components/MessageForm";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
@@ -41,6 +41,9 @@ class App extends React.Component {
         <div className="chat-bubble text-left break-all">
           {message.val.messageString}
         </div>
+        <div>
+          <img src={message.val.url} alt={message.val.name} />
+        </div>
       </li>
     ));
     return (
@@ -52,6 +55,9 @@ class App extends React.Component {
           <div className="flex justify-end m-2">
             <MessageForm />
           </div>
+        </div>
+        <div>
+          <FileUploadForm />
         </div>
       </div>
     );

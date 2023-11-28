@@ -4,7 +4,7 @@ import { database } from "../firebase";
 
 const DB_MESSAGES_KEY = "messages";
 
-export default class App extends React.Component {
+export default class MessageForm extends React.Component {
   constructor(props) {
     super(props);
 
