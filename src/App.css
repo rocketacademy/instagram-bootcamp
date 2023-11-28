@@ -21,3 +21,9 @@
 img {
   height: 25vmin;
 }
+
+.sticky {
+  position: sticky;
+  top: 0px;
+  background-color: rgb(98, 100, 100);
+}

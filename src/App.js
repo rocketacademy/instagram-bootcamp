@@ -1,5 +1,12 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import {
+  onChildAdded,
+  onChildChanged,
+  push,
+  ref,
+  set,
+  update,
+} from "firebase/database";
 import {
   getDownloadURL,
   ref as storageRef,
@@ -36,6 +43,13 @@ class App extends React.Component {
         posts: [...state.posts, { key: data.key, val: data.val() }],
       }));
     });
+    onChildChanged(postsRef, (data) => {
+      const replace = this.state.posts.toSpliced(data.val().postNo, 1, {
+        key: data.key,
+        val: data.val(),
+      });
+      this.setState({ posts: replace });
+    });
   }
 
   handleSumbit = () => {
@@ -61,6 +75,7 @@ class App extends React.Component {
       message: this.state.input,
       date: new Date().toLocaleString(),
       url: url,
+      likes: 0,
     });
     this.setState({ input: "", inputFile: null, inputFileValue: "" });
   };
@@ -69,11 +84,16 @@ class App extends React.Component {
     this.setState({ input: e.target.value });
   };
 
+  handleLike = (post) => {
+    const postRef = ref(database, DB_POSTS_KEY + "/" + post.key);
+    update(postRef, { likes: post.val.likes + 1 });
+  };
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <Posts posts={this.state.posts} />
+          <Posts posts={this.state.posts} handleLike={this.handleLike} />
           <Clock />
           <input
             value={this.state.input}
