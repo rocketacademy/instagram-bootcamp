@@ -1,4 +1,5 @@
 {
+  "homepage": "https://ianlauyin.github.io/instagram-bootcamp",
   "name": "instagram-bootcamp",
   "version": "0.1.0",
   "private": true,
@@ -8,11 +9,14 @@
     "@mui/material": "^5.14.18",
     "dotenv": "^16.3.1",
     "firebase": "^9.8.0",
+    "gh-pages": "^6.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "WATCHPACK_POLLING=true react-scripts start",
     "build": "react-scripts build"
   },

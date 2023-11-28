@@ -1,12 +1,11 @@
 import { Table, TableRow, TableCell } from "@mui/material";
 
-export default function Message(props) {
-  console.log(props.messages);
-  const display = props.messages.map((message) => {
+export default function Posts(props) {
+  const display = props.posts.map((post) => {
     return (
-      <TableRow key={message.key}>
-        <TableCell>{message.val.date}</TableCell>
-        <TableCell>{message.val.message}</TableCell>
+      <TableRow key={post.key}>
+        <TableCell>{post.val.date}</TableCell>
+        <TableCell>{post.val.message}</TableCell>
       </TableRow>
     );
   });
