@@ -59,7 +59,7 @@ class App extends React.Component {
     }
     const imgRef = storageRef(
       storage,
-      this.state.inputFile.name + this.state.posts.length
+      this.state.inputFile.name + this.state.posts.key
     );
     uploadBytes(imgRef, this.state.inputFile).then(() => {
       getDownloadURL(imgRef).then((url) => this.writeData(url));
@@ -84,9 +84,11 @@ class App extends React.Component {
     this.setState({ input: e.target.value });
   };
 
-  handleLike = (post) => {
+  handleLike = (post, isLike) => {
     const postRef = ref(database, DB_POSTS_KEY + "/" + post.key);
-    update(postRef, { likes: post.val.likes + 1 });
+    update(postRef, {
+      likes: isLike ? post.val.likes + 1 : post.val.likes - 1,
+    });
   };
 
   render() {

@@ -27,3 +27,8 @@ img {
   top: 0px;
   background-color: rgb(98, 100, 100);
 }
+
+.toggle {
+  color: white;
+  background-color: wheat;
+}
