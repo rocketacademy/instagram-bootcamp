@@ -7,7 +7,7 @@ export default function Posts(props) {
         <TableCell>{post.val.date}</TableCell>
         <TableCell>{post.val.message}</TableCell>
         <TableCell>
-          <img src={post.val.url} />
+          <img src={post.val.url} alt={post.val.postNo} />
         </TableCell>
       </TableRow>
     );

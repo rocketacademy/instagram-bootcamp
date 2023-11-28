@@ -12,7 +12,6 @@ import Clock from "./Clock";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
-const DS_IMAGE_KEY = "images";
 
 class App extends React.Component {
   constructor(props) {
@@ -42,7 +41,7 @@ class App extends React.Component {
   handleSumbit = () => {
     const imgRef = storageRef(
       storage,
-      DS_IMAGE_KEY + this.state.inputFile.name + this.state.posts.length
+      this.state.inputFile.name + this.state.posts.length
     );
     uploadBytes(imgRef, this.state.inputFile).then(() => {
       getDownloadURL(imgRef).then((url) => this.writeData(url));
