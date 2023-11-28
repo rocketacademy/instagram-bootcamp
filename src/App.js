@@ -42,7 +42,7 @@ class App extends React.Component {
   handleSumbit = () => {
     const imgRef = storageRef(
       storage,
-      DS_IMAGE_KEY + this.state.inputFile.name
+      DS_IMAGE_KEY + this.state.inputFile.name + this.state.posts.length
     );
     uploadBytes(imgRef, this.state.inputFile).then(() => {
       getDownloadURL(imgRef).then((url) => this.writeData(url));
@@ -54,6 +54,7 @@ class App extends React.Component {
     const postsListRef = ref(database, DB_POSTS_KEY);
     const newPostRef = push(postsListRef);
     set(newPostRef, {
+      postNo: this.state.posts.length,
       message: this.state.input,
       date: new Date().toLocaleString(),
       url: url,
