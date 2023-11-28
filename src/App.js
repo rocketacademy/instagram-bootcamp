@@ -39,6 +39,10 @@ class App extends React.Component {
   }
 
   handleSumbit = () => {
+    if (this.state.inputFile === null) {
+      this.writeData(null);
+      return;
+    }
     const imgRef = storageRef(
       storage,
       this.state.inputFile.name + this.state.posts.length
@@ -79,7 +83,12 @@ class App extends React.Component {
           <input
             type="file"
             value={this.state.inputFileValue}
-            onChange={(e) => this.setState({ inputFile: e.target.files[0] })}
+            onChange={(e) => {
+              this.setState({
+                inputFile: e.target.files[0],
+                inputFileValue: undefined,
+              });
+            }}
           />
           <button onClick={this.handleSumbit}>Send</button>
         </header>
