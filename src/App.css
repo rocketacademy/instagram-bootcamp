@@ -33,3 +33,9 @@ img {
   color: white;
   background-color: wheat;
 }
+
+.comment-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
