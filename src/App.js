@@ -1,11 +1,17 @@
 import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
+import { get, onChildAdded, push, ref, set } from "firebase/database";
+import { database, storage } from "./firebase";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 // import logo from "./logo.png";
 import "./App.css";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const STORAGE_KEY = "images/";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,6 +21,8 @@ class App extends React.Component {
     this.state = {
       messages: [],
       inputValue: "",
+      fileInputFile: null,
+      fileInputValue: "",
     };
   }
 
@@ -34,7 +42,7 @@ class App extends React.Component {
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
+  writeData = (url) => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, {
@@ -46,8 +54,22 @@ class App extends React.Component {
         month: "numeric",
         year: "numeric",
       }),
+      url: url,
     });
     this.setState({ inputValue: "" });
+  };
+  submit = () => {
+    const fullStorageRef = storageRef(
+      storage,
+      STORAGE_KEY + this.state.fileInputFile.name
+    );
+    uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
+      getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
+        (url) => {
+          this.writeData(url);
+        }
+      );
+    });
   };
 
   render() {
@@ -56,6 +78,13 @@ class App extends React.Component {
       <li key={message.key}>
         <span>{message.val.text}</span>
         <span className="date">{message.val.date}</span>
+        <p>
+          {message.val.url ? (
+            <img src={message.val.url} alt={message.val.name} />
+          ) : (
+            "No image"
+          )}
+        </p>
       </li>
     ));
     return (
@@ -65,11 +94,23 @@ class App extends React.Component {
 
           <input
             type="text"
+            name="text"
             value={this.state.inputValue}
             onChange={this.handleChange}
           />
+          <input
+            type="file"
+            name="file"
+            value={this.state.fileInputValue}
+            onChange={(e) => {
+              this.setState({
+                fileInputFile: e.target.files[0],
+                fileInputValue: e.target.files.name,
+              });
+            }}
+          ></input>
 
-          <button onClick={this.writeData}>Send</button>
+          <button onClick={this.submit}>Send</button>
           <ol>{messageListItems}</ol>
         </header>
       </div>
