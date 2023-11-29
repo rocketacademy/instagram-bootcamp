@@ -26,6 +26,7 @@ img {
   position: sticky;
   top: 0px;
   background-color: rgb(98, 100, 100);
+  z-index: 3;
 }
 
 .toggle {

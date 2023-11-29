@@ -2,6 +2,7 @@ import { Table, TableRow, TableCell, ToggleButton } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import React from "react";
+import Comment from "./Comment";
 
 export default class Posts extends React.Component {
   constructor(props) {
@@ -9,7 +10,6 @@ export default class Posts extends React.Component {
     this.state = { button: {} };
   }
 
-  //Bug appear after two message and like
   handleChange = (post) => {
     const updated = {};
     let isLike = true;
@@ -21,12 +21,20 @@ export default class Posts extends React.Component {
     this.setState({ button: { ...this.state.button, ...updated } });
   };
   render() {
-    console.log(this.state.button);
     const display = this.props.posts.map((post) => {
       return (
         <TableRow key={post.key}>
           <TableCell>{post.val.postNo + 1}</TableCell>
           <TableCell>{post.val.date}</TableCell>
+          <TableCell>
+            {post.val.url !== undefined && (
+              <img src={post.val.url} alt={post.val.postNo} />
+            )}
+          </TableCell>
+          <TableCell>
+            {post.val.message}
+            <Comment post={post} />
+          </TableCell>
           <TableCell>
             <ToggleButton
               value="like"
@@ -41,12 +49,6 @@ export default class Posts extends React.Component {
             </ToggleButton>
             {post.val.likes}
           </TableCell>
-          <TableCell>{post.val.message}</TableCell>
-          <TableCell>
-            {post.val.url !== undefined && (
-              <img src={post.val.url} alt={post.val.postNo} />
-            )}
-          </TableCell>
         </TableRow>
       );
     });
@@ -56,9 +58,10 @@ export default class Posts extends React.Component {
         <TableRow className="sticky">
           <TableCell>Post:</TableCell>
           <TableCell>Time:</TableCell>
-          <TableCell>Likes:</TableCell>
-          <TableCell>Message:</TableCell>
           <TableCell>Picture:</TableCell>
+
+          <TableCell>Message:</TableCell>
+          <TableCell>Likes:</TableCell>
         </TableRow>
         {display}
       </Table>
