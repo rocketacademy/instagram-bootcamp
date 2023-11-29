@@ -8,6 +8,8 @@ import {
 } from "firebase/storage";
 // import logo from "./logo.png";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Card from "react-bootstrap/Card";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -75,44 +77,44 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        <span>{message.val.text}</span>
-        <span className="date">{message.val.date}</span>
-        <p>
-          {message.val.url ? (
-            <img src={message.val.url} alt={message.val.name} />
-          ) : (
-            "No image"
-          )}
-        </p>
-      </li>
+      <p key={message.key}>
+        <Card style={{ width: "18rem" }}>
+          <Card.Body>
+            <Card.Img
+              variant="top"
+              src={message.val.url && message.val.url}
+              alt={message.val.name}
+            />
+            <Card.Text>{message.val.text}</Card.Text>
+            <Card.Text className="date">{message.val.date}</Card.Text>
+          </Card.Body>
+        </Card>
+      </p>
     ));
     return (
       <div className="App">
-        <header className="App-header">
-          {/* TODO: Add input field and add text input as messages in Firebase */}
+        {/* TODO: Add input field and add text input as messages in Firebase */}
 
-          <input
-            type="text"
-            name="text"
-            value={this.state.inputValue}
-            onChange={this.handleChange}
-          />
-          <input
-            type="file"
-            name="file"
-            value={this.state.fileInputValue}
-            onChange={(e) => {
-              this.setState({
-                fileInputFile: e.target.files[0],
-                fileInputValue: e.target.files.name,
-              });
-            }}
-          ></input>
+        <input
+          type="text"
+          name="text"
+          value={this.state.inputValue}
+          onChange={this.handleChange}
+        />
+        <input
+          type="file"
+          name="file"
+          value={this.state.fileInputValue}
+          onChange={(e) => {
+            this.setState({
+              fileInputFile: e.target.files[0],
+              fileInputValue: e.target.files.name,
+            });
+          }}
+        ></input>
 
-          <button onClick={this.submit}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
+        <button onClick={this.submit}>Send</button>
+        <div>{messageListItems}</div>
       </div>
     );
   }
