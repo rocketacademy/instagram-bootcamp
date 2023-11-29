@@ -6,19 +6,22 @@ import React from "react";
 export default class Posts extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { button: [] };
+    this.state = { button: {} };
   }
 
+  //Bug appear after two message and like
   handleChange = (post) => {
-    const replace = this.state.button.length
-      ? this.state.button
-      : Array(this.props.posts.length).fill(false);
-    const isLike = !replace[post.val.postNo];
-    replace.splice(post.val.postNo, 1, isLike);
+    const updated = {};
+    let isLike = true;
+    if (post.val.postNo in this.state.button) {
+      isLike = !this.state.button[post.val.postNo];
+    }
+    updated[post.val.postNo] = isLike;
     this.props.handleLike(post, isLike);
-    this.setState({ button: replace });
+    this.setState({ button: { ...this.state.button, ...updated } });
   };
   render() {
+    console.log(this.state.button);
     const display = this.props.posts.map((post) => {
       return (
         <TableRow key={post.key}>
