@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "react-bootstrap/Button";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database, storage } from "./firebase";
 import {
@@ -24,6 +25,7 @@ class App extends React.Component {
       textInputValue: "",
       fileInputFile: null,
       fileInputValue: "",
+      likes: 0,
     };
   }
 
@@ -70,20 +72,23 @@ class App extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>
-        {message.val.text}
+      <Card bg="dark" text="white" key={message.key} className="post">
         {message.val.url ? (
-          <img className="image" src={message.val.url} alt="image" />
+          <Card.Img className="image" src={message.val.url} alt="image" />
         ) : (
-          <p>No images</p>
+          <Card.Text>"No images"</Card.Text>
         )}
-      </li>
+        <Card.Body>
+          <Card.Text>{message.val.text}</Card.Text>
+        </Card.Body>
+      </Card>
     ));
 
     return (
       <div className="App">
         <header className="App-header">
-          <form onSubmit={this.handleSubmit}>
+          <h1 className="title">Rocketgram</h1>
+          <form onSubmit={this.handleSubmit} className="input">
             <input
               type="file"
               value={this.state.fileInputValue}
@@ -101,12 +106,12 @@ class App extends React.Component {
             />
             <input
               type="submit"
-              value="Send"
+              value="Upload"
               // Disable Send button when text input is empty
               disabled={!this.state.textInputValue}
             />
           </form>
-          <ol>{messageListItems}</ol>
+          {messageListItems}
         </header>
       </div>
     );

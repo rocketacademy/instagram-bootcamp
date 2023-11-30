@@ -18,7 +18,18 @@
   color: white;
 }
 
-.image {
-  width: 50vw;
-  height: 30vh;
+.post {
+  margin: 20px;
+  width: 30vw;
+  height: 30vw;
+}
+
+.title {
+  font-family: "caveat", cursive;
+  margin: 5vw;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
 }
