@@ -108,7 +108,7 @@ class App extends React.Component {
             onChange={(e) => {
               this.setState({
                 inputFile: e.target.files[0],
-                inputFileValue: e.target.files[0].name,
+                inputFileValue: e.target.value,
               });
             }}
           />
