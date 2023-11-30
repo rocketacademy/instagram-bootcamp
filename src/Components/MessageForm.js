@@ -34,9 +34,9 @@ export default class MessageForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.writeData}>
+      <form className="flex w-full mr-5" onSubmit={this.writeData}>
         <input
-          className="input input-bordered text-slate-900"
+          className="w-full mr-2 ml-5 input input-bordered text-slate-900"
           type="text"
           placeholder="Type here"
           value={this.state.inputValue}

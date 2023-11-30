@@ -4,6 +4,7 @@ import { database } from "./firebase";
 import "./App.css";
 import FileUploadForm from "./Components/FileUploadForm";
 import MessageForm from "./Components/MessageForm";
+import PostDisplay from "./Components/PostDisplay";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -47,16 +48,18 @@ class App extends React.Component {
       </li>
     ));
     return (
-      <div className="min-h-screen flex flex-col items-center justify-end pb-10">
+      <div className="min-h-screen flex flex-col items-center justify-end pb-10 lg:flex-row lg:justify-around">
         <div className="">
           <div className="mb-10">
             <ol className="">{messageListItems}</ol>
           </div>
-          <div className="flex justify-end m-2">
+          <div className="flex lg:justify-between m-2 mb-10">
             <MessageForm />
           </div>
         </div>
         <div>
+          <p className="text-lg text-center font-semibold"> Album Highlights</p>
+          <PostDisplay />
           <FileUploadForm />
         </div>
       </div>

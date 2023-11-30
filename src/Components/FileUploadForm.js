@@ -9,7 +9,6 @@ import { push, ref, set } from "firebase/database";
 import { database } from "../firebase";
 
 const STORAGE_KEY = "/posts";
-const DB_MESSAGES_KEY = "messages";
 
 export default class FileUploadForm extends React.Component {
   constructor(props) {
@@ -29,7 +28,7 @@ export default class FileUploadForm extends React.Component {
   };
 
   writeData = (url) => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    const messageListRef = ref(database, STORAGE_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, {
       url: url,
@@ -52,7 +51,7 @@ export default class FileUploadForm extends React.Component {
 
   render() {
     return (
-      <form>
+      <form className="ml-10 mr-5 flex items-center">
         <input
           type="file"
           value={this.state.fileInputValue}
