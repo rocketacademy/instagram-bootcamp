@@ -10,6 +10,7 @@ import {
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -50,7 +51,11 @@ class App extends React.Component {
     const newMessageRef = push(messageListRef);
     set(newMessageRef, { text: this.state.textInputValue, url: url });
     // Reset input field after submit
-    this.setState({ textInputValue: "" });
+    this.setState({
+      textInputValue: "",
+      fileInputFile: null,
+      fileInputValue: "",
+    });
   };
 
   // Note use of array fields syntax to avoid having to manually bind this method to the class
@@ -89,21 +94,25 @@ class App extends React.Component {
         <header className="App-header">
           <h1 className="title">Rocketgram</h1>
           <form onSubmit={this.handleSubmit} className="input">
-            <input
-              type="file"
-              value={this.state.fileInputValue}
-              onChange={(e) =>
-                this.setState({
-                  fileInputFile: e.target.files[0],
-                  fileInputValue: e.target.value,
-                })
-              }
-            ></input>
-            <input
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Control
+                type="file"
+                value={this.state.fileInputValue}
+                onChange={(e) =>
+                  this.setState({
+                    fileInputFile: e.target.files[0],
+                    fileInputValue: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Control
               type="text"
+              placeholder="Description"
               value={this.state.textInputValue}
               onChange={this.handleChange}
             />
+
             <input
               type="submit"
               value="Upload"
