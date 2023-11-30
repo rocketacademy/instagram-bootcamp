@@ -1,11 +1,18 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+import { database, storage } from "./firebase";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Card from "react-bootstrap/Card";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
+const STORAGE_KEY = "images/";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,6 +22,8 @@ class App extends React.Component {
     this.state = {
       messages: [],
       textInputValue: "",
+      fileInputFile: null,
+      fileInputValue: "",
     };
   }
 
@@ -34,27 +43,57 @@ class App extends React.Component {
     this.setState({ textInputValue: event.target.value });
   };
 
+  writeData = (url) => {
+    const messageListRef = ref(database, DB_MESSAGES_KEY);
+    const newMessageRef = push(messageListRef);
+    set(newMessageRef, { text: this.state.textInputValue, url: url });
+    // Reset input field after submit
+    this.setState({ textInputValue: "" });
+  };
+
   // Note use of array fields syntax to avoid having to manually bind this method to the class
   handleSubmit = (event) => {
     event.preventDefault();
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, this.state.textInputValue);
-    // Reset input field after submit
-    this.setState({ textInputValue: "" });
+    const fullStorageRef = storageRef(
+      storage,
+      STORAGE_KEY + this.state.fileInputFile.name
+    );
+    uploadBytes(fullStorageRef, this.state.fileInputFile).then((snapshot) => {
+      getDownloadURL(fullStorageRef, this.state.fileInputFile.name).then(
+        (url) => {
+          this.writeData(url);
+        }
+      );
+    });
   };
 
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
+      <li key={message.key}>
+        {message.val.text}
+        {message.val.url ? (
+          <img className="image" src={message.val.url} alt="image" />
+        ) : (
+          <p>No images</p>
+        )}
+      </li>
     ));
-    console.log(this.state.messages);
+
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <form onSubmit={this.handleSubmit}>
+            <input
+              type="file"
+              value={this.state.fileInputValue}
+              onChange={(e) =>
+                this.setState({
+                  fileInputFile: e.target.files[0],
+                  fileInputValue: e.target.value,
+                })
+              }
+            ></input>
             <input
               type="text"
               value={this.state.textInputValue}
