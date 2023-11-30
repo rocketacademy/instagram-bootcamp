@@ -59,7 +59,7 @@ class App extends React.Component {
     }
     const imgRef = storageRef(
       storage,
-      this.state.inputFile.name + this.state.posts.key
+      this.state.inputFile.name + this.state.posts.length
     );
     uploadBytes(imgRef, this.state.inputFile).then(() => {
       getDownloadURL(imgRef).then((url) => this.writeData(url));
@@ -104,6 +104,7 @@ class App extends React.Component {
           />
           <input
             type="file"
+            accept="image/*"
             value={this.state.inputFileValue}
             onChange={(e) => {
               this.setState({
