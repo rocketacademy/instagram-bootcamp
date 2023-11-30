@@ -58,7 +58,7 @@ class App extends React.Component {
       }),
       url: url,
     });
-    this.setState({ inputValue: "" });
+    this.setState({ inputValue: "", fileInputValue: "", fileInputFile: null });
   };
   submit = () => {
     const fullStorageRef = storageRef(
@@ -93,15 +93,20 @@ class App extends React.Component {
     ));
     return (
       <div className="App">
+        <header>Rocketgram</header>
+        <h3>Create a post</h3>
         {/* TODO: Add input field and add text input as messages in Firebase */}
 
         <input
+          className="input-text"
           type="text"
           name="text"
+          placeholder="write your caption..."
           value={this.state.inputValue}
           onChange={this.handleChange}
         />
         <input
+          className="input-file"
           type="file"
           name="file"
           value={this.state.fileInputValue}
@@ -113,7 +118,7 @@ class App extends React.Component {
           }}
         ></input>
 
-        <button onClick={this.submit}>Send</button>
+        <button onClick={this.submit}>Post</button>
         <div>{messageListItems}</div>
       </div>
     );
