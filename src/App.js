@@ -113,14 +113,16 @@ class App extends React.Component {
               onChange={this.handleChange}
             />
 
-            <input
+            <Button
+              variant="light"
               type="submit"
-              value="Upload"
-              // Disable Send button when text input is empty
+              // Disable Upload button when text input is empty
               disabled={!this.state.textInputValue}
-            />
+            >
+              Upload
+            </Button>
           </form>
-          {messageListItems}
+          {messageListItems.reverse()}
         </header>
       </div>
     );
