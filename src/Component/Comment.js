@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { push, ref, set } from "firebase/database";
 import React from "react";
-import { database } from "./firebase";
+import { database } from "../firebase";
 
 export default class Comment extends React.Component {
   constructor(props) {
