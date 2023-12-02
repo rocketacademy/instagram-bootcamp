@@ -48,7 +48,7 @@ class App extends React.Component {
       </li>
     ));
     return (
-      <div className="min-h-screen flex flex-col items-center justify-end pb-10 lg:flex-row lg:justify-around">
+      <div className="h-screen flex flex-col items-center justify-end pb-10 lg:flex-row lg:justify-around">
         <div className="">
           <div className="mb-10">
             <ol className="">{messageListItems}</ol>
