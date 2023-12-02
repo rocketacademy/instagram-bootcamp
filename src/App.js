@@ -8,7 +8,15 @@ import Composer from "./Component/Composer";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import UserBar from "./Component/UserBar";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { indigo, teal } from "@mui/material/colors";
 
+const theme = createTheme({
+  palette: {
+    primary: indigo,
+    secondary: teal,
+  },
+});
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
 
@@ -55,24 +63,26 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <UserBar user={this.state.user} updateUser={this.updateUser} />
-          <Posts
-            posts={this.state.posts}
-            handleLike={this.handleLike}
-            user={this.state.user}
-          />
-          <Clock />
-          {this.state.user && (
-            <Composer
-              author={
-                this.state.user.displayName
-                  ? this.state.user.displayName
-                  : this.state.user.email
-              }
+        <div className="App-header">
+          <ThemeProvider theme={theme}>
+            <UserBar user={this.state.user} updateUser={this.updateUser} />
+            <Posts
+              posts={this.state.posts}
+              handleLike={this.handleLike}
+              user={this.state.user}
             />
-          )}
-        </header>
+            <Clock />
+            {this.state.user && (
+              <Composer
+                author={
+                  this.state.user.displayName
+                    ? this.state.user.displayName
+                    : this.state.user.email
+                }
+              />
+            )}
+          </ThemeProvider>
+        </div>
       </div>
     );
   }

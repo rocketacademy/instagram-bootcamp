@@ -3,8 +3,9 @@ import {
   Button,
   Dialog,
   DialogTitle,
+  Divider,
   List,
-  ListItem,
+  ListItemText,
   TextField,
 } from "@mui/material";
 import { push, ref, set } from "firebase/database";
@@ -43,9 +44,11 @@ export default class Comment extends React.Component {
         ? Object.values(this.props.post.val.comments).map(
             ({ author, comment }, i) => {
               return (
-                <ListItem key={Object.keys(this.props.post.val.comments)[i]}>
+                <ListItemText
+                  key={Object.keys(this.props.post.val.comments)[i]}
+                >
                   {author}: {comment}
-                </ListItem>
+                </ListItemText>
               );
             }
           )
@@ -72,20 +75,21 @@ export default class Comment extends React.Component {
             </div>
             {this.props.post.val.author}:
             <DialogTitle>{this.props.post.val.message}</DialogTitle>
-            <div>
+            <div className="comment-like">
               Likes: {this.props.likeButton(this.props.post, this.props.liked)}
               {"likes" in this.props.post.val
                 ? this.props.post.val.likes.length
                 : 0}
             </div>
+            <Divider />
             Comment:
             <List>{display}</List>
             {this.props.user && (
-              <div>
+              <div className="comment-input">
                 <TextField
                   value={this.state.input}
                   onChange={this.handleChange}
-                  placeholder="Leave your comment"
+                  label="Leave your comment"
                 />
                 <Button onClick={this.handleSubmit} variant="contained">
                   Send

@@ -18,7 +18,11 @@ export default function EditName(props) {
   return (
     <div className="dialog">
       <DialogTitle>Type in your new user name:</DialogTitle>
-      <TextField value={input} onChange={(e) => setInput(e.target.value)} />
+      <TextField
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        style={{ marginBottom: "5px" }}
+      />
       <Button variant="contained" onClick={() => handleSubmit()}>
         OK
       </Button>

@@ -26,14 +26,12 @@ img {
   margin-top: 50px;
   position: static;
 }
-.post-info {
-  background-color: rgb(98, 100, 100);
-  z-index: 3;
-}
 
-.toggle {
-  color: white;
-  background-color: wheat;
+.comment-like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
 }
 
 .comment-img {
@@ -42,19 +40,22 @@ img {
   justify-content: center;
 }
 
+.comment-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .dialog {
   box-sizing: border-box;
   padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background-color: #b2dfdb;
 }
-
 .dialog input {
-  padding: 5px;
-}
-.dialog button {
-  margin-top: 5px;
+  height: 20%;
 }
 
 .user-bar {
@@ -80,4 +81,8 @@ img {
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
+  padding: 5px;
+}
+.composer button {
+  margin: 5px;
 }

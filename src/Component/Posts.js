@@ -27,8 +27,9 @@ export default class Posts extends React.Component {
           value="like"
           selected={liked}
           onChange={() => this.handleLike(post, liked)}
+          style={{ height: "30px", width: "30px" }}
         >
-          {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
         </ToggleButton>
       )
     );
@@ -68,7 +69,7 @@ export default class Posts extends React.Component {
 
     return (
       <Table className="post">
-        <TableRow className="post-info">
+        <TableRow style={{ backgroundColor: "secondary" }}>
           <TableCell>Author</TableCell>
           <TableCell>Time:</TableCell>
           <TableCell>Picture:</TableCell>
