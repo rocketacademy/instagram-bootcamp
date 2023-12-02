@@ -53,6 +53,9 @@ img {
 .dialog input {
   padding: 5px;
 }
+.dialog button {
+  margin-top: 5px;
+}
 
 .user-bar {
   height: 50px;
@@ -67,7 +70,9 @@ img {
   flex-direction: row;
 }
 .user-bar button {
+  max-height: 30px;
   margin: 5px;
+  padding: 5px;
 }
 
 .composer {

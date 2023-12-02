@@ -53,7 +53,7 @@ export default class Posts extends React.Component {
             {post.val.message}
             <Comment
               post={post}
-              user={this.props.user ? this.props.user.email : null}
+              user={this.props.user ? this.props.user : null}
               likeButton={this.likeButton}
               liked={liked}
             />

@@ -27,7 +27,6 @@ class App extends React.Component {
     onAuthStateChanged(auth, (user) => {
       this.setState({ user: user });
     });
-
     const postsRef = ref(database, DB_POSTS_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(postsRef, (data) => {
@@ -49,18 +48,30 @@ class App extends React.Component {
     });
   }
 
+  updateUser = () => {
+    this.setState({ user: auth.currentUser });
+  };
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <UserBar user={this.state.user} />
+          <UserBar user={this.state.user} updateUser={this.updateUser} />
           <Posts
             posts={this.state.posts}
             handleLike={this.handleLike}
             user={this.state.user}
           />
           <Clock />
-          {this.state.user && <Composer author={this.state.user.email} />}
+          {this.state.user && (
+            <Composer
+              author={
+                this.state.user.displayName
+                  ? this.state.user.displayName
+                  : this.state.user.email
+              }
+            />
+          )}
         </header>
       </div>
     );

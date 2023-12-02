@@ -11,7 +11,7 @@ export default function SignUpForm(props) {
   const handleSubmit = async () => {
     await createUserWithEmailAndPassword(auth, email, password)
       .then(() => props.setSignUp(false))
-      .catch((error) => {
+      .catch(() => {
         setSnackBar(true);
       });
   };
