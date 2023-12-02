@@ -37,7 +37,6 @@ export default function Composer(props) {
       message: input,
       date: new Date().toLocaleString(),
       url: url,
-      likes: 0,
     });
     setInput("");
     setInputFile(null);

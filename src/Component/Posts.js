@@ -3,26 +3,29 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import React from "react";
 import Comment from "./Comment";
+import { ref, update } from "firebase/database";
+import { database } from "../firebase";
 
 export default class Posts extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { button: {} };
-  }
-
-  handleChange = (post) => {
-    const updated = {};
-    let isLike = true;
-    if (post.key in this.state.button) {
-      isLike = !this.state.button[post.key];
+  handleLike = (post, liked) => {
+    const postRef = ref(database, "posts/" + post.key);
+    if (liked) {
+      const index = post.val.likes.indexOf(this.props.user.uid);
+      const replace = post.val.likes.toSpliced(index, 1);
+      update(postRef, { likes: replace });
+    } else if ("likes" in post.val) {
+      update(postRef, { likes: [...post.val.likes, this.props.user.uid] });
+    } else {
+      update(postRef, { likes: [this.props.user.uid] });
     }
-    updated[post.key] = isLike;
-    this.props.handleLike(post, isLike);
-    this.setState({ button: { ...this.state.button, ...updated } });
   };
+
   render() {
-    console.log(this.props.userEmail);
     const display = this.props.posts.map((post) => {
+      const liked =
+        "likes" in post.val &&
+        this.props.user &&
+        post.val.likes.includes(this.props.user.uid);
       return (
         <TableRow key={post.key}>
           <TableCell>{post.val.author}</TableCell>
@@ -34,23 +37,21 @@ export default class Posts extends React.Component {
           </TableCell>
           <TableCell>
             {post.val.message}
-            <Comment post={post} user={this.props.user} />
+            <Comment
+              post={post}
+              user={this.props.user ? this.props.user.email : null}
+            />
           </TableCell>
           <TableCell>
             {this.props.user && (
               <ToggleButton
-                value="like"
-                selected={this.state.button[post.key]}
-                onChange={() => this.handleChange(post)}
+                selected={liked}
+                onChange={() => this.handleLike(post, liked)}
               >
-                {this.state.button[post.key] ? (
-                  <FavoriteIcon />
-                ) : (
-                  <FavoriteBorderIcon />
-                )}
+                {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
               </ToggleButton>
             )}
-            {post.val.likes}
+            {"likes" in post.val ? post.val.likes.length : 0}
           </TableCell>
         </TableRow>
       );

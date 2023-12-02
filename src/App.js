@@ -1,5 +1,5 @@
 import React from "react";
-import { onChildAdded, onChildChanged, ref, update } from "firebase/database";
+import { onChildAdded, onChildChanged, ref } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
 import Posts from "./Component/Posts";
@@ -49,13 +49,6 @@ class App extends React.Component {
     });
   }
 
-  handleLike = (post, isLike) => {
-    const postRef = ref(database, DB_POSTS_KEY + "/" + post.key);
-    update(postRef, {
-      likes: isLike ? post.val.likes + 1 : post.val.likes - 1,
-    });
-  };
-
   render() {
     return (
       <div className="App">
@@ -63,7 +56,7 @@ class App extends React.Component {
           <Posts
             posts={this.state.posts}
             handleLike={this.handleLike}
-            user={this.state.user ? this.state.user.email : null}
+            user={this.state.user ? this.state.user : null}
           />
           <Clock />
           {this.state.user ? (
