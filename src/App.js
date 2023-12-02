@@ -1,15 +1,15 @@
 import React from "react";
-import { get, onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref, set } from "firebase/database";
 import { database, storage } from "./firebase";
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-// import logo from "./logo.png";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
+import { Button } from "react-bootstrap";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -78,6 +78,30 @@ class App extends React.Component {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
       <p key={message.key}>
+        {/* <span>{message.val.text}</span>
+        <span className="date">{message.val.date}</span>
+        <p>
+          {message.val.url ? (
+            <img src={message.val.url} alt={message.val.name} />
+          ) : (
+            "No image"
+          )}
+        </p> */}
+        {/* <div class="card">
+          {message.val.url ? (
+            <img
+              src={message.val.url}
+              class="card-img-top"
+              alt={message.val.name}
+            />
+          ) : (
+            "No image"
+          )}
+          <div class="card-body">
+            <p class="card-text">{message.val.text}</p>
+            <p className="date">{message.val.date}</p>
+          </div>
+        </div> */}
         <Card style={{ width: "18rem" }}>
           <Card.Body>
             <Card.Img
@@ -113,12 +137,19 @@ class App extends React.Component {
           onChange={(e) => {
             this.setState({
               fileInputFile: e.target.files[0],
-              fileInputValue: e.target.files.name,
+              fileInputValue: e.target.value,
             });
           }}
         ></input>
 
-        <button onClick={this.submit}>Post</button>
+        <Button
+          variant="outline-light"
+          size="lg"
+          className="mb-3"
+          onClick={this.submit}
+        >
+          Post
+        </Button>
         <div>{messageListItems}</div>
       </div>
     );
