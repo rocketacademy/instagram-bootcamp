@@ -38,7 +38,10 @@ class App extends React.Component {
       }));
     });
     onChildChanged(postsRef, (data) => {
-      const replace = this.state.posts.toSpliced(data.val().postNo, 1, {
+      const replacePostIndex = this.state.posts.findIndex(
+        (post) => post.key === data.key
+      );
+      const replace = this.state.posts.toSpliced(replacePostIndex, 1, {
         key: data.key,
         val: data.val(),
       });
