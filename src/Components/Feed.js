@@ -9,6 +9,8 @@ class Feed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // Initialise empty messages array in state to keep local state in sync with Firebase
+      // When Firebase changes, update local state, which will update local UI
       messages: [],
     };
   }
@@ -26,7 +28,7 @@ class Feed extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let messageListItems = this.state.messages.map((message) => (
-      <p key={message.key}>
+      <div key={message.key}>
         <Card style={{ width: "18rem" }}>
           <Card.Body>
             <Card.Img
@@ -38,7 +40,8 @@ class Feed extends React.Component {
             <Card.Text className="date">{message.val.date}</Card.Text>
           </Card.Body>
         </Card>
-      </p>
+        <br />
+      </div>
     ));
     return <div>{messageListItems}</div>;
   }
