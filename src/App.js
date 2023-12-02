@@ -5,9 +5,9 @@ import "./App.css";
 import Posts from "./Component/Posts";
 import Clock from "./Component/Clock";
 import Composer from "./Component/Composer";
-import AccountForm from "./Component/AccountForm";
 import { auth } from "./firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import UserBar from "./Component/UserBar";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
@@ -53,27 +53,14 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
+          <UserBar user={this.state.user} />
           <Posts
             posts={this.state.posts}
             handleLike={this.handleLike}
-            user={this.state.user ? this.state.user : null}
+            user={this.state.user}
           />
           <Clock />
-          {this.state.user ? (
-            <div>
-              Hi {this.state.user.email}{" "}
-              <button
-                onClick={() => {
-                  signOut(auth);
-                }}
-              >
-                Log out
-              </button>
-              <Composer author={this.state.user.email} />
-            </div>
-          ) : (
-            <AccountForm />
-          )}
+          {this.state.user && <Composer author={this.state.user.email} />}
         </header>
       </div>
     );

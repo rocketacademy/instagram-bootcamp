@@ -24,6 +24,7 @@ export default class Posts extends React.Component {
     return (
       this.props.user && (
         <ToggleButton
+          value="like"
           selected={liked}
           onChange={() => this.handleLike(post, liked)}
         >
@@ -66,8 +67,8 @@ export default class Posts extends React.Component {
     });
 
     return (
-      <Table>
-        <TableRow className="sticky">
+      <Table className="post">
+        <TableRow className="post-info">
           <TableCell>Author</TableCell>
           <TableCell>Time:</TableCell>
           <TableCell>Picture:</TableCell>

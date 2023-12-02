@@ -1,21 +1,23 @@
-import { Button, Input, List, Snackbar } from "@mui/material";
+import { Button, DialogTitle, Input, List, Snackbar } from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
 
-export default function LogInForm() {
+export default function LogInForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
 
   const handleSubmit = async () => {
-    await signInWithEmailAndPassword(auth, email, password).catch((error) => {
-      setSnackBar(true);
-    });
+    await signInWithEmailAndPassword(auth, email, password)
+      .then(() => props.setLogIn(false))
+      .catch((error) => {
+        setSnackBar(true);
+      });
   };
-
   return (
-    <div className="account">
+    <div className="dialog">
+      <DialogTitle>Log In</DialogTitle>
       <Snackbar
         open={snackBar}
         message="Wrong Email/Password"

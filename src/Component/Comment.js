@@ -66,16 +66,16 @@ export default class Comment extends React.Component {
               )}
             </div>
             {this.props.post.val.author}:
-            <DialogTitle>
-              {this.props.post.val.message}
-              {this.props.likeButton(this.props.post, this.props.liked)}
+            <DialogTitle>{this.props.post.val.message}</DialogTitle>
+            <div>
+              Likes: {this.props.likeButton(this.props.post, this.props.liked)}
               {"likes" in this.props.post.val
                 ? this.props.post.val.likes.length
                 : 0}
-            </DialogTitle>
+            </div>
             Comment:
             <List>{display}</List>
-            {this.props.user ? (
+            {this.props.user && (
               <div>
                 <TextField
                   value={this.state.input}
@@ -86,8 +86,6 @@ export default class Comment extends React.Component {
                   Send
                 </Button>
               </div>
-            ) : (
-              <p>Please sign up or log-in to leave comments</p>
             )}
           </div>
         </Dialog>

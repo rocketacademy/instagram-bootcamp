@@ -6,6 +6,7 @@ import {
 } from "firebase/storage";
 import { push, ref, set } from "firebase/database";
 import { database, storage } from "../firebase";
+import { Input, TextField, Button } from "@mui/material";
 
 const DB_POSTS_KEY = "posts";
 
@@ -44,8 +45,8 @@ export default function Composer(props) {
   };
 
   return (
-    <div>
-      <input
+    <div className="composer">
+      <Input
         type="file"
         accept="image/*"
         value={inputFileValue}
@@ -54,15 +55,16 @@ export default function Composer(props) {
           setInputFileValue(e.target.value);
         }}
       />
-      <input
+      <TextField
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
         }}
         placeholder="Please type in message"
       />
-
-      <button onClick={() => handleSumbit()}>Send</button>
+      <Button variant="contained" onClick={() => handleSumbit()}>
+        Send
+      </Button>
     </div>
   );
 }

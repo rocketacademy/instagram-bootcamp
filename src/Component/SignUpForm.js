@@ -1,22 +1,23 @@
-import { Button, Input, List, Snackbar } from "@mui/material";
+import { Button, DialogTitle, Input, List, Snackbar } from "@mui/material";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
 
-export default function SignUpForm() {
+export default function SignUpForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
 
   const handleSubmit = async () => {
-    await createUserWithEmailAndPassword(auth, email, password).catch(
-      (error) => {
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(() => props.setSignUp(false))
+      .catch((error) => {
         setSnackBar(true);
-      }
-    );
+      });
   };
   return (
-    <div className="account">
+    <div className="dialog">
+      <DialogTitle>Sign Up</DialogTitle>
       <Snackbar
         open={snackBar}
         message="Email already registered"

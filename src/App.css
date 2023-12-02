@@ -22,9 +22,11 @@ img {
   height: 25vmin;
 }
 
-.sticky {
-  position: sticky;
-  top: 0px;
+.post {
+  margin-top: 50px;
+  position: static;
+}
+.post-info {
   background-color: rgb(98, 100, 100);
   z-index: 3;
 }
@@ -40,13 +42,6 @@ img {
   justify-content: center;
 }
 
-.account {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .dialog {
   box-sizing: border-box;
   padding: 10px;
@@ -57,4 +52,27 @@ img {
 
 .dialog input {
   padding: 5px;
+}
+
+.user-bar {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+.user-bar div {
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+}
+.user-bar button {
+  margin: 5px;
+}
+
+.composer {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
 }

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogTitle } from "@mui/material";
+import { Button, Dialog } from "@mui/material";
 import { useState } from "react";
 import SignUpForm from "./SignUpForm";
 import LogInForm from "./LogInForm";
@@ -11,17 +11,11 @@ export default function AccountForm() {
     <p>
       Please <Button onClick={() => setSignUp(true)}>Sign up</Button> or{" "}
       <Button onClick={() => setLogIn(true)}>Log in</Button>.
-      <Dialog open={signUp} onClose={() => setSignUp(false)}>
-        <div className="dialog">
-          <DialogTitle>Sign Up</DialogTitle>
-          <SignUpForm />
-        </div>
+      <Dialog open={signUp} onClose={() => setSignUp(false)} className="dialog">
+        <SignUpForm />
       </Dialog>
       <Dialog open={LogIn} onClose={() => setLogIn(false)} className="dialog">
-        <div className="dialog">
-          <DialogTitle>Log In</DialogTitle>
-          <LogInForm />
-        </div>
+        <LogInForm />
       </Dialog>
     </p>
   );
