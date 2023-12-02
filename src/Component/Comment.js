@@ -18,6 +18,9 @@ export default class Comment extends React.Component {
   }
 
   handleSubmit = () => {
+    if (this.state.input === "") {
+      return;
+    }
     const DB_COMMENTS_KEY = `posts/${this.props.post.key}/comments`;
     const commentRef = ref(database, DB_COMMENTS_KEY);
     const newCommentRef = push(commentRef);
@@ -39,7 +42,7 @@ export default class Comment extends React.Component {
               </ListItem>
             );
           })
-        : "";
+        : "No comments";
 
     return (
       <div>
@@ -51,22 +54,33 @@ export default class Comment extends React.Component {
           onClose={() => this.setState({ open: false })}
           fullWidth
         >
-          <div className="comment-img">
-            {this.props.post.val.url !== undefined && (
-              <img
-                src={this.props.post.val.url}
-                alt={this.props.post.val.postNo}
-              />
+          <div className="dialog">
+            <div className="comment-img">
+              {this.props.post.val.url !== undefined && (
+                <img
+                  src={this.props.post.val.url}
+                  alt={this.props.post.val.postNo}
+                />
+              )}
+            </div>
+            {this.props.post.val.author}:
+            <DialogTitle>{this.props.post.val.message}</DialogTitle>
+            Comment:
+            <List>{display}</List>
+            {this.props.user ? (
+              <div>
+                <TextField
+                  onChange={this.handleChange}
+                  placeholder="Leave your comment"
+                />
+                <Button onClick={this.handleSubmit} variant="contained">
+                  Send
+                </Button>
+              </div>
+            ) : (
+              <p>Please sign up or log-in to leave comments</p>
             )}
           </div>
-          <DialogTitle>{this.props.post.val.message}</DialogTitle>
-          Comment:
-          <List>{display}</List>
-          <TextField
-            onChange={this.handleChange}
-            placeholder="Leave your comment"
-          />
-          <Button onClick={this.handleSubmit}>Send</Button>
         </Dialog>
       </div>
     );

@@ -15,6 +15,9 @@ export default function Composer(props) {
   const [inputFileValue, setInputFileValue] = useState("");
 
   const handleSumbit = () => {
+    if (inputFile === null && input === "") {
+      return;
+    }
     if (inputFile === null) {
       writeData(null);
       return;

@@ -21,6 +21,7 @@ export default class Posts extends React.Component {
     this.setState({ button: { ...this.state.button, ...updated } });
   };
   render() {
+    console.log(this.props.userEmail);
     const display = this.props.posts.map((post) => {
       return (
         <TableRow key={post.key}>
@@ -33,20 +34,22 @@ export default class Posts extends React.Component {
           </TableCell>
           <TableCell>
             {post.val.message}
-            <Comment post={post} />
+            <Comment post={post} user={this.props.user} />
           </TableCell>
           <TableCell>
-            <ToggleButton
-              value="like"
-              selected={this.state.button[post.key]}
-              onChange={() => this.handleChange(post)}
-            >
-              {this.state.button[post.key] ? (
-                <FavoriteIcon />
-              ) : (
-                <FavoriteBorderIcon />
-              )}
-            </ToggleButton>
+            {this.props.user && (
+              <ToggleButton
+                value="like"
+                selected={this.state.button[post.key]}
+                onChange={() => this.handleChange(post)}
+              >
+                {this.state.button[post.key] ? (
+                  <FavoriteIcon />
+                ) : (
+                  <FavoriteBorderIcon />
+                )}
+              </ToggleButton>
+            )}
             {post.val.likes}
           </TableCell>
         </TableRow>
@@ -59,7 +62,6 @@ export default class Posts extends React.Component {
           <TableCell>Author</TableCell>
           <TableCell>Time:</TableCell>
           <TableCell>Picture:</TableCell>
-
           <TableCell>Message:</TableCell>
           <TableCell>Likes:</TableCell>
         </TableRow>

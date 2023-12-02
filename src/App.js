@@ -60,11 +60,15 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Posts posts={this.state.posts} handleLike={this.handleLike} />
+          <Posts
+            posts={this.state.posts}
+            handleLike={this.handleLike}
+            user={this.state.user ? this.state.user.email : null}
+          />
           <Clock />
-          {Boolean(this.state.user) ? (
+          {this.state.user ? (
             <div>
-              Hi {this.state.user.email}
+              Hi {this.state.user.email}{" "}
               <button
                 onClick={() => {
                   signOut(auth);
