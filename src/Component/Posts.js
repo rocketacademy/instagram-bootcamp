@@ -13,10 +13,10 @@ export default class Posts extends React.Component {
   handleChange = (post) => {
     const updated = {};
     let isLike = true;
-    if (post.val.postNo in this.state.button) {
-      isLike = !this.state.button[post.val.postNo];
+    if (post.key in this.state.button) {
+      isLike = !this.state.button[post.key];
     }
-    updated[post.val.postNo] = isLike;
+    updated[post.key] = isLike;
     this.props.handleLike(post, isLike);
     this.setState({ button: { ...this.state.button, ...updated } });
   };
@@ -28,7 +28,7 @@ export default class Posts extends React.Component {
           <TableCell>{post.val.date}</TableCell>
           <TableCell>
             {post.val.url !== undefined && (
-              <img src={post.val.url} alt={post.val.postNo} />
+              <img src={post.val.url} alt={post.key} />
             )}
           </TableCell>
           <TableCell>
@@ -38,10 +38,10 @@ export default class Posts extends React.Component {
           <TableCell>
             <ToggleButton
               value="like"
-              selected={this.state.button[post.val.postNo]}
+              selected={this.state.button[post.key]}
               onChange={() => this.handleChange(post)}
             >
-              {this.state.button[post.val.postNo] ? (
+              {this.state.button[post.key] ? (
                 <FavoriteIcon />
               ) : (
                 <FavoriteBorderIcon />
