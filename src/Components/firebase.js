@@ -13,14 +13,6 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  // apiKey: "AIzaSyA-OgWcImTfZWLhP2oVahMZlsg7ZyC6HCU",
-  // authDomain: "rocketgram-6f5a2.firebaseapp.com",
-  // databaseURL:
-  //   "https://rocketgram-6f5a2-default-rtdb.asia-southeast1.firebasedatabase.app",
-  // projectId: "rocketgram-6f5a2",
-  // storageBucket: "rocketgram-6f5a2.appspot.com",
-  // messagingSenderId: "210992876137",
-  // appId: "1:210992876137:web:ae55576f7c0e854d9c30f8",
 };
 
 console.log(firebaseConfig);
