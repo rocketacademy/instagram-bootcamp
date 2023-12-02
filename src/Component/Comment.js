@@ -66,7 +66,13 @@ export default class Comment extends React.Component {
               )}
             </div>
             {this.props.post.val.author}:
-            <DialogTitle>{this.props.post.val.message}</DialogTitle>
+            <DialogTitle>
+              {this.props.post.val.message}
+              {this.props.likeButton(this.props.post, this.props.liked)}
+              {"likes" in this.props.post.val
+                ? this.props.post.val.likes.length
+                : 0}
+            </DialogTitle>
             Comment:
             <List>{display}</List>
             {this.props.user ? (

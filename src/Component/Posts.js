@@ -20,6 +20,19 @@ export default class Posts extends React.Component {
     }
   };
 
+  likeButton = (post, liked) => {
+    return (
+      this.props.user && (
+        <ToggleButton
+          selected={liked}
+          onChange={() => this.handleLike(post, liked)}
+        >
+          {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        </ToggleButton>
+      )
+    );
+  };
+
   render() {
     const display = this.props.posts.map((post) => {
       const liked =
@@ -40,17 +53,12 @@ export default class Posts extends React.Component {
             <Comment
               post={post}
               user={this.props.user ? this.props.user.email : null}
+              likeButton={this.likeButton}
+              liked={liked}
             />
           </TableCell>
           <TableCell>
-            {this.props.user && (
-              <ToggleButton
-                selected={liked}
-                onChange={() => this.handleLike(post, liked)}
-              >
-                {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-              </ToggleButton>
-            )}
+            {this.likeButton(post, liked)}
             {"likes" in post.val ? post.val.likes.length : 0}
           </TableCell>
         </TableRow>
