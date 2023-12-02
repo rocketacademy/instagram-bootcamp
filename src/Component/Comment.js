@@ -24,7 +24,7 @@ export default class Comment extends React.Component {
     const DB_COMMENTS_KEY = `posts/${this.props.post.key}/comments`;
     const commentRef = ref(database, DB_COMMENTS_KEY);
     const newCommentRef = push(commentRef);
-    set(newCommentRef, this.state.input);
+    set(newCommentRef, { author: this.props.user, comment: this.state.input });
     this.setState({ input: "" });
   };
 
@@ -35,13 +35,15 @@ export default class Comment extends React.Component {
   render() {
     const display =
       "comments" in this.props.post.val
-        ? Object.values(this.props.post.val.comments).map((comment, i) => {
-            return (
-              <ListItem key={Object.keys(this.props.post.val.comments)[i]}>
-                {comment}
-              </ListItem>
-            );
-          })
+        ? Object.values(this.props.post.val.comments).map(
+            ({ author, comment }, i) => {
+              return (
+                <ListItem key={Object.keys(this.props.post.val.comments)[i]}>
+                  {author}:{comment}
+                </ListItem>
+              );
+            }
+          )
         : "No comments";
 
     return (
@@ -70,6 +72,7 @@ export default class Comment extends React.Component {
             {this.props.user ? (
               <div>
                 <TextField
+                  value={this.state.input}
                   onChange={this.handleChange}
                   placeholder="Leave your comment"
                 />

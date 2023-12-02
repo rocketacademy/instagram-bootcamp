@@ -39,6 +39,7 @@ export default function LogInForm() {
       </List>
       <List>
         <Input
+          type="password"
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
