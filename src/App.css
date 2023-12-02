@@ -2,9 +2,9 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.Card {
+  width: 50vw;
+  height: 30vh;
 }
 
 .App-header {
