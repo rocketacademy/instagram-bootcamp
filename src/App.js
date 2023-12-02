@@ -5,6 +5,9 @@ import "./App.css";
 import Posts from "./Component/Posts";
 import Clock from "./Component/Clock";
 import Composer from "./Component/Composer";
+import AccountForm from "./Component/AccountForm";
+import { auth } from "./firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_POSTS_KEY = "posts";
@@ -16,10 +19,15 @@ class App extends React.Component {
     // When Firebase changes, update local state, which will update local UI
     this.state = {
       posts: [],
+      user: null,
     };
   }
 
   componentDidMount() {
+    onAuthStateChanged(auth, (user) => {
+      this.setState({ user: user });
+    });
+
     const postsRef = ref(database, DB_POSTS_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
     onChildAdded(postsRef, (data) => {
@@ -51,7 +59,21 @@ class App extends React.Component {
         <header className="App-header">
           <Posts posts={this.state.posts} handleLike={this.handleLike} />
           <Clock />
-          <Composer posts={this.state.posts} />
+          {Boolean(this.state.user) ? (
+            <div>
+              Hi {this.state.user.email}
+              <button
+                onClick={() => {
+                  signOut(auth);
+                }}
+              >
+                Log out
+              </button>
+              <Composer author={this.state.user.email} />
+            </div>
+          ) : (
+            <AccountForm />
+          )}
         </header>
       </div>
     );

@@ -24,7 +24,7 @@ export default class Posts extends React.Component {
     const display = this.props.posts.map((post) => {
       return (
         <TableRow key={post.key}>
-          <TableCell>{post.val.postNo + 1}</TableCell>
+          <TableCell>{post.val.author}</TableCell>
           <TableCell>{post.val.date}</TableCell>
           <TableCell>
             {post.val.url !== undefined && (
@@ -56,7 +56,7 @@ export default class Posts extends React.Component {
     return (
       <Table>
         <TableRow className="sticky">
-          <TableCell>Post:</TableCell>
+          <TableCell>Author</TableCell>
           <TableCell>Time:</TableCell>
           <TableCell>Picture:</TableCell>
 

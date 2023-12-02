@@ -19,7 +19,7 @@ export default function Composer(props) {
       writeData(null);
       return;
     }
-    const imgRef = storageRef(storage, inputFile.name + props.posts.length);
+    const imgRef = storageRef(storage, inputFile.name + new Date());
     uploadBytes(imgRef, inputFile).then(() => {
       getDownloadURL(imgRef).then((url) => writeData(url));
     });
@@ -30,7 +30,7 @@ export default function Composer(props) {
     const postsListRef = ref(database, DB_POSTS_KEY);
     const newPostRef = push(postsListRef);
     set(newPostRef, {
-      postNo: props.posts.length,
+      author: props.author,
       message: input,
       date: new Date().toLocaleString(),
       url: url,
@@ -44,13 +44,6 @@ export default function Composer(props) {
   return (
     <div>
       <input
-        value={input}
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
-        placeholder="Please type in message"
-      />
-      <input
         type="file"
         accept="image/*"
         value={inputFileValue}
@@ -59,6 +52,14 @@ export default function Composer(props) {
           setInputFileValue(e.target.value);
         }}
       />
+      <input
+        value={input}
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+        placeholder="Please type in message"
+      />
+
       <button onClick={() => handleSumbit()}>Send</button>
     </div>
   );
