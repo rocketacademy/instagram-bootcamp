@@ -3,7 +3,11 @@ import FileUploadForm from "./Components/FileUploadForm";
 import MessageForm from "./Components/MessageForm";
 import PostDisplay from "./Components/PostDisplay";
 import ChatMessages from "./Components/ChatMessages";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 class App extends React.Component {
   constructor(props) {
@@ -11,8 +15,12 @@ class App extends React.Component {
     // Initialise empty messages array in state to keep local state in sync with Firebase
     // When Firebase changes, update local state, which will update local UI
     this.state = {
-      loggedInUser: "",
+      loggedInUser: false,
     };
+  }
+
+  componentDidMount() {
+    onAuthStateChanged;
   }
 
   render() {
