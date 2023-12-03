@@ -1,6 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button } from "react-bootstrap";
+import { Button, Row, Col } from "react-bootstrap";
 import { push, ref, set } from "firebase/database";
 import { database, storage } from "./firebase";
 import {
@@ -8,6 +8,7 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_KEY = "images/";
 class PostForm extends React.Component {
@@ -56,34 +57,42 @@ class PostForm extends React.Component {
     return (
       <div>
         <h3>Create a post</h3>
-        <input
-          className="input-text"
-          type="text"
-          name="text"
-          placeholder="write your caption..."
-          value={this.state.inputValue}
-          onChange={this.handleChange}
-        />
-        <input
-          className="input-file"
-          type="file"
-          name="file"
-          value={this.state.fileInputValue}
-          onChange={(e) => {
-            this.setState({
-              fileInputFile: e.target.files[0],
-              fileInputValue: e.target.value,
-            });
-          }}
-        ></input>
-        <Button
-          variant="outline-light"
-          size="lg"
-          className="mb-3"
-          onClick={this.submit}
-        >
-          Post
-        </Button>
+        <Row className="align-items-center">
+          <Col className="col-sm-3">
+            <input
+              className="input-file"
+              type="file"
+              name="file"
+              value={this.state.fileInputValue}
+              onChange={(e) => {
+                this.setState({
+                  fileInputFile: e.target.files[0],
+                  fileInputValue: e.target.value,
+                });
+              }}
+            ></input>
+          </Col>
+          <Col className="col-sm-6">
+            <input
+              className="input-text"
+              type="text"
+              name="text"
+              placeholder="write your caption..."
+              value={this.state.inputValue}
+              onChange={this.handleChange}
+            />
+          </Col>
+          <Col className="col-sm-2">
+            <Button
+              variant="outline-light"
+              // size="lg"
+
+              onClick={this.submit}
+            >
+              Post
+            </Button>
+          </Col>
+        </Row>
       </div>
     );
   }
