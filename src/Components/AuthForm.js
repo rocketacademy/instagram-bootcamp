@@ -33,7 +33,6 @@ export default class AuthForm extends React.Component {
       this.state.email,
       this.state.password
     );
-    console.log(user);
     this.setState({
       email: "",
       password: "",
@@ -46,7 +45,6 @@ export default class AuthForm extends React.Component {
       this.state.email,
       this.state.password
     );
-    console.log(user);
     this.setState({
       email: "",
       password: "",
@@ -54,8 +52,6 @@ export default class AuthForm extends React.Component {
   };
 
   render() {
-    console.log(this.state.email);
-    console.log(this.state.password);
     return (
       <form className="flex w-full mr-5" onSubmit={this.writeData}>
         <input

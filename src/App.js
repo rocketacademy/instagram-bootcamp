@@ -5,7 +5,7 @@ import PostDisplay from "./Components/PostDisplay";
 import ChatMessages from "./Components/ChatMessages";
 import AuthForm from "./Components/AuthForm";
 import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,6 +30,14 @@ class App extends React.Component {
     });
   }
 
+  signOut = () => {
+    this.setState({
+      loggedInUser: false,
+      user: {},
+    });
+    signOut(auth);
+  };
+
   render() {
     return (
       <>
@@ -47,6 +55,11 @@ class App extends React.Component {
             </p>
             <PostDisplay />
             {this.state.loggedInUser ? <FileUploadForm /> : <AuthForm />}
+            {this.state.loggedInUser ? (
+              <div className="btn" onClick={this.signOut}>
+                Sign Out
+              </div>
+            ) : null}
           </div>
         </div>
       </>
