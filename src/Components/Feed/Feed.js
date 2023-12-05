@@ -6,6 +6,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import Card from "react-bootstrap/Card";
+import "./Feed.css";
 
 class Feed extends React.Component {
   constructor(props) {
@@ -43,7 +44,7 @@ class Feed extends React.Component {
       <div className="Feed">
         <header className="Feed-header">
           {this.state.postList.map((url, index) => (
-            <Card key={index} src={url}>
+            <Card className="Card" key={index} src={url}>
               <Card.Img variant="top" src={url} />
             </Card>
           ))}
