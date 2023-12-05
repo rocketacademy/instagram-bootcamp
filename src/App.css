@@ -14,6 +14,15 @@
   color: white;
 }
 
+.footer-nav {
+  background-color: #282c34;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  color: white;
+}
+
 .name-field {
   margin-bottom: 10px;
 }
@@ -44,4 +53,29 @@
 
 .msg-date-time {
   font-size: smaller;
+}
+
+.posts {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.post-container {
+  display: flex;
+  flex-direction: column;
+  width: 33vh;
+}
+
+.post-thumbnail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 33vh;
+  width: inherit;
+  overflow: hidden;
+}
+
+img {
+  width: inherit;
 }

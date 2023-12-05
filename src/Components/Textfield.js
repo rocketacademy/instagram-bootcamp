@@ -1,6 +1,6 @@
 import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "../firebase";
+import { database } from "../firebase.js";
 import "../App.css";
 
 const DB_MESSAGES_KEY = "messages";
@@ -19,13 +19,17 @@ class Textfield extends React.Component {
   componentDidMount() {
     const messagesRef = ref(database, DB_MESSAGES_KEY);
     // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
+    this.unsubscribe = onChildAdded(messagesRef, (data) => {
       // Add the subsequent child to local component state, initialising a new array to trigger re-render
       this.setState((state) => ({
         // Store message key so we can use it as a key in our list items when rendering messages
         messages: [...state.messages, { key: data.key, val: data.val() }],
       }));
     });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   handleChange = (e, field) => {
@@ -70,19 +74,28 @@ class Textfield extends React.Component {
     ));
     return (
       <header className="App-header row">
-        <h4>Currently chatting as: {this.props.name}</h4>
+        <h4>
+          {this.props.name === ""
+            ? "Please insert your name before chatting."
+            : `Currently logged in as: ${this.props.name}`}
+        </h4>
         <div className="msg-container col-lg-8 col-sm-12">
-          {messageListItems}
+          {this.props.name === "" ? null : messageListItems}
         </div>
-        <input
-          className="col-lg-8 col-sm-12"
-          type="text"
-          value={this.state.inputField}
-          onChange={(e) => this.handleChange(e, "inputField")}
-        />
-        <button className="col-lg-8 col-sm-12" onClick={this.writeData}>
-          Send
-        </button>
+
+        {this.props.name !== "" && (
+          <div>
+            <input
+              className="col-lg-8 col-sm-12"
+              type="text"
+              value={this.state.inputField}
+              onChange={(e) => this.handleChange(e, "inputField")}
+            />
+            <button className="col-lg-8 col-sm-12" onClick={this.writeData}>
+              Send
+            </button>
+          </div>
+        )}
       </header>
     );
   }
