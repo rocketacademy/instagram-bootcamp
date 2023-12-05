@@ -4,7 +4,7 @@ import Composer from "./Composer";
 
 export default function MainPage(props) {
   return (
-    <div>
+    <div className="main-page">
       <Posts posts={props.posts} user={props.user} />
       <Clock />
       {props.user && (

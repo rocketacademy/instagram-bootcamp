@@ -9,17 +9,19 @@ import {
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
   const [open, setOpen] = useState(true);
+  const navi = useNavigate();
 
   const handleSubmit = async () => {
     await createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
+        navi("/");
         setOpen(false);
       })
       .catch(() => {
@@ -30,6 +32,7 @@ export default function SignUpForm() {
     <Dialog
       open={open}
       onClose={() => {
+        navi("/");
         setOpen(false);
       }}
     >
@@ -75,7 +78,6 @@ export default function SignUpForm() {
           </Button>
         </List>
       </div>
-      {!open && <Navigate to="/" />}
     </Dialog>
   );
 }

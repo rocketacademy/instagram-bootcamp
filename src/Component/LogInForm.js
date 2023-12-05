@@ -9,17 +9,21 @@ import {
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function LogInForm(props) {
+export default function LogInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
   const [open, setOpen] = useState(true);
+  const navi = useNavigate();
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, email, password)
-      .then(() => setOpen(false))
+      .then(() => {
+        navi("/");
+        setOpen(false);
+      })
       .catch(() => {
         setSnackBar(true);
       });
@@ -28,6 +32,7 @@ export default function LogInForm(props) {
     <Dialog
       open={open}
       onClose={() => {
+        navi("/");
         setOpen(false);
       }}
     >
@@ -74,7 +79,6 @@ export default function LogInForm(props) {
           </Button>
         </List>
       </div>
-      {!open && <Navigate to="/" />}
     </Dialog>
   );
 }

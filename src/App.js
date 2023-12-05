@@ -11,6 +11,8 @@ import MainPage from "./Component/MainPage";
 import LogInForm from "./Component/LogInForm";
 import SignUpForm from "./Component/SignUpForm";
 import { useState, useEffect } from "react";
+import Comment from "./Component/Comment";
+import Post from "./Component/Post";
 
 const theme = createTheme({
   palette: {
@@ -54,6 +56,15 @@ export default function App() {
     setUser(auth.currentUser);
   };
 
+  const commentRoute = posts.map((post) => {
+    return (
+      <Route
+        path={`${post.key}`}
+        element={<Comment post={post} user={user} />}
+      />
+    );
+  });
+
   return (
     <div className="App">
       <div className="App-header">
@@ -67,6 +78,9 @@ export default function App() {
               />
               <Route path="/logIn" element={<LogInForm />} />
               <Route path="/signUp" element={<SignUpForm />} />
+              <Route path="/comment" element={<Post posts={posts} />}>
+                {commentRoute}
+              </Route>
               <Route path="/*" element={<div>404</div>} />
             </Routes>
           </BrowserRouter>

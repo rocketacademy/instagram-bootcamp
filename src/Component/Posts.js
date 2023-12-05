@@ -1,9 +1,16 @@
-import { Table, TableRow, TableCell, ToggleButton } from "@mui/material";
+import {
+  Table,
+  TableRow,
+  TableCell,
+  ToggleButton,
+  Button,
+} from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import Comment from "./Comment";
 import { ref, update } from "firebase/database";
 import { database } from "../firebase";
+import { Link } from "react-router-dom";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 export default function Posts(props) {
   const handleLike = (post, liked) => {
@@ -50,12 +57,11 @@ export default function Posts(props) {
         </TableCell>
         <TableCell>
           {post.val.message}
-          <Comment
-            post={post}
-            user={props.user ? props.user : null}
-            likeButton={likeButton}
-            liked={liked}
-          />
+          <Link to={`/comment/${post.key}`}>
+            <Button>
+              <ChatBubbleOutlineIcon />
+            </Button>
+          </Link>
         </TableCell>
         <TableCell>
           {likeButton(post, liked)}
