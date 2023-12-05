@@ -37,16 +37,9 @@ export default class ChatMessages extends React.Component {
         <div className="chat-bubble text-left break-all">
           {message.val.messageString}
         </div>
-        <div>
-          <img src={message.val.url} alt={message.val.name} />
-        </div>
       </li>
     ));
 
-    return (
-      <div className="mb-10">
-        <ol className="">{messageListItems}</ol>
-      </div>
-    );
+    return <div className="m-5 overflow-auto">{messageListItems}</div>;
   }
 }

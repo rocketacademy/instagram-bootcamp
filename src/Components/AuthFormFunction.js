@@ -30,7 +30,7 @@ export const AuthFormFunction = () => {
   };
 
   return (
-    <form className="flex w-full mr-5">
+    <form className="flex w-full m-3">
       <input
         className="w-full mr-2 ml-5 input input-bordered"
         type="email"
