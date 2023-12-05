@@ -55,15 +55,15 @@ export default class AuthForm extends React.Component {
     return (
       <form className="flex w-full mr-5" onSubmit={this.writeData}>
         <input
-          className="w-full mr-2 ml-5 input input-bordered text-slate-900"
-          type="text"
+          className="w-full mr-2 ml-5 input input-bordered"
+          type="email"
           placeholder="Email"
           value={this.state.email}
           onChange={this.handleEmailChange}
         />
         <input
-          className="w-full mr-2 ml-5 input input-bordered text-slate-900"
-          type="text"
+          className="w-full mr-2 ml-5 input input-bordered"
+          type="password"
           placeholder="Password"
           value={this.state.password}
           onChange={this.handlePasswordChange}

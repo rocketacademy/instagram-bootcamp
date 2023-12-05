@@ -6,6 +6,7 @@ import ChatMessages from "./Components/ChatMessages";
 import AuthForm from "./Components/AuthForm";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { NavBar } from "./Components/NavBar";
 
 class App extends React.Component {
   constructor(props) {
@@ -39,8 +40,14 @@ class App extends React.Component {
   };
 
   render() {
+    console.log(this.state.user);
     return (
       <>
+        {this.state.loggedInUser ? (
+          <NavBar name={this.state.user.email} />
+        ) : (
+          <NavBar name={"Unknown User"} />
+        )}
         <div className="h-screen flex flex-col items-center justify-end pb-10 lg:flex-row lg:justify-around">
           <div className="">
             <ChatMessages />
