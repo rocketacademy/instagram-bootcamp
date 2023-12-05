@@ -5,11 +5,7 @@ import Composer from "./Composer";
 export default function MainPage(props) {
   return (
     <div>
-      <Posts
-        posts={props.posts}
-        handleLike={props.handleLike}
-        user={props.user}
-      />
+      <Posts posts={props.posts} user={props.user} />
       <Clock />
       {props.user && (
         <Composer
