@@ -28,52 +28,53 @@ export default function SignUpForm() {
   };
   return (
     <Dialog
-      className="dialog"
       open={open}
       onClose={() => {
         setOpen(false);
       }}
     >
-      <DialogTitle>Sign Up</DialogTitle>
-      <Snackbar
-        open={snackBar}
-        message="Email already registered"
-        onClose={() => setSnackBar(false)}
-        autoHideDuration={2000}
-      />
-      <List>
-        <label>Please enter your email:</label>
-      </List>
-      <List>
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+      <div className="dialog">
+        <DialogTitle>Sign Up</DialogTitle>
+        <Snackbar
+          open={snackBar}
+          message="Email already registered"
+          onClose={() => setSnackBar(false)}
+          autoHideDuration={2000}
         />
-      </List>
-      <List>
-        <label>Please enter your password:</label>
-      </List>
-      <List>
-        <Input
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
-      </List>
-      <List>
-        <Button
-          onClick={() => {
-            handleSubmit();
-          }}
-          variant="contained"
-        >
-          Sign Up!
-        </Button>
-      </List>
+        <List>
+          <label>Please enter your email:</label>
+        </List>
+        <List>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </List>
+        <List>
+          <label>Please enter your password:</label>
+        </List>
+        <List>
+          <Input
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
+        </List>
+        <List>
+          <Button
+            onClick={() => {
+              handleSubmit();
+            }}
+            variant="contained"
+          >
+            Sign Up!
+          </Button>
+        </List>
+      </div>
       {!open && <Navigate to="/" />}
     </Dialog>
   );
