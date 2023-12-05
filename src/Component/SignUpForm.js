@@ -1,22 +1,39 @@
-import { Button, DialogTitle, Input, List, Snackbar } from "@mui/material";
+import {
+  Button,
+  DialogTitle,
+  Input,
+  List,
+  Snackbar,
+  Dialog,
+} from "@mui/material";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
+import { Navigate } from "react-router-dom";
 
-export default function SignUpForm(props) {
+export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const handleSubmit = async () => {
     await createUserWithEmailAndPassword(auth, email, password)
-      .then(() => props.setSignUp(false))
+      .then(() => {
+        setOpen(false);
+      })
       .catch(() => {
         setSnackBar(true);
       });
   };
   return (
-    <div className="dialog">
+    <Dialog
+      className="dialog"
+      open={open}
+      onClose={() => {
+        setOpen(false);
+      }}
+    >
       <DialogTitle>Sign Up</DialogTitle>
       <Snackbar
         open={snackBar}
@@ -57,6 +74,7 @@ export default function SignUpForm(props) {
           Sign Up!
         </Button>
       </List>
-    </div>
+      {!open && <Navigate to="/" />}
+    </Dialog>
   );
 }

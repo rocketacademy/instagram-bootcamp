@@ -1,13 +1,8 @@
-import { AppBar, Box, Button, Dialog } from "@mui/material";
-import SignUpForm from "./SignUpForm";
-import LogInForm from "./LogInForm";
-import { useState } from "react";
+import { AppBar, Box, Button } from "@mui/material";
 import UserMenu from "./UserMenu";
+import { Link } from "react-router-dom";
 
 export default function UserBar(props) {
-  const [signUp, setSignUp] = useState(false);
-  const [logIn, setLogIn] = useState(false);
-
   return (
     <AppBar>
       <Box className="user-bar">
@@ -23,22 +18,16 @@ export default function UserBar(props) {
             <UserMenu user={props.user} updateUser={props.updateUser} />
           ) : (
             <div>
-              <Button variant="contained" onClick={() => setSignUp(true)}>
-                Sign up
-              </Button>
-              <Button variant="contained" onClick={() => setLogIn(true)}>
-                Log in
-              </Button>
+              <Link to="/signup">
+                <Button variant="contained">Sign up</Button>
+              </Link>
+              <Link to="/logIn">
+                <Button variant="contained">Log in</Button>
+              </Link>
             </div>
           )}
         </Box>
       </Box>
-      <Dialog open={signUp} onClose={() => setSignUp(false)} className="dialog">
-        <SignUpForm setSignUp={setSignUp} />
-      </Dialog>
-      <Dialog open={logIn} onClose={() => setLogIn(false)} className="dialog">
-        <LogInForm setLogIn={setLogIn} />
-      </Dialog>
     </AppBar>
   );
 }

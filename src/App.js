@@ -2,14 +2,15 @@ import React from "react";
 import { onChildAdded, onChildChanged, ref } from "firebase/database";
 import { database } from "./firebase";
 import "./App.css";
-import Posts from "./Component/Posts";
-import Clock from "./Component/Clock";
-import Composer from "./Component/Composer";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import UserBar from "./Component/UserBar";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { indigo, teal } from "@mui/material/colors";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainPage from "./Component/MainPage";
+import LogInForm from "./Component/LogInForm";
+import SignUpForm from "./Component/SignUpForm";
 
 const theme = createTheme({
   palette: {
@@ -65,22 +66,24 @@ class App extends React.Component {
       <div className="App">
         <div className="App-header">
           <ThemeProvider theme={theme}>
-            <UserBar user={this.state.user} updateUser={this.updateUser} />
-            <Posts
-              posts={this.state.posts}
-              handleLike={this.handleLike}
-              user={this.state.user}
-            />
-            <Clock />
-            {this.state.user && (
-              <Composer
-                author={
-                  this.state.user.displayName
-                    ? this.state.user.displayName
-                    : this.state.user.email
-                }
-              />
-            )}
+            <BrowserRouter>
+              <UserBar user={this.state.user} updateUser={this.updateUser} />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <MainPage
+                      posts={this.state.posts}
+                      handleLike={this.handleLike}
+                      user={this.state.user}
+                    />
+                  }
+                />
+                <Route path="/logIn" element={<LogInForm />} />
+                <Route path="/signUp" element={<SignUpForm />} />
+                <Route path="/*" element={<div>404</div>} />
+              </Routes>
+            </BrowserRouter>
           </ThemeProvider>
         </div>
       </div>

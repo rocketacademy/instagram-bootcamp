@@ -1,12 +1,21 @@
-import { Button, DialogTitle, Input, List, Snackbar } from "@mui/material";
+import {
+  Button,
+  DialogTitle,
+  Input,
+  List,
+  Snackbar,
+  Dialog,
+} from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase";
+import { Navigate } from "react-router-dom";
 
 export default function LogInForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [snackBar, setSnackBar] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, email, password)
@@ -16,7 +25,13 @@ export default function LogInForm(props) {
       });
   };
   return (
-    <div className="dialog">
+    <Dialog
+      open={open}
+      onClose={() => {
+        setOpen(false);
+      }}
+      className="dialog"
+    >
       <DialogTitle>Log In</DialogTitle>
       <Snackbar
         open={snackBar}
@@ -58,6 +73,7 @@ export default function LogInForm(props) {
           Log in!
         </Button>
       </List>
-    </div>
+      {!open && <Navigate to="/" />}
+    </Dialog>
   );
 }
