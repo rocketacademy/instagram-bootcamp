@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "react-bootstrap";
+import { InputGroup } from "react-bootstrap";
 
 import { auth } from "./firebase";
 import {
@@ -15,6 +16,8 @@ class AuthForm extends React.Component {
     this.state = {
       email: "",
       password: "",
+      errorCode: "",
+      errorMessage: "",
     };
   }
 
@@ -26,27 +29,48 @@ class AuthForm extends React.Component {
   };
 
   signUp = async () => {
-    const user = await createUserWithEmailAndPassword(
+    await createUserWithEmailAndPassword(
       auth,
       this.state.email,
       this.state.password
-    );
-    console.log(user);
-    this.setState({ email: "", password: "" });
+    )
+      .then(() => {
+        this.setState({ email: "", password: "" });
+      })
+      .catch((error) => {
+        this.setState({
+          errorCode: error.code,
+          errorMessage: error.message,
+        });
+      });
   };
   signIn = async () => {
-    const user = await signInWithEmailAndPassword(
+    await signInWithEmailAndPassword(
       auth,
       this.state.email,
       this.state.password
-    );
-    console.log(user);
-    this.setState({ email: "", password: "" });
+    )
+      .then(() => {
+        this.setState({ email: "", password: "" });
+      })
+      .catch((error) => {
+        this.setState({
+          errorCode: error.code,
+          errorMessage: error.message,
+        });
+      });
   };
 
   render() {
     return (
-      <div>
+      <div className="error-message">
+        <div>
+          <p>{this.state.errorCode && `Error code: ${this.state.errorCode}`}</p>
+          <p>
+            {this.state.errorMessage &&
+              `Error message: ${this.state.errorMessage}`}
+          </p>
+        </div>
         <label>Email</label>
 
         <input
