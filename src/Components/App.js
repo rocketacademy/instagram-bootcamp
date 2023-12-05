@@ -33,23 +33,23 @@ class App extends React.Component {
     this.setState({ isUserLoggedIn: false, user: null });
   };
   render() {
-    console.log(this.state.isUserLoggedIn);
     return (
       <div className="App">
         <header>Rocketgram</header>
         {this.state.isUserLoggedIn && (
-          <p>You are logged in! You can now create your posts!</p>
+          <p>Hi {this.state.user.email}! You are now logged in and can post!</p>
         )}
-        {this.state.isUserLoggedIn ? <PostForm /> : <AuthForm />}
         {this.state.isUserLoggedIn && (
           <Button
             variant="outline-light"
-            className="mb-3"
+            className="mb-5"
             onClick={this.signOut}
           >
             Sign out
           </Button>
         )}
+        {this.state.isUserLoggedIn ? <PostForm /> : <AuthForm />}
+
         <Feed />
       </div>
     );
