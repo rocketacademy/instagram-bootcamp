@@ -19,7 +19,7 @@ export default function LogInForm(props) {
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, email, password)
-      .then(() => props.setLogIn(false))
+      .then(() => setOpen(false))
       .catch(() => {
         setSnackBar(true);
       });
