@@ -53,7 +53,7 @@ export default function App() {
   }, []);
 
   const updateUser = () => {
-    setUser(auth.currentUser);
+    setUser({ ...auth.currentUser });
   };
 
   const commentRoute = posts.map((post) => {
@@ -64,7 +64,7 @@ export default function App() {
       />
     );
   });
-
+  console.log(user);
   return (
     <div className="App">
       <div className="App-header">
