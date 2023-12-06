@@ -26,13 +26,12 @@
   color: white;
 } */
 header {
-  margin: 100px auto;
+  margin: 50px auto;
   font-size: 50px;
 }
 .input-text {
-  margin-top: 20px;
   min-width: 300px;
-  min-height: 100px;
+  min-height: 50px;
   padding: 15px;
   font-size: 20px;
 }
@@ -43,4 +42,7 @@ header {
 .date {
   font-size: 15px;
   color: rgb(81, 78, 79);
+}
+.preLoginMessage {
+  font-size: 15px;
 }
