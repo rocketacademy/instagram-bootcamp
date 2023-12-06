@@ -17,3 +17,113 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+img {
+  height: 25vmin;
+}
+
+.post {
+  margin-top: 50px;
+  position: static;
+}
+.comment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2px;
+  width: 80%;
+  border-radius: 5%;
+}
+
+.comment {
+  background-color: #667e7c;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: 5%;
+  width: 100%;
+}
+.comment h4 {
+  align-self: center;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.comment-img {
+  display: flex;
+  align-self: center;
+  justify-content: center;
+}
+
+.comment-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.dialog {
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #b2dfdb;
+}
+.dialog input {
+  height: 20%;
+}
+
+.user-bar {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+.user-bar div {
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+}
+.user-bar button {
+  max-height: 30px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.composer {
+  background-color: #667e7c;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  border-radius: 5%;
+  width: 50%;
+}
+.composer button {
+  margin: 5px;
+}
+
+.x-button {
+  align-items: end;
+}
+
+.main-page {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post-content {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}

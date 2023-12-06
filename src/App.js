@@ -1,60 +1,91 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, onChildChanged, ref } from "firebase/database";
 import { database } from "./firebase";
-import logo from "./logo.png";
 import "./App.css";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import UserBar from "./Component/UserBar";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { indigo, teal } from "@mui/material/colors";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainPage from "./Component/MainPage";
+import LogInForm from "./Component/LogInForm";
+import SignUpForm from "./Component/SignUpForm";
+import { useState, useEffect } from "react";
+import Comment from "./Component/Comment";
+import Post from "./Component/Post";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
+const theme = createTheme({
+  palette: {
+    primary: indigo,
+    secondary: teal,
+  },
+});
+const DB_POSTS_KEY = "posts";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      messages: [],
-    };
-  }
+export default function App() {
+  const [posts, setPosts] = useState([]);
+  const [user, setUser] = useState(null);
 
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setUser(user);
     });
-  }
 
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
+    const postsRef = ref(database, DB_POSTS_KEY);
+
+    onChildAdded(postsRef, (data) => {
+      setPosts((prevPosts) => [
+        ...prevPosts,
+        { key: data.key, val: data.val() },
+      ]);
+    });
+
+    onChildChanged(postsRef, (data) => {
+      setPosts((prevPosts) => {
+        const replacePostIndex = prevPosts.findIndex(
+          (post) => post.key === data.key
+        );
+        const replace = prevPosts.slice();
+        replace[replacePostIndex] = { key: data.key, val: data.val() };
+        return replace;
+      });
+    });
+  }, []);
+
+  const updateUser = () => {
+    setUser({ ...auth.currentUser });
   };
 
-  render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
+  const commentRoute = posts.map((post) => {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
-      </div>
+      <Route
+        path={`${post.key}`}
+        element={<Comment post={post} user={user} />}
+      />
     );
-  }
+  });
+  console.log(user);
+  return (
+    <div className="App">
+      <div className="App-header">
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <UserBar user={user} updateUser={updateUser} />
+            <Routes>
+              <Route
+                path="/"
+                element={<MainPage posts={posts} user={user} />}
+              />
+              <Route path="/logIn" element={<LogInForm />} />
+              <Route path="/signUp" element={<SignUpForm />} />
+              <Route path="/comment" element={<Post posts={posts} />}>
+                {commentRoute}
+              </Route>
+              <Route path="/*" element={<div>404</div>} />
+            </Routes>
+          </BrowserRouter>
+        </ThemeProvider>
+      </div>
+    </div>
+  );
 }
-
-export default App;
