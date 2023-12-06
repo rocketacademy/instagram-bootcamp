@@ -35,7 +35,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header>Rocketgram</header>
+        <header>Rocketgram 🚀</header>
         {this.state.isUserLoggedIn && (
           <p>Hi {this.state.user.email}! You are now logged in and can post!</p>
         )}
