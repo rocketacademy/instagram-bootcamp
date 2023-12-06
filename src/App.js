@@ -1,7 +1,6 @@
 import React from "react";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import AuthForm from "./AuthForm";
 import Post from "./Post";
 import Header from "./Header";
 import "./App.css";
@@ -12,7 +11,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       loggedInUser: null,
-      showAuthForm: false,
     };
   }
 
@@ -30,28 +28,21 @@ class App extends React.Component {
     auth.signOut().then(() => {
       this.setState({
         loggedInUser: null,
-        showAuthForm: true,
       });
+      alert("You have signed out successfully!");
     });
-  };
-
-  toggleAuthForm = () => {
-    this.setState((prevState) => ({ showAuthForm: !this.state.showAuthForm }));
   };
 
   render() {
     const post = <Post loggedInUser={this.state.loggedInUser} />;
-    const authForm = <AuthForm toggleAuthForm={this.toggleAuthForm} />;
 
     return (
       <div className="App">
-        {this.state.loggedInUser && (
-          <Header
-            loggedInUser={this.state.loggedInUser}
-            onSignOut={this.handleSignOut}
-          />
-        )}
-        {this.state.showAuthForm ? authForm : post}
+        <Header
+          loggedInUser={this.state.loggedInUser}
+          onSignOut={this.handleSignOut}
+        />
+        {post}
       </div>
     );
   }
