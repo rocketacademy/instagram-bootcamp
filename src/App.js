@@ -48,9 +48,9 @@ class App extends React.Component {
     );
     const chatAndFeed = (
       <div>
+        <Feed />
         {this.state.loggedInUser ? chat : createAccountOrSignInButton}
         <br />
-        <Feed />
       </div>
     );
 

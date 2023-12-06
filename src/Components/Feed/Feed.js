@@ -4,6 +4,7 @@ import {
   uploadBytes,
   ref as Sref,
   getDownloadURL,
+  listAll,
 } from "firebase/storage";
 import Card from "react-bootstrap/Card";
 import "./Feed.css";
@@ -19,6 +20,28 @@ class Feed extends React.Component {
       newPost: null,
       postList: [],
     };
+  }
+
+  componentDidMount() {
+    const storage = getStorage();
+    const listRef = Sref(storage, "");
+    listAll(listRef)
+      .then((res) => {
+        res.prefixes.forEach((folderRef) => {
+          console.log(folderRef);
+        });
+        res.items.forEach((itemRef) => {
+          console.log(itemRef);
+          getDownloadURL(itemRef).then((url) => {
+            this.setState({
+              postList: [...this.state.postList, url],
+            });
+          });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   addPost = (event) => {
@@ -41,14 +64,18 @@ class Feed extends React.Component {
 
   render() {
     return (
-      <div className="Feed">
-        <header className="Feed-header">
+      <div>
+        <div className="Feed-header">
           {this.state.postList.map((url, index) => (
-            <Card className="Card" key={index} src={url}>
-              <Card.Img variant="top" src={url} />
+            <Card
+              //style={{ width: "50vw", height: "30vh" }}
+              key={index}
+              src={url}
+            >
+              <Card.Img className="Card" src={url} />
             </Card>
           ))}
-        </header>
+        </div>
         <input
           type="file"
           onChange={(event) =>
