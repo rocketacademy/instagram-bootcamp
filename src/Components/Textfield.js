@@ -1,4 +1,3 @@
-import React from "react";
 import { onChildAdded, push, ref, set } from "firebase/database";
 import { database } from "../firebase.js";
 import { useState, useEffect } from "react";
