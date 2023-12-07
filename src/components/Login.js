@@ -22,26 +22,37 @@ const Login = () => {
 
   return (
     <>
-      <h3>Sign in</h3>
+      <p class="text-2xl m-2 font-bold">Sign in</p>
       <form onSubmit={handleLogIn}>
-        <label for="email">Email</label>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          name="email-text"
-          style={{ display: "block" }}
-        />
-        <label for="password">Password</label>
-        <input
-          type="text"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          name="password-text"
-          style={{ display: "block" }}
-        />
-        <button type="submit">Sign in</button>
+        <div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            class="p-1 rounded my-3 shadow"
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            required
+            class="p-1 rounded my-3 shadow"
+            autoComplete="password"
+          />
+        </div>
+        <div>
+          <button type="submit" class="bg-gray-800 text-white m-2  p-2">
+            Sign In
+          </button>
+        </div>
       </form>
     </>
   );
