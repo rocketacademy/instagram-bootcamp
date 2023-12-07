@@ -40,7 +40,7 @@ const Textfield = (props) => {
     setInputField("");
   };
 
-  let messageListItems = messages.map((message) => (
+  const messageListItems = messages.map((message) => (
     <div
       style={{
         textAlign: props.name === message.val.name ? "right" : "left",
