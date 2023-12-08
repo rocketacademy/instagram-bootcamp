@@ -4,6 +4,7 @@ import { database, storage } from "./firebase";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -30,9 +31,39 @@ class Post extends React.Component {
     });
   }
 
+  handleLike = (messageKey) => {
+    const user = this.props.loggedInUser;
+
+    if (!user) {
+      alert("please sign in first");
+    }
+
+    const likedMessage = this.state.messages.find(
+      (message) => message.key === messageKey
+    );
+    //check if user liked the post
+    const likedByUser = likedMessage.val.likes[user.uid];
+
+    const likesRef = ref(
+      database,
+      DB_MESSAGES_KEY + "/" + messageKey + "/likes"
+    );
+    //unlike
+    if (likedByUser) {
+      update(likesRef, {
+        [user.uid]: null,
+      });
+    }
+    //if like
+    else {
+      update(likesRef, {
+        [user.uid]: true,
+      });
+    }
+  };
+
   render() {
     // Convert messages in state to message JSX elements to render
-
     let messageListItems = this.state.messages.map((message) => (
       <Card bg="dark" text="white" key={message.key}>
         {message.val.url ? (
@@ -43,6 +74,15 @@ class Post extends React.Component {
         <Card.Body>
           <Card.Text>{message.val.text}</Card.Text>
           <Card.Text>{message.val.email}</Card.Text>
+          <div className="like-container">
+            <Button onClick={() => this.handleLike(message.key)}>
+              Like/Unlike
+            </Button>
+            <p>
+              Likes:
+              {message.val.likes ? Object.keys(message.val.likes).length : 0}
+            </p>
+          </div>
         </Card.Body>
       </Card>
     ));

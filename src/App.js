@@ -17,7 +17,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       loggedInUser: null,
-      likes: false,
     };
   }
 
@@ -40,23 +39,6 @@ class App extends React.Component {
     });
   };
 
-  handleLikes = (updatedMessage) => {
-    const messageIndex = this.state.messages.findIndex(
-      (message) => message.key === updatedMessage.key
-    );
-
-    // Create a copy of the current state's messages array
-    const updatedMessages = [...this.state.messages];
-
-    // Update the likes count for the specific message
-    updatedMessages[messageIndex] = updatedMessage;
-
-    // Update the state with the modified messages array
-    this.setState({
-      messages: updatedMessages,
-    });
-  };
-
   render() {
     return (
       <div className="App">
@@ -64,10 +46,7 @@ class App extends React.Component {
           loggedInUser={this.state.loggedInUser}
           onSignOut={this.handleSignOut}
         />
-        <Post
-          loggedInUser={this.state.loggedInUser}
-          onLikes={this.handleLikes}
-        />
+        <Post loggedInUser={this.state.loggedInUser} />
       </div>
     );
   }

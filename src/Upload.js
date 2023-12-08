@@ -47,13 +47,12 @@ class Upload extends React.Component {
   writeData = (url) => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-
     const user = this.props.loggedInUser;
     const userEmail = user ? user.email : null;
     set(newMessageRef, {
       text: this.state.textInputValue,
       url: url,
-      likes: 0,
+      likes: {},
       email: userEmail,
     });
     // Reset input field after submit
