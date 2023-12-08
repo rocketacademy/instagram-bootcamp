@@ -47,7 +47,15 @@ class Upload extends React.Component {
   writeData = (url) => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
-    set(newMessageRef, { text: this.state.textInputValue, url: url, likes: 0 });
+
+    const user = this.props.loggedInUser;
+    const userEmail = user ? user.email : null;
+    set(newMessageRef, {
+      text: this.state.textInputValue,
+      url: url,
+      likes: 0,
+      email: userEmail,
+    });
     // Reset input field after submit
     this.setState({
       textInputValue: "",
@@ -82,6 +90,7 @@ class Upload extends React.Component {
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Control
               type="file"
+              name="fileInputValue"
               value={this.state.fileInputValue}
               onChange={(e) =>
                 this.setState({
@@ -94,6 +103,7 @@ class Upload extends React.Component {
           <Form.Control
             type="text"
             placeholder="Description"
+            name="textInputValue"
             value={this.state.textInputValue}
             onChange={this.handleChange}
           />

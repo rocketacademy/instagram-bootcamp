@@ -1,6 +1,5 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
-import { onChildAdded, push, ref, set } from "firebase/database";
+import { onChildAdded, push, ref, set, update } from "firebase/database";
 import { database, storage } from "./firebase";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -43,7 +42,7 @@ class Post extends React.Component {
         )}
         <Card.Body>
           <Card.Text>{message.val.text}</Card.Text>
-          <Button onSubmit={this.handleLikes}>Likes</Button>
+          <Card.Text>{message.val.email}</Card.Text>
         </Card.Body>
       </Card>
     ));

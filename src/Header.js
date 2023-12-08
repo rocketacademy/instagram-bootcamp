@@ -1,6 +1,8 @@
 import React from "react";
 import AuthForm from "./AuthForm";
 import Upload from "./Upload";
+import Button from "react-bootstrap/Button";
+import { CgAddR } from "react-icons/cg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -27,24 +29,29 @@ class Header extends React.Component {
         <div className="navbar">
           <h1>Rocketgram</h1>
           <div className="user-navbar">
-            {this.props.loggedInUser && (
-              <button onClick={this.toggleUpload}>Upload</button>
-            )}
             {this.props.loggedInUser ? (
               this.props.loggedInUser.email
             ) : (
-              <button onClick={this.toggleAuthForm}>Sign In</button>
+              <Button onClick={this.toggleAuthForm}>Sign In</Button>
             )}
 
             {this.props.loggedInUser && (
-              <button onClick={this.props.onSignOut}>Sign Out</button>
+              <Button onClick={this.toggleUpload}>
+                <CgAddR />
+              </Button>
+            )}
+
+            {this.props.loggedInUser && (
+              <Button onClick={this.props.onSignOut}>Sign Out</Button>
             )}
           </div>
         </div>
         {this.state.showAuthForm && (
           <AuthForm toggleAuthForm={this.toggleAuthForm} />
         )}
-        {this.state.showUpload && <Upload />}
+        {this.state.showUpload && (
+          <Upload loggedInUser={this.props.loggedInUser} />
+        )}
       </div>
     );
   }

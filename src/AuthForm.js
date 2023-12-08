@@ -72,7 +72,6 @@ class AuthForm extends React.Component {
   render() {
     return (
       <div className="App-header">
-        <h1 className="title">Rocketgram</h1>
         <p>{this.state.errorCode && `Error code: ${this.state.errorCode}`}</p>
         <p>
           {this.state.errorMessage &&
@@ -87,7 +86,7 @@ class AuthForm extends React.Component {
             onChange={this.handleChange}
           />
           <Form.Control
-            type="text"
+            type="password"
             placeholder="Password"
             name="passwordInputValue"
             value={this.state.passwordInputValue}
