@@ -6,6 +6,7 @@ import ChatMessages from "./Components/ChatMessages";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NavBar } from "./Components/NavBar";
+import { ChatMessagesFunction } from "./Components/ChatMessagesFunction";
 
 class App extends React.Component {
   constructor(props) {
@@ -59,7 +60,7 @@ class App extends React.Component {
         </div>
         <div className="flex flex-col items-start pb-10 lg:flex-row lg:justify-around">
           <div className="flex flex-col h-[680px] mt-2">
-            <ChatMessages />
+            <ChatMessagesFunction />
             <div className="flex lg:justify-between m-2">
               {this.state.loggedInUser ? <MessageForm /> : null}
             </div>
