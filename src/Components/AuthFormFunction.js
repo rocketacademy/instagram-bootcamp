@@ -4,8 +4,10 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export const AuthFormFunction = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,12 +23,14 @@ export const AuthFormFunction = () => {
     await createUserWithEmailAndPassword(auth, email, password);
     setEmail("");
     setPassword("");
+    navigate("/");
   };
 
   const signIn = async () => {
     await signInWithEmailAndPassword(auth, email, password);
     setEmail("");
     setPassword("");
+    navigate("/");
   };
 
   return (
@@ -50,6 +54,9 @@ export const AuthFormFunction = () => {
       </div>
       <div className="btn mr-1 ml-1" onClick={signIn}>
         Sign In
+      </div>
+      <div className="btn mr-1 ml-1">
+        <Link to="/">Home</Link>
       </div>
     </form>
   );

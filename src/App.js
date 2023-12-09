@@ -6,7 +6,6 @@ import ChatMessages from "./Components/ChatMessages";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NavBar } from "./Components/NavBar";
-import { AuthFormFunction } from "./Components/AuthFormFunction";
 
 class App extends React.Component {
   constructor(props) {
@@ -40,21 +39,23 @@ class App extends React.Component {
   };
 
   render() {
+    console.log(this.state.loggedInUser);
     return (
       <>
-        <div className="flex flex-col justify-center lg:flex-row ">
+        <div className="flex flex-col justify-between lg:flex-row ">
           {this.state.loggedInUser ? (
-            <NavBar name={this.state.user.email} />
+            <p className="btn btn-ghost text-xl">
+              Hello, {this.state.user.email}
+            </p>
           ) : (
-            <NavBar name={"Unknown! Please sign in!"} />
+            <p className="btn btn-ghost text-xl">
+              Please sign in to chat and post~
+            </p>
           )}
-          {this.state.loggedInUser ? (
-            <div className="btn p-2 m-2" onClick={this.signOut}>
-              Sign Out
-            </div>
-          ) : (
-            <AuthFormFunction />
-          )}
+          <NavBar
+            loggedInUser={this.state.loggedInUser}
+            signOut={this.signOut}
+          />
         </div>
         <div className="flex flex-col items-start pb-10 lg:flex-row lg:justify-around">
           <div className="flex flex-col h-[680px] mt-2">
