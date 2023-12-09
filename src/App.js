@@ -1,13 +1,26 @@
+// components
 import Textfield from "./Components/Textfield.js";
 import Posts from "./Components/Posts.js";
+// react hooks
 import { useState, useEffect } from "react";
+// firebase
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  updateCurrentUser,
+} from "firebase/auth";
 import "./App.css";
 
 const App = () => {
-  const [userField, setUserField] = useState("");
+  const [nameField, setNameField] = useState("");
+  const [emailField, setEmailField] = useState("");
+  const [passField, setPassfield] = useState("");
   const [user, setUser] = useState("");
   const [screen, setScreen] = useState(false);
   const [displayScreen, setDisplayScreen] = useState(null);
+  const [logIn, setLogIn] = useState(true);
 
   useEffect(() => {
     if (screen === "messages") {
@@ -26,7 +39,37 @@ const App = () => {
   };
 
   const handleSubmit = (e) => {
-    setUser(userField);
+    const auth = getAuth();
+    if (logIn) {
+      signInWithEmailAndPassword(auth, emailField, passField)
+        .then((userCredential) => {
+          // Signed in
+          setUser(userCredential.user.displayName);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    } else {
+      createUserWithEmailAndPassword(auth, emailField, passField, nameField)
+        .then(() => {
+          // Signed up
+          setUser(nameField);
+          updateProfile(auth.currentUser, {
+            displayName: nameField,
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    }
+
+    setNameField("");
+    setEmailField("");
+    setPassfield("");
   };
   return (
     <div className="App">
@@ -38,14 +81,43 @@ const App = () => {
         displayScreen
       ) : user === "" ? (
         <header className="App-header row">
-          <h4>Please insert your name</h4>
-          <input
-            className="name-field"
-            type="text"
-            value={userField}
-            onChange={(e) => handleChange(e, setUserField)}
-          />
-          <button onClick={handleSubmit}>Submit</button>
+          <h4>{logIn ? "Please login below" : "Sign up below"}</h4>
+          {!logIn && (
+            <div>
+              <span>Name: </span>
+              <input
+                className="login-field"
+                type="text"
+                value={nameField}
+                onChange={(e) => handleChange(e, setNameField)}
+              />
+            </div>
+          )}
+          <div>
+            <span>Email: </span>
+            <input
+              className="input-field"
+              type="email"
+              value={emailField}
+              onChange={(e) => handleChange(e, setEmailField)}
+            />
+          </div>
+          <div>
+            <span>Password: </span>
+            <input
+              className="login-field"
+              type="password"
+              value={passField}
+              onChange={(e) => handleChange(e, setPassfield)}
+            />
+          </div>
+
+          <div>
+            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={() => setLogIn(!logIn)}>
+              {logIn ? "Sign up here" : "Login as existing user"}
+            </button>
+          </div>
         </header>
       ) : (
         <header className="App-header row">

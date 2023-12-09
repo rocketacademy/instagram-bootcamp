@@ -23,7 +23,8 @@
   color: white;
 }
 
-.name-field {
+.login-field {
+  display: inline-block;
   margin-bottom: 10px;
 }
 
