@@ -25,6 +25,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import Composer from "./Components/Composer";
 import NewsFeed from "./Components/NewsFeed";
 import NavBar from "./Components/NavBar";
+import { useNavigate } from "react-router-dom";
 
 // Save the Firebase message folder name as a constant to avoid bugs due to misspelling
 const DB_MESSAGES_KEY = "messages";
@@ -185,6 +186,20 @@ class App extends React.Component {
       });
   };
 
+  logout = (e) => {
+    this.setState({
+      isLoggedIn: false,
+      user: {},
+    });
+
+    signOut(auth);
+
+    const { history } = this.props;
+    if (history) {
+      history.push("/");
+    }
+  };
+
   render() {
     console.log(this.state.messages);
     console.log(this.state.user);
@@ -206,17 +221,7 @@ class App extends React.Component {
           )}
 
           {this.state.isLoggedIn ? (
-            <button
-              onClick={(e) => {
-                this.setState({
-                  isLoggedIn: false,
-                  user: {},
-                });
-                signOut(auth);
-              }}
-            >
-              Logout
-            </button>
+            <button onClick={this.logout}>Logout</button>
           ) : null}
 
           <form onSubmit={this.submit}>
