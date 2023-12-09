@@ -28,13 +28,13 @@ export default class PostDisplay extends React.Component {
   render() {
     // Convert messages in state to message JSX elements to render
     let postListItems = this.state.posts.map((post) => (
-      <div className="carousel-item h-full">
+      <div className="carousel-item">
         <img src={post.val.url} alt={post.val.url} />
       </div>
     ));
 
     return (
-      <div className="m-10 h-96 carousel carousel-center max-w-md p-4 space-x-4 bg-neutral rounded-box">
+      <div className="m-10 h-full carousel carousel-center max-w-md p-4 space-x-4 bg-neutral rounded-box">
         {postListItems}
       </div>
     );

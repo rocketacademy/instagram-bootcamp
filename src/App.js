@@ -42,11 +42,11 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <div className="flex flex-row justify-center">
+        <div className="flex flex-col justify-center lg:flex-row ">
           {this.state.loggedInUser ? (
             <NavBar name={this.state.user.email} />
           ) : (
-            <NavBar name={"Unknown! Please sign in to chat & upload!"} />
+            <NavBar name={"Unknown! Please sign in!"} />
           )}
           {this.state.loggedInUser ? (
             <div className="btn p-2 m-2" onClick={this.signOut}>
@@ -56,14 +56,14 @@ class App extends React.Component {
             <AuthFormFunction />
           )}
         </div>
-        <div className="flex flex-col items-center pb-10 lg:flex-row lg:justify-around">
-          <div className="flex flex-col h-screen">
+        <div className="flex flex-col items-start pb-10 lg:flex-row lg:justify-around">
+          <div className="flex flex-col h-[680px] mt-2">
             <ChatMessages />
-            <div className="flex lg:justify-between m-2 mb-10">
+            <div className="flex lg:justify-between m-2">
               {this.state.loggedInUser ? <MessageForm /> : null}
             </div>
           </div>
-          <div>
+          <div className="h-[500px] mt-5">
             <p className="text-lg text-center font-semibold">
               {" "}
               Album Highlights

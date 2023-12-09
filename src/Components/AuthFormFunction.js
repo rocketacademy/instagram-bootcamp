@@ -30,25 +30,25 @@ export const AuthFormFunction = () => {
   };
 
   return (
-    <form className="flex w-full m-3">
+    <form className="flex flex-col lg:flex-row lg:w-full mt-3">
       <input
-        className="w-full mr-2 ml-5 input input-bordered"
+        className="w-full mr-1 ml-1 input input-bordered"
         type="email"
         placeholder="Email"
         value={email}
         onChange={handleEmailChange}
       />
       <input
-        className="w-full mr-2 ml-5 input input-bordered"
+        className="w-full mr-1 ml-1 input input-bordered"
         type="password"
         placeholder="Password"
         value={password}
         onChange={handlePasswordChange}
       />
-      <div className="btn" onClick={signUp}>
+      <div className="btn mr-1 ml-1" onClick={signUp}>
         Sign Up
       </div>
-      <div className="btn" onClick={signIn}>
+      <div className="btn mr-1 ml-1" onClick={signIn}>
         Sign In
       </div>
     </form>
