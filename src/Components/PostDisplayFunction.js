@@ -16,7 +16,10 @@ export const PostDisplayFunction = () => {
 
   useEffect(() => {
     onChildAdded(postsRef, (data) => {
-      setPosts([...posts, { key: data.key, val: data.val() }]);
+      setPosts((prevPosts) => [
+        ...prevPosts,
+        { key: data.key, val: data.val() },
+      ]);
     });
   }, []);
 
