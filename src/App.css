@@ -8,12 +8,62 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(14, 2, 2);
+}
+
+.input {
+  margin: 20px;
+  width: 220px;
+  height: 50px;
+  border-radius: 30%;
+}
+
+.input-send {
+  margin: 20px;
+  width: 80px;
+  height: 50px;
+  border-radius: 100%;
+}
+
+.submit {
+  width: 80px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.input-group {
+  font-size: 15px;
+}
+
+.list {
+  margin-bottom: 80px;
+}
+
+img {
+  border-radius: 40px;
+  height: 125px;
+  width: 125px;
+}
+
+.list-items {
+  margin-top: 80px;
+}
+
+.card-with-bg {
+  height: 48rem;
+  width: 18rem;
+  margin: 25px;
+  border-radius: 50px;
+  margin-top: 59px;
+}
+
+.buttons {
+  margin-left: 15px;
+  margin-right: 15px;
 }
