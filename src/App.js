@@ -8,6 +8,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NavBar } from "./Components/NavBar";
 import { ChatMessagesFunction } from "./Components/ChatMessagesFunction";
 import { FileUploadFormFunction } from "./Components/FileUploadFormFunction";
+import { MessageFormFunction } from "./Components/MessageFormFunction";
 
 class App extends React.Component {
   constructor(props) {
@@ -63,7 +64,7 @@ class App extends React.Component {
           <div className="flex flex-col h-[680px] mt-2">
             <ChatMessagesFunction />
             <div className="flex lg:justify-between m-2">
-              {this.state.loggedInUser ? <MessageForm /> : null}
+              {this.state.loggedInUser ? <MessageFormFunction /> : null}
             </div>
           </div>
           <div className="h-[500px] mt-5">
