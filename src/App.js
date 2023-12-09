@@ -9,6 +9,7 @@ import { NavBar } from "./Components/NavBar";
 import { ChatMessagesFunction } from "./Components/ChatMessagesFunction";
 import { FileUploadFormFunction } from "./Components/FileUploadFormFunction";
 import { MessageFormFunction } from "./Components/MessageFormFunction";
+import { PostDisplayFunction } from "./Components/PostDisplayFunction";
 
 class App extends React.Component {
   constructor(props) {
@@ -72,7 +73,7 @@ class App extends React.Component {
               {" "}
               Album Highlights
             </p>
-            <PostDisplay />
+            <PostDisplayFunction />
             {this.state.loggedInUser ? <FileUploadFormFunction /> : null}
           </div>
         </div>
