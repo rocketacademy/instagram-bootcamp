@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap");
+
 .App {
   text-align: center;
 }
@@ -9,11 +11,54 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 20vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.grid {
+  display: grid;
+  margin: 2vw;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto-fill;
+  gap: 1vw;
+}
+
+.title {
+  font-family: "Roboto Slab", cursive;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  background-color: #ffffff;
+  color: black;
+  height: 80px;
+}
+
+.navbar > h1 {
+  margin: 10px;
+  font-family: "Roboto Slab", cursive;
+}
+
+.user-navbar {
+  display: flex;
+  gap: 20px;
+  margin-left: auto;
+  font-size: 18px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 15px;
+}
+
+.user-navbar button {
+  margin-left: auto;
 }
