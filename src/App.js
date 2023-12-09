@@ -7,6 +7,7 @@ import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NavBar } from "./Components/NavBar";
 import { ChatMessagesFunction } from "./Components/ChatMessagesFunction";
+import { FileUploadFormFunction } from "./Components/FileUploadFormFunction";
 
 class App extends React.Component {
   constructor(props) {
@@ -71,7 +72,7 @@ class App extends React.Component {
               Album Highlights
             </p>
             <PostDisplay />
-            {this.state.loggedInUser ? <FileUploadForm /> : null}
+            {this.state.loggedInUser ? <FileUploadFormFunction /> : null}
           </div>
         </div>
       </>
