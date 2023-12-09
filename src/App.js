@@ -1,68 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Feed from "../src/Components/Feed/Feed";
 import Chat from "../src/Components/Chat/Chat";
 import AuthForm from "../src/Components/AuthForm/AuthForm";
-
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./App.css";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const auth = getAuth();
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loggedInUser: null,
-      shouldRenderAuthForm: false,
-    };
-  }
-  componentDidMount() {
+export default function App() {
+  const auth = getAuth();
+  const [loggedInUser, setLoggedIn] = useState(false);
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.setState({
-          loggedInUser: user,
-        });
+        setLoggedIn(true);
         return;
-      } else {
-        this.setState({ loggedInUser: null });
       }
+      setLoggedIn(false);
     });
-  }
+  }, [auth]);
 
-  toggleAuthForm = () => {
-    this.setState({
-      shouldRenderAuthForm: true,
-    });
-  };
-
-  render() {
-    const authForm = <AuthForm toggleAuthForm={this.state.toggleAuthForm} />;
-    const chat = <Chat loggedInUser={this.state.loggedInUser} />;
-    const createAccountOrSignInButton = (
-      <div>
-        <button onClick={(event) => this.toggleAuthForm(event)}>
-          Create Account Or Sign In
-        </button>
+  return (
+    <div className="App">
+      <header className="App-header">
         <br />
-      </div>
-    );
-    const chatAndFeed = (
-      <div>
-        <Feed />
-        {this.state.loggedInUser ? chat : createAccountOrSignInButton}
-        <br />
-      </div>
-    );
-
-    return (
-      <div className="App">
-        <header className="App-header">
-          <br />
-          {this.state.shouldRenderAuthForm ? authForm : chatAndFeed}
-        </header>
-      </div>
-    );
-  }
+        <BrowserRouter>
+          {loggedInUser ? <Navigate to="/" /> : <Navigate to="/auth" />}
+          <Routes>
+            <Route path="/" element={<Feed />} />
+            <Route path="/auth" element={<AuthForm />} />
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </BrowserRouter>
+      </header>
+    </div>
+  );
 }
-
-export default App;
