@@ -24,6 +24,7 @@ export const ChatMessagesFunction = () => {
       className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"}`} //alternate between chat start and chat end
     >
       <div className="chat-footer text-xs opacity-50">{message.val.date}</div>
+      <div className="chat-header text-xs opacity-50">{message.val.email}</div>
       <div className="chat-bubble text-left break-all">
         {message.val.messageString}
       </div>

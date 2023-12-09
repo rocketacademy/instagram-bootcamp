@@ -11,7 +11,7 @@ export const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(false);
   const [user, setUser] = useState({});
 
-  const signOut = () => {
+  const signOutUser = () => {
     setLoggedInUser(false);
     setUser({});
     signOut(auth);
@@ -37,13 +37,13 @@ export const App = () => {
             Please sign in to chat and post~
           </p>
         )}
-        <NavBar loggedInUser={loggedInUser} signOut={signOut} />
+        <NavBar loggedInUser={loggedInUser} signOut={signOutUser} />
       </div>
       <div className="flex flex-col items-start pb-10 lg:flex-row lg:justify-around">
         <div className="flex flex-col h-[680px] mt-2">
           <ChatMessagesFunction />
           <div className="flex lg:justify-between m-2">
-            {loggedInUser ? <MessageFormFunction /> : null}
+            {loggedInUser ? <MessageFormFunction email={user.email} /> : null}
           </div>
         </div>
         <div className="h-[500px] mt-5">

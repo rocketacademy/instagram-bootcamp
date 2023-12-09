@@ -2,7 +2,7 @@ import { push, ref, set } from "firebase/database";
 import { database } from "../firebase";
 import { useState } from "react";
 
-export const MessageFormFunction = () => {
+export const MessageFormFunction = (props) => {
   const DB_MESSAGES_KEY = "messages";
 
   const [inputValue, setInputValue] = useState("");
@@ -17,6 +17,7 @@ export const MessageFormFunction = () => {
     set(newMessageRef, {
       messageString: inputValue,
       date: new Date().toLocaleString(),
+      email: props.email,
     });
     setInputValue("");
   };
