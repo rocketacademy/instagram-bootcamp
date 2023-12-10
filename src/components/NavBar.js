@@ -1,11 +1,19 @@
-import React, { useState } from "react";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import AuthForm from "./AuthForm";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-const NavBar = ({ isUserLoggedIn, auth }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const NavBar = () => {
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  //on first page loads, determine if user is logged in
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) return setIsUserLoggedIn(true);
+      return setIsUserLoggedIn(false);
+    });
+  }, []);
 
   const toggleLogout = (
     <>
@@ -22,25 +30,20 @@ const NavBar = ({ isUserLoggedIn, auth }) => {
 
   return (
     <>
-      <nav class="bg-gray-300 fixed w-full z-20 top-0 h-30">
-        <div class="flex justify-between mx-auto p-5">
+      <nav class="dark:bg-gray-900 text-white">
+        <div class="flex justify-between mx-auto p-5 max-w-screen-xl">
           <p>
             {!isUserLoggedIn
               ? `You are  not logged in.`
               : `You are logged in as, ${auth.currentUser.displayName}.`}
           </p>
-          <div>
-            {!isUserLoggedIn ? (
-              <button onClick={() => setIsModalOpen(true)}>
-                Log In / Sign Up
-              </button>
-            ) : (
-              toggleLogout
-            )}
-          </div>
+          {!isUserLoggedIn ? (
+            <Link to="/authform"> Log In / Sign Up</Link>
+          ) : (
+            toggleLogout
+          )}
         </div>
       </nav>
-      {isModalOpen && <AuthForm setIsModalOpen={setIsModalOpen} />}
     </>
   );
 };
