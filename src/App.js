@@ -1,17 +1,19 @@
 // components
 import Textfield from "./Components/Textfield.js";
 import Posts from "./Components/Posts.js";
+import NavBar from "./Components/NavBar.js";
 // react hooks
 import { useState, useEffect } from "react";
 // firebase
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
   updateCurrentUser,
 } from "firebase/auth";
+import { auth } from "./firebase.js";
 import "./App.css";
+import { FirebaseError } from "firebase/app";
 
 const App = () => {
   const [nameField, setNameField] = useState("");
@@ -39,12 +41,12 @@ const App = () => {
   };
 
   const handleSubmit = (e) => {
-    const auth = getAuth();
     if (logIn) {
       signInWithEmailAndPassword(auth, emailField, passField)
         .then((userCredential) => {
           // Signed in
           setUser(userCredential.user.displayName);
+          console.log(auth.currentUser);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -73,7 +75,9 @@ const App = () => {
   };
   return (
     <div className="App">
-      <div className="footer-nav">
+      {console.log(auth.currentUser)}
+      <NavBar />
+      <div className="nav">
         <h4 onClick={() => loadItem("messages")}>msgs</h4>
         <h4 onClick={() => loadItem("posts")}>posts</h4>
       </div>
