@@ -19,7 +19,6 @@ export const App = () => {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         setLoggedInUser(true);
         setUser(user);
