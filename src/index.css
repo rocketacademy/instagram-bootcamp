@@ -56,6 +56,18 @@
 .author {
   @apply font-bold p-2;
 }
+
+.message-box {
+  @apply flex mt-2 space-x-6 max-w-xs;
+}
+.form {
+  @apply bg-gray-300 p-4;
+}
+
+.messenger-input {
+  @apply flex h-10 w-full rounded px-3 m-1 text-sm;
+}
+
 @tailwind utilities;
 
 body {
