@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { UserContext } from "../App";
 
 const NavBar = () => {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const navigate = useNavigate();
-
-  //on first page loads, determine if user is logged in
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) return setIsUserLoggedIn(true);
-      return setIsUserLoggedIn(false);
-    });
-  }, []);
+  const { isUserLoggedIn, user, setUser, setIsUserLoggedIn, setMsg, msg } =
+    useContext(UserContext);
 
   const toggleLogout = (
     <>
       <button
         onClick={() => {
-          navigate("/");
+          setUser({});
+          setIsUserLoggedIn(false);
+          setMsg("You have signed out successfully!");
           signOut(auth);
+          navigate("/");
         }}
       >
         Log out
@@ -30,13 +27,14 @@ const NavBar = () => {
 
   return (
     <>
-      <nav class="dark:bg-gray-900 text-white">
-        <div class="flex justify-between mx-auto p-5 max-w-screen-xl">
+      <nav class="nav-bar">
+        <div class="nav-bar-contents">
           <p>
             {!isUserLoggedIn
               ? `You are  not logged in.`
-              : `You are logged in as, ${auth.currentUser.displayName}.`}
+              : `You are logged in as, ${user.displayName}.`}
           </p>
+          <p>{msg}</p>
           {!isUserLoggedIn ? (
             <Link to="/authform"> Log In / Sign Up</Link>
           ) : (
