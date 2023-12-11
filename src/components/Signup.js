@@ -47,7 +47,7 @@ const Signup = () => {
   };
   return (
     <>
-      <p class="auth-header">Create Account</p>
+      <p class="header">Create Account</p>
       <form onSubmit={handleSignUp}>
         <div>
           <input
