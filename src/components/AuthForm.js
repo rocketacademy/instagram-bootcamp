@@ -7,8 +7,8 @@ const AuthForm = () => {
 
   return (
     <>
-      <div class="auth-screen">
-        <div class="auth-box">
+      <div class="page">
+        <div class="box">
           {isLogin ? <Login /> : <Signup />}
           <div class="m-2">
             <p>
