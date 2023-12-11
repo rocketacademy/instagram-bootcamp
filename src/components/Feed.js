@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+// import { Link } from "react-router-dom";
 import { onChildAdded, ref } from "firebase/database";
 import { database } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import SideBar from "./SideBar";
+import { UserContext } from "../App";
 
 const DB_POSTS_KEY = "posts";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
-  const navigate = useNavigate();
+  const { isUserLoggedIn } = useContext(UserContext);
 
   useEffect(() => {
     const postListRef = ref(database, DB_POSTS_KEY);
@@ -20,35 +22,40 @@ const Feed = () => {
 
   return (
     <>
-      {posts && (
-        <div style={{ border: "10px solid red" }}>
-          {posts.map((post) => {
-            return (
-              <div key={post.key} class="min-w-md rounded-lg shadow-md m-5">
-                <div>
-                  {
-                    <img
-                      class="object-cover h-48 w-96"
-                      src={post.val.url}
-                      alt={post.val.caption}
-                    />
-                  }
-                </div>
-                <div class="flex justify-between m-1.5 text-sm text-sm ">
-                  <div class="font-bold p-2">
-                    {post.val.user} {""}
-                    <span class="font-normal">{post.val.caption}</span>
-                  </div>
-
-                  <button onClick={() => navigate("/individual")} class="p-2">
-                    View post
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+      {isUserLoggedIn && (
+        <div class="side-bar">
+          <SideBar />
         </div>
       )}
+      <div class="feed">
+        {posts && (
+          <div>
+            {posts.map((post) => {
+              return (
+                <div key={post.key} class="feed-post">
+                  {/* <Link to={`/feed/${post.val.url}`}> */}
+                  <div>
+                    {
+                      <img
+                        class="feed-img"
+                        src={post.val.url}
+                        alt={post.val.caption}
+                      />
+                    }
+                  </div>
+                  <div class="feed-context">
+                    <div class="author">
+                      {post.val.user} {""}
+                      <span class="font-normal">{post.val.caption}</span>
+                    </div>
+                  </div>
+                  {/* </Link> */}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </>
   );
 };
