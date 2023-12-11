@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
+import useInput from "./hooks/useInput";
 import { push, ref, set, onChildAdded } from "firebase/database";
-import { database, storage } from "../firebase";
+import { database, storage, auth } from "../firebase";
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+import SideBar from "./SideBar";
 
 const DB_MESSAGES_KEY = "messages";
 const STORAGE_KEY = "images/";
 
 const Messenger = () => {
-  const [message, setMessage] = useState("");
+  const [userMessage, setUserMessage, resetUserMessage] = useInput("");
   const [file, setFile] = useState(null);
   const [fileInputValue, setFileInputValue] = useState("");
   const [messages, setMessages] = useState([]);
@@ -28,7 +30,7 @@ const Messenger = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!file && !message) return;
+    if (!file && !userMessage) return;
 
     if (!file) {
       writeData(null);
@@ -46,11 +48,12 @@ const Messenger = () => {
     const messageListRef = ref(database, DB_MESSAGES_KEY);
     const newMessageRef = push(messageListRef);
     set(newMessageRef, {
-      text: message,
+      userMessage: userMessage,
       date: new Date().toLocaleTimeString(),
       url,
+      user: auth.currentUser.displayName,
     });
-    setMessage("");
+    resetUserMessage();
     setFileInputValue("");
     setFile(null);
   };
@@ -62,11 +65,10 @@ const Messenger = () => {
   const messageListItems = () => {
     return messages.map((message) => {
       return (
-        <div key={message.key}>
+        <div key={message.key} class="bg-gray-300 my-2 p-2 rounded-lg">
           <div>{message.val.date}</div>
-          <div>{message.val.text}</div>
+          <div>{message.val.userMessage}</div>
           <div>
-            {" "}
             {message.val.url && (
               <img src={message.val.url} alt="img" style={{ width: "30px" }} />
             )}
@@ -78,23 +80,49 @@ const Messenger = () => {
 
   return (
     <>
-      <div>{messageListItems()}</div>
-      <form onSubmit={handleSubmit}>
-        <input
-          onChange={(e) => setMessage(e.target.value)}
-          value={message}
-          placeholder="Type something..."
-          name="input-text"
-          type="text"
-        />
-        <input
-          type="file"
-          name="input-file"
-          value={fileInputValue}
-          onChange={(e) => handleChange(e)}
-        />
-        <input value="send" type="submit" />
-      </form>
+      <div>
+        <SideBar />
+      </div>
+      <div>
+        <div class="flex flex-col items-center justify-center w-screen min-h-screen bg-gray-200 p-10">
+          <div class="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg mt-20">
+            <div class="flex-grow h-0 p-4 overflow-auto ">
+              <div class="message-box">
+                <div>{messageListItems()}</div>
+              </div>
+            </div>
+
+            <div class="form">
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <input
+                    {...setUserMessage}
+                    placeholder="Type something..."
+                    name="input"
+                    type="text"
+                    required
+                    class="messenger-input"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="file"
+                    name="file"
+                    value={fileInputValue}
+                    onChange={(e) => handleChange(e)}
+                    class="w-full px-3 m-1"
+                  />
+                </div>
+                <div>
+                  <button type="submit" class="btn">
+                    Send
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
