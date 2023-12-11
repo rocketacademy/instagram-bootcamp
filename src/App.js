@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import Feed from "../src/Components/Feed/Feed";
 import Chat from "../src/Components/Chat/Chat";
 import AuthForm from "../src/Components/AuthForm/AuthForm";
@@ -7,31 +13,47 @@ import "./App.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function App() {
-  const auth = getAuth();
-  const [loggedInUser, setLoggedIn] = useState(false);
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setLoggedIn(true);
-        return;
-      }
-      setLoggedIn(false);
-    });
-  }, [auth]);
-
   return (
     <div className="App">
       <header className="App-header">
-        <br />
         <BrowserRouter>
-          {loggedInUser ? <Navigate to="/" /> : <Navigate to="/auth" />}
-          <Routes>
-            <Route path="/" element={<Feed />} />
-            <Route path="/auth" element={<AuthForm />} />
-            <Route path="/chat" element={<Chat />} />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </header>
     </div>
+  );
+}
+
+function AppRoutes() {
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const [loggedInUser, setLoggedIn] = useState(false);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user);
+      if (user) {
+        setLoggedIn(true);
+        console.log("User logged in");
+        navigate("/");
+      } else {
+        setLoggedIn(false);
+        console.log("User loggedIn is false");
+        navigate("/auth");
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, navigate]);
+
+  console.log("loggedInUser state:", loggedInUser);
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={loggedInUser ? <Feed /> : <Navigate to="/auth" />}
+      />
+      <Route path="/auth" element={<AuthForm setLoggedIn={setLoggedIn} />} />
+      <Route path="/chat" element={<Chat />} />
+    </Routes>
   );
 }

@@ -14,7 +14,7 @@ class AuthForm extends React.Component {
     this.state = {
       emailInputValue: "",
       passwordInputValue: "",
-      isNewUser: true,
+      isNewUser: false,
       errorCode: "",
       errorMessage: "",
     };
@@ -34,19 +34,21 @@ class AuthForm extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log("Submitting form");
     const closeAuthForm = () => {
+      console.log("User signed in:");
       this.setState({
         emailInputValue: "",
         passwordInputValue: "",
-        isNewUser: true,
+        //isNewUser: null,
         errorCode: "",
         errorMessage: "",
       });
-      this.props.toggleAuthForm();
+      this.props.setLoggedIn(true);
     };
 
     const setErrorState = (error) => {
+      console.error("Authentication error:", error);
       this.setState({
         errorCode: error.code,
         errorMessage: error.message,
@@ -54,6 +56,7 @@ class AuthForm extends React.Component {
     };
 
     if (this.state.isNewUser) {
+      console.log("Attempting to create new user");
       createUserWithEmailAndPassword(
         auth,
         this.state.emailInputValue,
@@ -62,6 +65,7 @@ class AuthForm extends React.Component {
         .then(closeAuthForm)
         .catch(setErrorState);
     } else {
+      console.log("Attempting to sign in user");
       signInWithEmailAndPassword(
         auth,
         this.state.emailInputValue,
@@ -80,7 +84,7 @@ class AuthForm extends React.Component {
         </p>
         <p>
           {this.state.errorMessage
-            ? `Error message: ${this.state.errorCode}`
+            ? `Error message: ${this.state.errorMessage}`
             : null}
         </p>
         <p> Sign in with this form to post.</p>
@@ -94,6 +98,7 @@ class AuthForm extends React.Component {
           <br></br>
           <input
             type="password"
+            autoComplete="on"
             placeholder="Enter your password"
             value={this.state.passwordInputValue}
             onChange={(event) => this.handlePasswordInputChange(event)}
