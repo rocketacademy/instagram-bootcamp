@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { UserContext } from "../App";
+import useInput from "./hooks/useInput";
 
 const Login = () => {
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [password, setNewPassword, resetPassword] = useInput("");
+  const [email, setNewEmail, resetEmail] = useInput("");
+  const { setIsUserLoggedIn, setMsg, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleLogIn = async (e) => {
     e.preventDefault();
@@ -12,26 +17,30 @@ const Login = () => {
 
     try {
       const newUser = await signInWithEmailAndPassword(auth, email, password);
-      console.log(newUser);
-      setPassword("");
-      setEmail("");
+      // console.log(newUser); keeping this here instead of deleting for future reference
+      setIsUserLoggedIn(true);
+      setUser(newUser.user);
+      setMsg("");
+      resetEmail();
+      resetPassword();
+      navigate("/feed");
     } catch (error) {
-      console.log(error);
+      setMsg(error.message);
     }
   };
 
   return (
     <>
-      <p class="text-2xl m-2 font-bold">Sign in</p>
+      <p class="auth-header">Sign In</p>
+
       <form onSubmit={handleLogIn}>
         <div>
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...setNewEmail}
             name="email"
-            class="p-1 rounded my-3 shadow"
+            class="input"
             required
           />
         </div>
@@ -40,16 +49,15 @@ const Login = () => {
           <input
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...setNewPassword}
             name="password"
             required
-            class="p-1 rounded my-3 shadow"
+            class="input"
             autoComplete="password"
           />
         </div>
         <div>
-          <button type="submit" class="bg-gray-800 text-white m-2  p-2">
+          <button type="submit" class="btn">
             Sign In
           </button>
         </div>
