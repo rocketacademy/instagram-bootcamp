@@ -1,3 +1,63 @@
+@tailwind base;
+@tailwind components;
+
+.input {
+  @apply p-1 rounded my-3 shadow;
+}
+
+.btn {
+  @apply bg-gray-800 text-white m-2 p-2 rounded;
+}
+
+.header {
+  @apply font-bold text-xl p-2;
+}
+
+.nav-bar {
+  @apply dark:bg-gray-900 fixed w-full z-20 top-0 text-white;
+}
+
+.nav-bar-contents {
+  @apply flex justify-between items-center mx-auto p-5 max-w-screen-xl;
+}
+
+.side-bar {
+  @apply fixed left-0 h-full px-6 bg-gray-100 space-y-8 flex-col flex justify-center;
+}
+
+.page {
+  @apply flex items-center justify-center mx-auto h-screen;
+}
+
+.box {
+  @apply bg-gray-200 rounded-md w-80 fixed bg-opacity-70 p-4;
+}
+
+.auth-form-btn {
+  @apply underline underline-offset-4 m-2;
+}
+
+.feed {
+  @apply flex justify-center items-center w-full top-0 my-16 overflow-y-scroll;
+}
+
+.feed-post {
+  @apply rounded-lg shadow-md m-5;
+}
+
+.feed-img {
+  @apply object-cover h-48 w-96;
+}
+
+.feed-context {
+  @apply flex justify-between m-1.5 text-sm text-sm;
+}
+
+.author {
+  @apply font-bold p-2;
+}
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
