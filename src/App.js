@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  useNavigate,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Feed from "../src/Components/Feed/Feed";
 import Chat from "../src/Components/Chat/Chat";
 import AuthForm from "../src/Components/AuthForm/AuthForm";
@@ -42,16 +36,13 @@ function AppRoutes() {
       }
     });
     return () => unsubscribe();
-  }, [auth, navigate]);
+  }, [auth]);
 
   console.log("loggedInUser state:", loggedInUser);
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={loggedInUser ? <Feed /> : <Navigate to="/auth" />}
-      />
+      <Route path="/" element={<Feed />} />
       <Route path="/auth" element={<AuthForm setLoggedIn={setLoggedIn} />} />
       <Route path="/chat" element={<Chat />} />
     </Routes>

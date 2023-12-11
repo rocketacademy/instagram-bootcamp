@@ -39,7 +39,7 @@ const Chat = () => {
   };
 
   const goToFeed = () => {
-    navigate("/feed");
+    navigate("/");
   };
 
   console.log("Rendering Chat");
