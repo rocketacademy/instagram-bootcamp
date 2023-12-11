@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <>
-      <p class="auth-header">Sign In</p>
+      <p class="header">Sign In</p>
 
       <form onSubmit={handleLogIn}>
         <div>
