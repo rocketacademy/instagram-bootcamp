@@ -17,21 +17,6 @@ const Posts = () => {
   const [userDisplayName, setUserDisplayName] = useState("noUserDisplayName");
 
   useEffect(() => {
-    let loadedPosts = [];
-    const postsCaptionsRef = ref(database, `${user}/${DB_POSTS_KEY}`);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    const unsubscribe = onChildAdded(postsCaptionsRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      let value = data.val();
-      loadedPosts = [...loadedPosts, { key: data.key, val: value }];
-      setPosts(loadedPosts);
-    });
-    return () => {
-      unsubscribe();
-    };
-  });
-
-  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(() => {
       if (auth.currentUser === null) {
         return () => {
@@ -41,6 +26,21 @@ const Posts = () => {
       }
       setUser(auth.currentUser.uid);
       setUserDisplayName(auth.currentUser.displayName);
+    });
+    return () => {
+      unsubscribe();
+    };
+  });
+
+  useEffect(() => {
+    let loadedPosts = [];
+    const postsCaptionsRef = ref(database, `${user}/${DB_POSTS_KEY}`);
+    // onChildAdded will return data for every child at the reference and every subsequent new child
+    const unsubscribe = onChildAdded(postsCaptionsRef, (data) => {
+      // Add the subsequent child to local component state, initialising a new array to trigger re-render
+      let value = data.val();
+      loadedPosts = [...loadedPosts, { key: data.key, val: value }];
+      setPosts(loadedPosts);
     });
     return () => {
       unsubscribe();
