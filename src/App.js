@@ -1,40 +1,22 @@
 // components
-import Textfield from "./Components/Textfield.js";
-import Posts from "./Components/Posts.js";
 import NavBar from "./Components/NavBar.js";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // firebase
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  updateCurrentUser,
 } from "firebase/auth";
 import { auth } from "./firebase.js";
 import "./App.css";
-import { FirebaseError } from "firebase/app";
 
 const App = () => {
   const [nameField, setNameField] = useState("");
   const [emailField, setEmailField] = useState("");
   const [passField, setPassfield] = useState("");
   const [user, setUser] = useState("");
-  const [screen, setScreen] = useState(false);
-  const [displayScreen, setDisplayScreen] = useState(null);
   const [logIn, setLogIn] = useState(true);
-
-  useEffect(() => {
-    if (screen === "messages") {
-      setDisplayScreen(<Textfield name={user} />);
-    } else if (screen === "posts") {
-      setDisplayScreen(<Posts name={user} />);
-    }
-  }, [screen, user]);
-
-  const loadItem = (item) => {
-    setScreen(screen === item ? false : item);
-  };
 
   const handleChange = (e, setter) => {
     setter(e.target.value);
@@ -75,15 +57,8 @@ const App = () => {
   };
   return (
     <div className="App">
-      {console.log(auth.currentUser)}
       <NavBar />
-      <div className="nav">
-        <h4 onClick={() => loadItem("messages")}>msgs</h4>
-        <h4 onClick={() => loadItem("posts")}>posts</h4>
-      </div>
-      {screen ? (
-        displayScreen
-      ) : user === "" ? (
+      {user === "" ? (
         <header className="App-header row">
           <h4>{logIn ? "Please login below" : "Sign up below"}</h4>
           {!logIn && (

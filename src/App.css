@@ -23,6 +23,10 @@
   color: white;
 }
 
+.nav-link {
+  color: white;
+}
+
 .login-field {
   display: inline-block;
   margin-bottom: 10px;
