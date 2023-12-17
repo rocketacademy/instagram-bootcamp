@@ -1,60 +1,50 @@
-import React from "react";
-import { onChildAdded, push, ref, set } from "firebase/database";
-import { database } from "./firebase";
-import logo from "./logo.png";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import Feed from "../src/Components/Feed/Feed";
+import Chat from "../src/Components/Chat/Chat";
+import AuthForm from "../src/Components/AuthForm/AuthForm";
 import "./App.css";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-// Save the Firebase message folder name as a constant to avoid bugs due to misspelling
-const DB_MESSAGES_KEY = "messages";
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // Initialise empty messages array in state to keep local state in sync with Firebase
-    // When Firebase changes, update local state, which will update local UI
-    this.state = {
-      messages: [],
-    };
-  }
-
-  componentDidMount() {
-    const messagesRef = ref(database, DB_MESSAGES_KEY);
-    // onChildAdded will return data for every child at the reference and every subsequent new child
-    onChildAdded(messagesRef, (data) => {
-      // Add the subsequent child to local component state, initialising a new array to trigger re-render
-      this.setState((state) => ({
-        // Store message key so we can use it as a key in our list items when rendering messages
-        messages: [...state.messages, { key: data.key, val: data.val() }],
-      }));
-    });
-  }
-
-  // Note use of array fields syntax to avoid having to manually bind this method to the class
-  writeData = () => {
-    const messageListRef = ref(database, DB_MESSAGES_KEY);
-    const newMessageRef = push(messageListRef);
-    set(newMessageRef, "abc");
-  };
-
-  render() {
-    // Convert messages in state to message JSX elements to render
-    let messageListItems = this.state.messages.map((message) => (
-      <li key={message.key}>{message.val}</li>
-    ));
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          {/* TODO: Add input field and add text input as messages in Firebase */}
-          <button onClick={this.writeData}>Send</button>
-          <ol>{messageListItems}</ol>
-        </header>
-      </div>
-    );
-  }
+export default function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </header>
+    </div>
+  );
 }
 
-export default App;
+function AppRoutes() {
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const [loggedInUser, setLoggedIn] = useState(false);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user);
+      if (user) {
+        setLoggedIn(true);
+        console.log("User logged in");
+        navigate("/");
+      } else {
+        setLoggedIn(false);
+        console.log("User loggedIn is false");
+        navigate("/auth");
+      }
+    });
+    return () => unsubscribe();
+  }, [auth]);
+
+  console.log("loggedInUser state:", loggedInUser);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Feed />} />
+      <Route path="/auth" element={<AuthForm setLoggedIn={setLoggedIn} />} />
+      <Route path="/chat" element={<Chat />} />
+    </Routes>
+  );
+}
